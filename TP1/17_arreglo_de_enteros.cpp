@@ -50,10 +50,10 @@ void encontrarYGuardarMayorYMenor(int arreglo[], int tamanio, int mayorYMenor[])
   int menor = arreglo[0];
 
   for (int i = 1; i < tamanio; i++) {
-    const int elementoActual = arreglo[i];
+    const int ELEMENTO_ACTUAL = arreglo[i];
 
-    if (elementoActual > mayor) mayor = elementoActual;
-    if (elementoActual < menor) menor = elementoActual;
+    if (ELEMENTO_ACTUAL > mayor) mayor = ELEMENTO_ACTUAL;
+    if (ELEMENTO_ACTUAL < menor) menor = ELEMENTO_ACTUAL;
   }
 
   mayorYMenor[0] = mayor;
@@ -68,7 +68,7 @@ int ocurrenciasDeNumero(int numeroABuscar, int arreglo[], int tamanio) {
   return contador;
 }
 
-string arregloEnString(int arreglo[], int tamanio) {
+string arregloComoString(int arreglo[], int tamanio) {
   string arregloEnStr = "{ ";
 
   for (int i = 0; i < tamanio; i++) {
@@ -81,27 +81,27 @@ string arregloEnString(int arreglo[], int tamanio) {
 
 int main() {
   cout << "Ingrese la cantidad de numeros enteros a evaluar: ";
-  const int tamanio = validarCantidad();
-  int serieDeNumeros[tamanio]; //Declara arreglo de largo tamanio
+  const int TAMANIO = validarCantidad();
+  int serieDeNumeros[TAMANIO]; //Declara arreglo de largo TAMANIO
 
   cout << "Ingrese los numeros de a uno: ";
   //Pasa el arreglo por referencia y la función lo modifica directamente (lo llena)
-  llenarArreglo(serieDeNumeros, tamanio);
+  llenarArreglo(serieDeNumeros, TAMANIO);
 
   cout << "Listo, procesando...\n";
 
   int mayorYMenor[2];
-  encontrarYGuardarMayorYMenor(serieDeNumeros, tamanio, mayorYMenor);
+  encontrarYGuardarMayorYMenor(serieDeNumeros, TAMANIO, mayorYMenor);
 
-  const int mayorNroIngresado = mayorYMenor[0];
-  const int menorNroIngresado = mayorYMenor[1];
-  const int ocurrenciasMayor = ocurrenciasDeNumero(mayorNroIngresado, serieDeNumeros, tamanio);
-  const int ocurrenciasMenor = ocurrenciasDeNumero(menorNroIngresado, serieDeNumeros, tamanio);
-  const string arregloComoString = arregloEnString(serieDeNumeros, tamanio);
+  const int MAYOR_NRO_INGRESADO = mayorYMenor[0];
+  const int MENOR_NRO_INGRESADO = mayorYMenor[1];
+  const int OCURRENCIAS_MAYOR = ocurrenciasDeNumero(MAYOR_NRO_INGRESADO, serieDeNumeros, TAMANIO);
+  const int OCURRENCIAS_MENOR = ocurrenciasDeNumero(MENOR_NRO_INGRESADO, serieDeNumeros, TAMANIO);
+  const string ARREGLO_COMO_STRING = arregloComoString(serieDeNumeros, TAMANIO);
 
-  cout << "Ingresados: " << arregloComoString << ".\n"
-       << "Mayor: " << mayorNroIngresado << ".\n" << "Ocurrencias mayor: " << ocurrenciasMayor << ".\n"
-       << "Menor: " << menorNroIngresado << ".\n" << "Ocurrencias menor: " << ocurrenciasMenor << ".\n"
+  cout << "Ingresados: " << ARREGLO_COMO_STRING << ".\n"
+       << "Mayor: " << MAYOR_NRO_INGRESADO << ".\n" << "Ocurrencias mayor: " << OCURRENCIAS_MAYOR << ".\n"
+       << "Menor: " << MENOR_NRO_INGRESADO << ".\n" << "Ocurrencias menor: " << OCURRENCIAS_MENOR << ".\n"
        << "Bye.";
 
   return 0;
