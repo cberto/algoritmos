@@ -1,35 +1,59 @@
 /**
 1)
 
-j=j-2;				            //+2
-i=j*12;				            //+2
-printf("%d\n",i);		      //+1
+j=j-2;				            //2
+i=j*12;				            //2
+printf("%d\n",i);		      //1
 
-COMPLEJIDAD: 
+ANÁLISIS DE COMPLEJIDAD ALGORÍTMICA: 
   
-  O(1) (Constante)
+  1. Identificar n
+      N/A. No depende de datos de entrada variable.
+  
+  2. Identificar peor caso
+      No hay. Peor caso = caso promedio = mejor caso.
+  
+  3. Cantidad de operaciones
+      1 por línea: (Operación + reasignación) x 2 + imprimir en pantalla
+      T(n) = 5
+  
+  4. COMPLEJIDAD:
+      T(n) = 5    ====>   O(1) (Constante)
 
 --------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
 2)    
 
-Scanner leer = new Scanner(System. in);   		    //+1
-int n = leer.nextInt(), c = 0;       					    //+2
-while (n-- > 0)								                    //+1n
+Scanner leer = new Scanner(System. in);   		        //+1
+int n = leer.nextInt(), c = 0;       					        //+2
+
+while (n-- > 0)								                        //+1n
 {
-c++;                              						    //+2n
-int res = 0;              leemos rangos				    //+1n
-int b = leer.nextInt();						                //+1n
-for (int a = 0; i <= b; i++) 					            //+4n
-if (i % 2 == 1)							                      //+1n.b
-res = res + i;						                        //+2n.b
-System. out .printf( "Case %d: %d\n" , c, res);		//+1n
+  c++;                              						      //+2n
+  int res = 0;                            			      //+1n leemos rangos	
+  int b = leer.nextInt();						                  //+1n
+  
+  for (int a = 0; i <= b; i++) 					              //+4n
+    if (i % 2 == 1)							                      //+1n.b
+    res = res + i;						                        //+2n.b
+  
+    System. out .printf( "Case %d: %d\n" , c, res);		//+1n
 }
 
-COMPLEJIDAD: 
+ANÁLISIS DE COMPLEJIDAD ALGORÍTMICA: 
   
-  O(n.b) ??
+  1. Identificar n
+      ?
+      
+  2. Identificar peor caso
+      ?
+  
+  3. Cantidad de operaciones
+      T(n) = ?
+  
+  4. COMPLEJIDAD:
+        O(n.b) ??
 
 --------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
@@ -45,11 +69,19 @@ printf("%d\n", i);					                //+1n
 i++;							                          //+2n 
 }
 
-
-COMPLEJIDAD: 
+ANÁLISIS DE COMPLEJIDAD ALGORÍTMICA: 
   
-  (O(n)+O(n)) = O(n) (Lineal)
-
+  1. Identificar n
+      ?
+      
+  2. Identificar peor caso
+      ?
+  
+  3. Cantidad de operaciones
+      T(n) = ?
+  
+  4. COMPLEJIDAD:
+      (O(n)+O(n)) = O(n) (Lineal)
 --------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
@@ -71,9 +103,19 @@ while (i<10) {
     i++;            
 }
 
-COMPLEJIDAD: 
+ANÁLISIS DE COMPLEJIDAD ALGORÍTMICA: 
   
-  ??
+  1. Identificar n
+      ?
+      
+  2. Identificar peor caso
+      ?
+  
+  3. Cantidad de operaciones
+      T(n) = ?
+  
+  4. COMPLEJIDAD:
+      ?
 --------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
@@ -104,25 +146,28 @@ NodoInt primero;
 } 
  
 Dada una ListaInt, decimos que un par de números (a; b) son contiguos divisibles en la 
-lista si a aparece justo antes que b y a es divisible por b. Dada esta definición, se pide  
- 
- 
-escribir el método de instancia void separarContiguosDivisibles() de orden lineal, es 
+lista si a aparece justo antes que b y a es divisible por b. Dada esta definición, se pide:
+
+- Escribir el método de instancia void separarContiguosDivisibles() de orden lineal, es 
 decir, O(n) donde n es la cantidad de elementos de la lista, que por cada par (a; b) de 
-contiguos divisibles de la lista, agrega entre ellos el número a/b.  
-Por ejemplo: 
-Si la lista es [20, 10, 6, 3], los pares de contiguos divisibles son (20,10) y (6,3), y por lo 
-tanto la lista deberá quedar como [20, 2, 10, 6, 2, 3]. 
-Si la lista es [20, 10, 2, 3], los pares de contiguos divisibles son (20,10) y (10,2), y por lo 
-tanto la lista deberá quedar como [20, 2, 10, 5, 2, 3]. 
-Si la lista es [7, 6, 2, 7, 6], el único par de contiguos divisibles es (6,2) con lo cual la lista 
-deberá quedar como [7, 6, 3, 2, 7, 6]. 
-Si la lista es [1, 1], el par (1,1) es de contiguos divisibles y por lo tanto la lista deberá 
-quedar como [1, 1, 1]. 
-Si la lista es [50, 5], el par (50,5) es de contiguos divisibles y por lo tanto la lista deberá 
-quedar como [50, 10, 5]. Notar que la nueva lista contiene el par de contiguos 
-consecutivos (10,5), sin embargo, este par no se separa por no ser parte de la lista 
-original.
+contiguos divisibles de la lista, agrega entre ellos el número a/b. 
+
+Por ejemplo:
+- Si la lista es [20, 10, 6, 3], los pares de contiguos divisibles son (20,10) y (6,3), y por lo 
+  tanto la lista deberá quedar como [20, 2, 10, 6, 2, 3]. 
+
+- Si la lista es [20, 10, 2, 3], los pares de contiguos divisibles son (20,10) y (10,2), y por lo 
+  tanto la lista deberá quedar como [20, 2, 10, 5, 2, 3]. 
+
+- Si la lista es [7, 6, 2, 7, 6], el único par de contiguos divisibles es (6,2) con lo cual la lista 
+  deberá quedar como [7, 6, 3, 2, 7, 6]. 
+
+- Si la lista es [1, 1], el par (1,1) es de contiguos divisibles y por lo tanto la lista deberá 
+  quedar como [1, 1, 1]. 
+
+- Si la lista es [50, 5], el par (50,5) es de contiguos divisibles y por lo tanto la lista deberá 
+  quedar como [50, 10, 5]. Notar que la nueva lista contiene el par de contiguos 
+  consecutivos (10,5), sin embargo, este par no se separa por no ser parte de la lista original.
 
 
 */
