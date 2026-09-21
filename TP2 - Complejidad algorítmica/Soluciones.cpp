@@ -38,7 +38,7 @@ while (n-- > 0)								                        //+1n
     if (i % 2 == 1)							                      //+1n.b
     res = res + i;						                        //+2n.b
   
-    System. out .printf( "Case %d: %d\n" , c, res);		//+1n
+  System. out .printf( "Case %d: %d\n" , c, res);		  //+1n
 }
 
 ANÁLISIS DE COMPLEJIDAD ALGORÍTMICA: 
