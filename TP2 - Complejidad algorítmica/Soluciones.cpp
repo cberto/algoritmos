@@ -87,18 +87,18 @@ ANÁLISIS DE COMPLEJIDAD ALGORÍTMICA:
 
 4)
 
-for (i = 0; i < n; i++) {                          
-    for (j = 0; j < n; j++)  
-         printf("%d\n",i+j); 
+for (i = 0; i < n; i++) {                   //+4n       
+    for (j = 0; j < n; j++)                 //+4n*4n= 16n²
+         printf("%d\n",i+j);                ////+4n*4n= 16n²
 }
 
 i=0;
-while (i<10) {       
+while (i<10) {                              // +10
     // begin B 
-    j=0;             
-    while (j<n) {    
-        printf("%d\n",i+j);  
-        j++;                 
+    j=0;                                    // +10
+    while (j<n) {                           //n
+        printf("%d\n",i+j);                 //n
+        j++;                                //n
     } 
     i++;            
 }
@@ -115,7 +115,7 @@ ANÁLISIS DE COMPLEJIDAD ALGORÍTMICA:
       T(n) = ?
   
   4. COMPLEJIDAD:
-      ?
+      O(n²)+O(n) =  O(n²) (Cuadrática)
 --------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
