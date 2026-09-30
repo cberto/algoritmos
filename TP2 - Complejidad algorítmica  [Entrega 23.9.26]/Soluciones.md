@@ -15,16 +15,20 @@ printf("%d\n", i);       // 1
 ### Análisis de complejidad algorítmica
 
 1. **Identificar `n`**
+
    N/A. No depende de datos de entrada variable.
 
 2. **Identificar peor caso**
+
    No hay. Peor caso = caso promedio = mejor caso.
 
 3. **Cantidad de operaciones**
+
    1 por línea: (Operación + reasignación) × 2 + imprimir en pantalla.
    `T(n) = 5`
 
 4. **Complejidad**
+
    `T(n) = 5` → **O(1)** (Constante)
 
 ---
@@ -54,6 +58,7 @@ while (n-- > 0)                                 // +1n
 ### Análisis de complejidad algorítmica
 
 1. **Identificar `n`**
+
    Acá hay **dos tamaños de entrada**, no uno solo:
    - `n`: la cantidad de casos de prueba (controla cuántas veces se ejecuta el `while`).
    - `b`: el rango leído en cada caso (controla cuántas veces se ejecuta el `for` interno).
@@ -61,6 +66,7 @@ while (n-- > 0)                                 // +1n
    Como `b` puede variar libremente y no está acotado por `n`, no podemos "esconderlo" dentro de una sola variable. Vamos a dejar el resultado en función de ambos.
 
 2. **Identificar peor caso**
+
    El `if (a % 2 == 1)` se evalúa siempre, sin importar los datos (n.b veces). La única diferencia entre "peor" y "mejor" caso es si `res = res + a` se ejecuta o no en cada vuelta, pero eso solo cambia una constante (como mucho el doble de operaciones), **no cambia el orden**. Por eso tomamos como peor caso el que hace que la asignación se ejecute siempre.
 
 3. **Cantidad de operaciones**
@@ -93,6 +99,7 @@ while (n-- > 0)                                 // +1n
    ```
 
 4. **Complejidad**
+
    El término que crece más rápido es `7n.b` (crece con el *producto* de los dos tamaños de entrada), así que:
 
    **O(n.b)**
@@ -116,9 +123,11 @@ while (i < n)                  // +1n
 ### Análisis de complejidad algorítmica
 
 1. **Identificar `n`**
+
    `n` es el valor de entrada que determina cuántas veces itera cada bucle (tanto el `for` como el `while` recorren el mismo rango, de `0` a `n-1`).
 
 2. **Identificar peor caso**
+
    No hay ningún `if` ni rama condicional: las dos estructuras (el `for` y el `while`) ejecutan exactamente las mismas operaciones sin importar los valores. Por lo tanto, **peor caso = caso promedio = mejor caso**.
 
 3. **Cantidad de operaciones**
@@ -140,6 +149,7 @@ while (i < n)                  // +1n
    ```
 
 4. **Complejidad**
+
    `T(n) = 9n + 1` → el término dominante es `9n`, las constantes se descartan:
 
    **(O(n) + O(n)) = O(n)** (Lineal)
@@ -168,9 +178,11 @@ while (i < 10) {                    // +1·10 (constante, no depende de n)
 ### Análisis de complejidad algorítmica
 
 1. **Identificar `n`**
+
    `n` es el tamaño de los bucles internos (el `for j` y el `while j < n`). Es clave notar que el bucle `while (i < 10)` es de **tamaño fijo (10 vueltas)**: no crece con `n`, así que aporta una constante, no un término de orden `n`.
 
 2. **Identificar peor caso**
+
    No hay condicionales que dependan de los datos de entrada (solo comparaciones de contadores). Todas las iteraciones hacen siempre el mismo trabajo, así que **peor caso = caso promedio = mejor caso**.
 
 3. **Cantidad de operaciones**
@@ -186,6 +198,7 @@ while (i < 10) {                    // +1·10 (constante, no depende de n)
    ```
 
    **Bloque 2 (`while` externo fijo en 10, `while` interno en `n`):**
+
    El bucle externo corre 10 veces sin importar `n`; dentro, el bucle interno corre `n` veces cada una de esas 10 vueltas → `10 × n = 10n` pasadas internas.
    ```
    1            (i = 0)
@@ -201,12 +214,14 @@ while (i < 10) {                    // +1·10 (constante, no depende de n)
    ```
 
    **Total:**
+
    ```
    T(n) = (4n + 5n²) + (40n + 41)
         = 5n² + 44n + 41
    ```
 
 4. **Complejidad**
+
    El término que domina cuando `n` crece es `5n²` (la parte lineal `44n + 41` queda absorbida):
 
    **O(n²)** (Cuadrática)
@@ -216,6 +231,7 @@ while (i < 10) {                    // +1·10 (constante, no depende de n)
 ## Ejercicio 5
 
 **Desarrollar un algoritmo para calcular el promedio de un vector de n elementos.**
+
 Calcular luego, su tiempo de ejecución.
 
 ```java
@@ -230,12 +246,15 @@ float promedio(int[] v, int n) {
 ### Análisis de complejidad algorítmica
 
 1. **Identificar `n`**
+
    `n` es la cantidad de elementos del vector `v`.
 
 2. **Identificar peor caso**
+
    No hay ramas condicionales: se recorre el vector completo siempre, sin excepción. **Peor caso = caso promedio = mejor caso.**
 
 3. **Cantidad de operaciones**
+
    ```
    T(n) = 1        (suma = 0)
         + 4n       (overhead del for)
@@ -246,6 +265,7 @@ float promedio(int[] v, int n) {
    ```
 
 4. **Complejidad**
+
    El término dominante es `6n`:
 
    **O(n)** (Lineal) — es esperable, porque para promediar hay que leer *todos* los elementos al menos una vez, no hay forma de hacerlo en menos de `n` pasos.
@@ -269,9 +289,11 @@ int maximo(int[] v, int n) {
 ### Análisis de complejidad algorítmica
 
 1. **Identificar `n`**
+
    `n` es la cantidad de elementos del vector `v`. El `for` arranca en `i = 1` (ya usamos `v[0]` como máximo inicial), así que recorre `n - 1` elementos.
 
 2. **Identificar peor caso**
+
    Acá sí hay una rama (`if v[i] > max`), y su resultado depende de los datos:
    - **Peor caso:** el vector está ordenado en forma creciente. Cada elemento es mayor al máximo actual, así que la asignación `max = v[i]` se ejecuta las `n-1` veces.
    - **Mejor caso:** el vector está ordenado en forma decreciente. La asignación nunca se vuelve a ejecutar después de la primera comparación.
@@ -279,6 +301,7 @@ int maximo(int[] v, int n) {
    La diferencia entre ambos casos es solo una constante (si se hace o no la asignación), **no cambia el orden**, porque el `if` se evalúa siempre las `n-1` veces de todos modos. Tomamos el peor caso (todas las asignaciones se ejecutan) para el cálculo.
 
 3. **Cantidad de operaciones**
+
    ```
    T(n) = 2               (max = v[0])
         + 4(n-1)          (overhead del for)
@@ -292,6 +315,7 @@ int maximo(int[] v, int n) {
    ```
 
 4. **Complejidad**
+
    El término dominante es `7n`:
 
    **O(n)** (Lineal) — tiene sentido: para estar seguros de cuál es el máximo hay que mirar cada elemento al menos una vez.
