@@ -16,14 +16,20 @@ void Lista::alta(Dato d, int pos)
     Nodo* nuevo = new Nodo(d);
     if (pos == 1)
     {
+        // Nuevo apunta a Primero y cambia tu siguiente
         nuevo->cambiar_siguiente(primero);
+        // Nuevo ahora es Primero
         primero = nuevo;
     }
     else
     {
+        //dame nodo Anterior
         Nodo* anterior = obtener_nodo(pos - 1);
+        //de nodo Anterior dame su siguiente
         Nodo* siguiente = anterior->obtener_siguiente();
+        //nuevo Apunta a Siguiente y cambia tu siguiente
         nuevo->cambiar_siguiente(siguiente);
+        //Anterior apunta a Nuevo y cambia tu siguiente
         anterior->cambiar_siguiente(nuevo);
     }
     largo++;
