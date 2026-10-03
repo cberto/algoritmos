@@ -10,22 +10,90 @@
 
 
 <!-- Seguir analizando desde línea f2(&y, a + cant) -->
+| Paso / Línea | Estado de `x` | Estado de `y` | Estado de `z` | Memoria Heap | Salida en Pantalla (Console) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `cant = 2` | Sin inicializar | Sin inicializar | Sin inicializar | Sin reservas | |
+| `x = f1(cant)` | Apunta al primer elemento del arreglo `H1` | Sin inicializar | Sin inicializar | `H1: [?, ?]` (2 `int` reservados) | |
+| `for (i=0..1) x[i] = a + i` | Apunta a `H1`; `x[0]=65`, `x[1]=66` | Sin inicializar | Sin inicializar | `H1: [65, 66]` | |
+| `f2(&y, a + cant)` | Apunta a `H1`; `[65, 66]` | Apunta al entero `H2`, cuyo valor es `67` | Sin inicializar | `H1: [65, 66]`; `H2: 67` | `67B` |
+| `cout << *y << *x << endl` | Apunta a `H1`; `[65, 66]` | Apunta a `H2`; `*y=67` | Sin inicializar | `H1: [65, 66]`; `H2: 67` | `6765` |
+| `f3(z, x)` | Apunta a `H1`; `[65, 66]` | Apunta a `H2`; `*y=67` | Apunta a `H1+1` (equivale a `&x[1]`) | `H1: [65, 66]`; `H2: 67` | |
+| `cout << *z << endl` | Apunta a `H1`; `[65, 66]` | Apunta a `H2`; `*y=67` | Apunta a `H1+1`; `*z=66` | `H1: [65, 66]`; `H2: 67` | `66` |
+| `*z = *x + 2` | Apunta a `H1`; `[65, 67]` | Apunta a `H2`; `*y=67` | Apunta a `H1+1`; ahora `*z=67` | `H1: [65, 67]`; `H2: 67` | |
+| `cout << *z << *(x + 1) << *y << endl` | Apunta a `H1`; `[65, 67]` | Apunta a `H2`; `*y=67` | Apunta a `H1+1`; `*z=67` | `H1: [65, 67]`; `H2: 67` | `676767` |
+| `z = y` | Apunta a `H1`; `[65, 67]` | Apunta a `H2`; `*y=67` | Apunta a `H2`; `*z=67` | `H1: [65, 67]`; `H2: 67` | |
+| `a = (char)(*y)` | Apunta a `H1`; `[65, 67]` | Apunta a `H2`; `*y=67` | Apunta a `H2`; `*z=67` | `H1: [65, 67]`; `H2: 67` | |
+| `f3(y, x)` | Apunta a `H1`; `[65, 67]` | Apunta a `H1+1` (equivale a `&x[1]`) | Apunta a `H2`; `*z=67` | `H1: [65, 67]`; `H2: 67` | |
+| `cout << *y << a << *z << x[1] << endl` | Apunta a `H1`; `[65, 67]` | Apunta a `H1+1`; `*y=67` | Apunta a `H2`; `*z=67` | `H1: [65, 67]`; `H2: 67` | `67C6767` |
+| `for (i=0..1) cout << *(x+i)` | Apunta a `H1`; `[65, 67]` | Apunta a `H1+1` | Apunta a `H2` | `H1: [65, 67]`; `H2: 67` | `65` y luego `67` (cada uno en una línea) |
+
+## Ejercicio 2
+
+**Datos de entrada:** `udp = 7`, por lo tanto `cant = (7 % 3) + 2 = 3`.
 
 | Paso / Línea | Estado de `x` | Estado de `y` | Estado de `z` | Memoria Heap | Salida en Pantalla (Console) |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `cant = 2` | `nullptr` | `nullptr` | `nullptr` | Sin reservas | |
-| `x = f1(cant)` | f1 devuelve el puntero (dirección asignada) para el arreglo dinámico con tamaño 2. Ese valor se referencia con x. | `nullptr` | `nullptr` | Arreglo de 2 `int` reservado | |
-| `for (i=0..1) x[i] = a + i` | Se asignan `x[0]=65` y `x[1]=66` | `nullptr` | `nullptr` | `[65, 66]` | |
-| `f2(&y, a + cant)` | ? | ? | `nullptr` | ? | ? |
-| `cout << *y << *x << endl` | ? | ? | `nullptr` | ? | ? |
-| `f3(z, x)` | | | | | |
-| `cout << *z << endl` | | | | | |
-| `*z = *x + 2` | | | | | |
-| `cout << *z << *(x + 1) << *y << endl` | | | | | |
-| `z = y` | | | | | |
-| `a = (char)(*y)` | | | | | |
-| `f3(y, x)` | | | | | |
-| `cout << *y << a << *z << x[1] << endl` | | | | | |
-| `for (i=0..1) cout << *(x+i)` | | | | | |
+| `x = f1(cant)` | Apunta a `H1` | Sin inicializar | Sin inicializar | `H1: [?, ?, ?]` | |
+| `for` que asigna `x[i] = a + i` | Apunta a `H1` | Sin inicializar | Sin inicializar | `H1: [65, 66, 67]` | |
+| `f2(y, a + cant)` | Apunta a `H1` | Apunta a `H2`; `*y=68` | Sin inicializar | `H1: [65, 66, 67]`; `H2: 68` | `68 E` |
+| `cout << *y << " " << *x` | Sin cambios | Sin cambios | Sin inicializar | Sin cambios | `68 65` |
+| `z = x++` | Apunta a `H1+1` | Apunta a `H2` | Apunta a `H1` | Sin cambios | |
+| `cout << *z` | Sin cambios | Sin cambios | `*z=65` | Sin cambios | `65` |
+| `*z = *y + 1` | Apunta a `H1+1` | `*y=68` | Apunta a `H1`; `*z=69` | `H1: [69, 66, 67]`; `H2: 68` | |
+| `cout << *z << " " << *(x-1) << " " << *y` | Sin cambios | Sin cambios | Sin cambios | Sin cambios | `69 69 68` |
+| `a = (char)(*y)` y siguiente `cout` | `*x=66` | `*y=68` | `*z=69` | Sin cambios | `D 69 65` |
+| Bucle `cout << *(z+i)+i` | `x` apunta a `H1+1` | Apunta a `H2` | Apunta a `H1` | `H1: [69, 66, 67]`; `H2: 68` | `69 67 69` |
+
+La linea `delete x, y, z;` no libera correctamente estas reservas: se intenta borrar `x`, que apunta al segundo elemento del arreglo, y ese `delete` es invalido. Como `z` conserva la direccion inicial del arreglo, una liberacion correcta al final seria `delete[] z; delete y;`.
+
+## Ejercicio 3
+
+**Datos de entrada:** `udp = 7`, por lo tanto `cant = 2 * ((7 % 3) + 1) = 4`.
+
+| Paso / Línea | Estado de `x` | Estado de `y` | Estado de `z` | Memoria Heap | Salida en Pantalla (Console) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `x = f1(cant)` | Apunta a `H1` | Sin inicializar | Sin inicializar | `H1: [?, ?, ?, ?]` | |
+| `for` que asigna `x[i] = a + i` | Apunta a `H1` | Sin inicializar | Sin inicializar | `H1: [65, 66, 67, 68]` | |
+| `f2(y, a + cant)` | Apunta a `H1` | Apunta a `H2`; `*y=70` | Sin inicializar | `H1: [65, 66, 67, 68]`; `H2: 70` | `70F` |
+| `cout << *y << *x` | Sin cambios | Sin cambios | Sin inicializar | Sin cambios | `7065` |
+| `z = x++` | Apunta a `H1+1` | Apunta a `H2` | Apunta a `H1` | Sin cambios | |
+| `cout << *z` | Sin cambios | Sin cambios | `*z=65` | Sin cambios | `65` |
+| `*z = *y + 1` | Apunta a `H1+1` | `*y=70` | Apunta a `H1`; `*z=71` | `H1: [71, 66, 67, 68]`; `H2: 70` | |
+| `cout << *z << *x << *y` | Sin cambios | Sin cambios | Sin cambios | Sin cambios | `716670` |
+| `a = (char)(*y)` y siguiente `cout` | `*x=66` | `*y=70` | `*z=71` | Sin cambios | `F7165` |
+| Bucle `cout << *(z+i)` | `x` apunta a `H1+1` | Apunta a `H2` | Apunta a `H1` | `H1: [71, 66, 67, 68]`; `H2: 70` | `71666768` (sin espacios ni salto de linea) |
+
+El codigo no libera la memoria reservada. Al final se podria usar `delete[] z; delete y;`, porque `z` apunta al inicio de `H1` y `y` a un entero individual.
+
+## Ejercicio 4
+
+Para interpretar `D` y `E`, se asume una maquina little-endian y ASCII. `D` apunta al primer byte del entero reservado por `F`; `E` al primer byte del entero reservado por `A`. `B` apunta al puntero `F`, y `C` contiene una copia de ese mismo puntero.
+
+| Paso / Línea | Estado de punteros y valores | Memoria Heap | Salida en Pantalla (Console) |
+| :--- | :--- | :--- | :--- |
+| Inicializacion: `H=66`, `G='D'`, `*A=64` | `A` apunta a `H1`; `F` apunta a `H2` | `H1: 64`; `H2: sin inicializar` | |
+| `cout << H << G << *A` | `H=66`; `G='D'`; `*A=64` | `H1: 64`; `H2: sin inicializar` | `66D64` |
+| `B=&F; *F=...; **B=...` | `B` apunta a `F`; `C` aun no esta asignado; `*F=66`; `*A=64` | `H1: 64`; `H2: 66` | |
+| `cout << *F << *A << **B` | `*F=66`; `*A=64`; `**B=66` | Sin cambios | `666466` |
+| `D=(Pchar)F; E=(Pchar)A; C=*B` y siguiente `cout` | `D` ve el byte `66` (`'B'`); `E` ve `64` (`'@'`); `C` apunta a `H2` | `H1: 64`; `H2: 66` | `B66@` |
+| `(*C) = (*C) - 63` | `C` y `F` apuntan al mismo entero; `*C` y `*F` pasan de `66` a `3` | `H1: 64`; `H2: 3` | |
+| `if ((*F)==H)` | La condicion `3 == 66` es falsa | Sin cambios | No imprime nada |
+| Bucle `while` | Primera vuelta: imprime `@3`; luego `*C` baja a `2` y `*F` a `1`. Segunda vuelta: `*A` ya vale `70` (`'F'`), imprime `F1`; luego `*C` baja a `0` y `*F` a `-1`. | Al salir: `H1: 70`; `H2: -1` | `@3`; luego `F1` |
+| `if ((**B)==(*C))` | `**B` y `*C` valen `-1`; la condicion es verdadera. `E` ve el byte `'F'` de `H1`. | `H1: 70`; `H2: -1` | `F` |
+
+## Ejercicio 5
+
+Se usa la misma suposicion de little-endian y ASCII. En este ejercicio `A` y `C` apuntan al mismo entero; `B` apunta al puntero `A`; `D` ve los bytes de `F` y `E` los bytes del entero compartido por `A` y `C`.
+
+| Paso / Línea | Estado de punteros y valores | Memoria Heap | Salida en Pantalla (Console) |
+| :--- | :--- | :--- | :--- |
+| Inicializacion | `F` apunta a `H1` con valor `70`; `A` y `C` apuntan a `H2` con valor `67`; `G='C'`; `H=71` | `H1: 70`; `H2: 67` | |
+| `cout << *C << *A << *F` | `*C=67`; `*A=67`; `*F=70` | Sin cambios | `676770` |
+| `B=&A; D=(Pchar)F; E=(Pchar)(*B); **B=(*A)-63` | `B` apunta a `A`; `D` ve el byte de `H1`; `E` ve el byte de `H2`; `H2` cambia a `4` | `H1: 70`; `H2: 4` | |
+| `if ((*E) != G)` y su `cout` | El byte de `H2` es `4`, distinto de `'C'`; imprime `*A`, `*D`, `*C` | Sin cambios | `4F4` |
+| `*A = *A - *C + 66` y siguiente `cout` | Como `A` y `C` apuntan al mismo entero: `4-4+66=66`; `*E` es `'B'` | `H1: 70`; `H2: 66` | `B70C` |
+| Bucle `while` | Primera vuelta: `*E='E'` cambia `H2` a `69`; luego `*A=70-69=1`, imprime `1`, y `(*C)--` deja `H2=0`. El bucle termina. | `H1: 70`; `H2: 0` | `1` |
+
+En el Ejercicio 5, `delete A; delete F;` libera correctamente los dos enteros. No se debe borrar `C` por separado porque apunta al mismo entero que `A`.
 
 
