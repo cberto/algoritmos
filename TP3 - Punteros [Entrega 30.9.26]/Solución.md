@@ -73,6 +73,59 @@ int main()
 
 ## Ejercicio 2
 
+```
+#include <iostream>
+using namespace std;
+int *f1(int cant) // devuelve un puntero a una lista de cantidad cant
+{
+  return new int[cant];
+}
+void f2(int *&p, int a) // de ese direccion(&p) se lee su contenido *(&p) | 'a' sin ref, dato directo
+{
+  p = new int;                          // si inicializa en ese lugar un espacio en memoria de tipo int
+  *p = a++;                             // se guarda el valor de 'a' + 1 en espacio int
+  cout << *p << " " << (char)a << endl; // imprime:  valor de *p | a pasado por param
+}
+int main()
+{
+  int udp = 7;
+  int cant = (udp % 3) + 2; // (7 % 3) + 2 = 1 + 2 = 3
+  int *x, *y, *z;           // inicializo 3 punteros sin valor guardado
+  char a = 'A';             // inizializo un espacio en memo tipo char con 'A'
+  x = f1(cant);             // el puntero que devuelve f1 se guarda en x
+  for (int i = 0; i < cant; i++)
+    x[i] = a + i;
+  // cada espacio de la lista cuando el puntero se mueve a la derecha 4 byte,
+  // al ser array termina actualizando la lista que se creo en ese luar con f1
+  // por ende, guarda casteado en int 65('A') 66('B') 67('C')
+  f2(y, a + cant); // puntero y  | 65('A') + 3
+  // guardo en y 68 | imprime 68 'E'
+  cout << *y << " " << *x << endl;                    // imprime 68 65
+  z = x++;                                            // guarda en z el puntero x[0] contiene valor 65 //mueve puntero de x[0] a x[1]
+  cout << *z << endl;                                 // imprime 65
+  *z = *y + 1;                                        // guardo en donde apunta x[0] el valor 69
+  cout << *z << " " << *(x - 1) << " " << *y << endl; // 69 69 68
+  a = (char)(*y);                                     // guarda 70 casteado en char 'D'
+  cout << a << " " << *z << " " << *x - 1 << endl;    // imprime D 69 65
+  for (int i = 0; i < cant; i++)
+    cout << *(z + i) + i << " ";
+  // imprme 69 67 69
+  // Liberar memoria
+  delete[] x;
+  delete y;
+  delete[] z;
+  return 0;
+}
+
+| stack           | heap        |
+ x[0] (sin mover) | 69
+ x[1]             | 66
+ x[2]             | 67
+ y                | 68
+ z                | x[0]
+ a                | 'D'
+```
+
 **Datos de entrada:** `udp = 7`, por lo tanto `cant = (7 % 3) + 2 = 3`.
 
 | Paso / Línea                               | Estado de `x`       | Estado de `y`          | Estado de `z`          | Memoria Heap                 | Salida en Pantalla (Console) |
@@ -136,6 +189,9 @@ int main()
   for (int i = 0; i < cant; i++)
     cout << *(x + i) << endl; // imprime 65 67
   // Instrucciones para liberar la memoria
+  delete[] x;
+  delete y;
+  delete[] z;
   return 0;
 }
 ```
@@ -161,6 +217,72 @@ El codigo no libera la memoria reservada. Al final se podria usar `delete[] z; d
 
 Para interpretar `D` y `E`, se asume una maquina little-endian y ASCII. `D` apunta al primer byte del entero reservado por `F`; `E` al primer byte del entero reservado por `A`. `B` apunta al puntero `F`, y `C` contiene una copia de ese mismo puntero.
 
+```
+#include <stdlib.h>
+#include <iostream>
+using namespace std;
+typedef int *Pint;
+typedef char *Pchar;
+/*
+Datos:
+'@' es 64
+'A' es 65
+...
+*/
+int main()
+{
+  Pint A, C, F; // creo punteros A B F int
+  Pint *B; // inicializo contenido de puntero B
+  Pchar D, E; // creo punteros D E
+  char G;
+  int H;
+  H = 66;
+  G = 'D';
+  A = new int;
+  F = new int;
+  (*A) = 64; // guardo donde apunta A 64
+  cout << H << G << (*A) << endl; //imprimo 66 D 64
+  B = &F; //apunto a F
+  (*F) = (*A) + H - 62; //guardo en donde apunta F 68
+  (**B) = (*F) - 2; // guardo en *B ->
+  cout << (*F) << (*A) << (**B) << endl; // 66 64 66
+  D = (Pchar)F; //D=F
+  E = (Pchar)A; //E=A
+  C = (*B); //apunta a F
+  cout << (*D) << (*C) << (*E) << endl; // B 66 D
+  (*C) = (*C) - 63; // contenido 3 en F
+  if ((*F) == H)
+  {
+    cout << G << H << (*E) << endl;// D 66 @
+  }
+  while ((*C) > 0) // 3 > 0 ->
+  {
+    cout << (*E) << (*C) << endl; // @ 3
+    (*C) = (*C) - 1; // *F = 3 - 1
+    (*F) = (*F) - 1; // *F = 2 - 1
+    (*A) = 70; // A = 70
+  }
+  if ((**B) == (*C)) // true
+  {
+    cout << (*E) << endl; // F
+  }
+  delete A; //delete A y F
+  delete F;
+  return 0;
+}
+
+/*
+| stack           | heap
+ A                | 70 -> delete
+ C                | &F
+ F                | 1  -> delete
+ B                | &F
+ D  (char)        | D=F
+ E  (char)        | E=A
+ G  (char)        | 68('D')
+ H                | 66
+```
+
 | Paso / Línea                                      | Estado de punteros y valores                                                                                                                                    | Memoria Heap                    | Salida en Pantalla (Console) |
 | :------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------ | :--------------------------- |
 | Inicializacion: `H=66`, `G='D'`, `*A=64`          | `A` apunta a `H1`; `F` apunta a `H2`                                                                                                                            | `H1: 64`; `H2: sin inicializar` |                              |
@@ -174,6 +296,70 @@ Para interpretar `D` y `E`, se asume una maquina little-endian y ASCII. `D` apun
 | `if ((**B)==(*C))`                                | `**B` y `*C` valen `-1`; la condicion es verdadera. `E` ve el byte `'F'` de `H1`.                                                                               | `H1: 70`; `H2: -1`              | `F`                          |
 
 ## Ejercicio 5
+
+```
+#include <stdlib.h>
+#include <iostream>
+using namespace std;
+typedef int *Pint;
+typedef char *Pchar;
+/*
+Datos:
+'@' es 64
+'A' es 65
+...
+*/
+int main()
+{
+  Pint A, C, F; // creo punteros A B F int
+  Pint *B;  // inicializo contenido de puntero B
+  Pchar D, E; // creo punteros D E
+  char G;
+  int H;
+  H = 70;
+  G = 'C';
+  F = new int;
+  (*F) = H;
+  C = new int;
+  A = C;
+  (*A) = 67;  // guardo donde apunta A 67
+  H++;
+  cout << (*C) << (*A) << (*F) << endl; // imprime 67 67 70
+  B = &A;
+  D = (Pchar)F;
+  E = (Pchar)(*B);
+  (**B) = (*A) - 63;
+  if ((*E) != G)
+  {
+    cout << (*A) << (*D) << (*C) << endl; // imprime 64 70 64
+  }
+  (*A) = (*A) - (*C) + 66;
+  cout << (*E) << (*F) << G << endl; // imprime B 70 C
+  while ((*C) > 0) // 66 > 0
+  {
+    (*E) = 'E'; //*A = 69
+    (*A) = (*F) - (*C); //*69 = 70 - 69 = 1
+    cout << (**B) << endl; //imprime 1
+    (*C)--; // *A = 0
+  }
+  delete A;
+  delete F;
+  return 0;
+}
+
+/*
+| stack           | heap
+ A                | 0 delete
+ C                | A=C
+ F                | 70 delete
+ B                | &A
+ D  (char)        | D=F
+ E  (char)        | E=A
+ G  (char)        | 67
+ H                | 71
+
+*/
+```
 
 Se usa la misma suposicion de little-endian y ASCII. En este ejercicio `A` y `C` apuntan al mismo entero; `B` apunta al puntero `A`; `D` ve los bytes de `F` y `E` los bytes del entero compartido por `A` y `C`.
 
