@@ -1,0 +1,7 @@
+501 PLZ Mecanica OK 1240
+502 PAL Electrica Averiada 3810
+503 CAB Mecanica OK 890
+504 PLZ Electrica OK 2100
+505 RET Mecanica Averiada 4500
+506 CON Electrica OK 300
+507 BOE Mecanica OK 1500
