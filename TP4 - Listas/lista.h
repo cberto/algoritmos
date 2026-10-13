@@ -36,8 +36,17 @@ public:
 
     int obtener_largo();
 
-    void mostrar();
+    // pre: la lista puede estar vacia
+    // pos: inserta entre cada par de elementos consecutivos el producto de esos elementos
+    void insertarProductos();
 
+    // pre: la lista puede estar vacia
+    // pos: inserta entre cada par de elementos consecutivos a y b, con b distinto de 0 y a divisible por b, el cociente a/b
+    void separarContiguosDivisibles();
+
+    // pre: la lista puede estar vacia
+    // pos: elimina de esta lista los elementos que estaban en las posiciones pares y los devuelve en una nueva lista, manteniendo su orden original
+    Lista* EliminarYRetornarImpares();
 
 private:
     Nodo* obtener_nodo(int pos);
