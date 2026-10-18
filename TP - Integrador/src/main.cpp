@@ -1,51 +1,107 @@
 #include <iostream>
+#include <limits>
+#include <sstream>
+#include "Sistema.h"
+#include "Estacion.h"
+
 
 using namespace std;
 
-// Esqueleto del menu.x
+// getline + istringstream evita bucles infinitos ante letras en un campo numerico.
+template<class T> T leer(string mensaje) {
+    for (;;) {
+        cout << mensaje;
+        string linea, sobrante;
+        if (!getline(cin, linea)) throw runtime_error("Fin de entrada");
+        istringstream entrada(linea); T valor{};
+        if (entrada >> valor && !(entrada >> sobrante)) return valor;
+        cout << "Entrada invalida. Ingrese un solo valor.\n";
+    }
+}
+
 
 static void mostrarMenu()
 {
     cout << "\n========== Bicicletas Publicas BA ==========\n"
-         << " 0. Salir\n"
-         << "----- Datos -----\n"
-         << " 1. Cargar datos desde archivos          [TODO]\n"
-         << " 2. Resumen del sistema                  [TODO]\n"
-         << "----- Modulo A: Estaciones -----\n"
-         << "10. Buscar estacion por codigo           [TODO]\n"
-         << "11. Agregar / eliminar estacion          [TODO]\n"
-         << "12. Listar estaciones ordenadas          [TODO]\n"
-         << "13. Estaciones con ocupacion < 20%       [TODO]\n"
-         << "14. Camino minimo por ciclovias (BFS)    [TODO]\n"
-         << "----- Modulo B: Viajes y colas -----\n"
-         << "20. Viajes por estacion y fechas         [TODO]\n"
-         << "21. Viajes por DNI                       [TODO]\n"
-         << "22. Bicicletas con mas de X km           [TODO]\n"
-         << "23. Cola de espera por estacion          [TODO]\n"
-         << "24. Taller (min-heap)                    [TODO]\n"
-         << "----- Modulo C: ABB bicicletas -----\n"
-         << "30. Buscar bicicleta por ID              [TODO]\n"
-         << "31. Listar bicicletas inorder            [TODO]\n"
-         << "32. Contar averiadas / altura ABB        [TODO]\n"
-         << "----- Modulo D: Backtracking -----\n"
-         << "40. Redistribucion (suma = C)            [TODO]\n"
-         << "============================================\n"
-         << "Opcion: ";
+    << " 0. Salir\n"
+    << "----- Datos -----\n"
+    << " 1. Cargar datos                         [TODO]\n"
+    << " 2. Generar resumen                      [TODO]\n"
+    << "----- Modulo A: Estaciones -----\n"
+    << "10. Buscar estacion                      [TODO]\n"
+    << "11. Agregar estacion                     [TODO]\n"
+    << "12. Conectar estaciones                  [TODO]\n"
+    << "13. Eliminar estacion                    [TODO]\n"
+    << "14. Listar estaciones ordenadas          [TODO]\n"
+    << "15. Ocupacion < 20%                      [TODO]\n"
+    << "16. Camino minimo por ciclovias          [TODO]\n"
+    << "----- Modulo B: Viajes y colas -----\n"
+    << "20. Viajes por estacion y fechas         [TODO]\n"
+    << "21. Viajes por DNI                       [TODO]\n"
+    << "22. Bicicletas con mas de X km           [TODO]\n"
+    << "23. Cola de espera por estacion          [TODO]\n"
+    << "24. Taller (min-heap)                    [TODO]\n"
+    << "----- Modulo C: ABB bicicletas -----\n"
+    << "30. Buscar bicicleta por ID              [TODO]\n"
+    << "31. Listar bicicletas inorder            [TODO]\n"
+    << "32. Contar averiadas / altura ABB        [TODO]\n"
+    << "----- Modulo D: Backtracking -----\n"
+    << "40. Redistribucion (suma = C)            [TODO]\n"
+    << "============================================\n"
+    << "Opcion: ";
 }
 
 int main()
 {
     int opcion = -1;
-
+    Sistema sistema;
+   
     while (opcion != 0)
     {
         mostrarMenu();
         cin >> opcion;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        if (opcion == 0)
-            cout << "Chau." << endl;
-        else
-            cout << "[TODO] Opcion " << opcion << " aun no implementada." << endl;
+        switch (opcion)
+        {
+        case 0:
+            cout << opcion << " - Chau." << endl;
+            break;
+        case 1:
+            sistema.CargarDatos("data", cout);
+            break;
+        case 2:
+            cout << "Resumen del sistema" << endl;
+            break;
+        case 10: {
+            Estacion* est = sistema.BuscarEstacion(leer <string>("Ingrese el codigo de la estacion: ") );
+            if(est){ 
+                est->MostrarEstacion(cout);
+            } else {
+                 cout << "Estacion no encontrada" << endl; 
+                }
+            break;
+        }
+        case 11: {
+           string codigo = leer <string>("Codigo:  ");
+           string nombre = leer <string>("Nombre(sin espacios): ");
+           string barrio = leer <string>("Barrio(sin espacios):  ");
+           int capacidad = leer <int>("Capacidad: ");
+           int disponible = leer <int>("Disponibles: ");
+           
+           cout << (sistema.AgregarEstacion(codigo, nombre, barrio, capacidad, disponible) ? "Estacion agregada" : "Error al agregar estacion") << endl;
+            break;
+        
+        }
+        case 13: {
+
+            cout << (sistema.EliminarEstacion(leer <string>("Codigo:  ")) ? "Estacion eliminada" : "Error al eliminar estacion") << endl;
+            break;
+        }
+        default:
+        cout << opcion << " - Opcion no valida." << endl;
+           
+        }
     }
 
     return 0;

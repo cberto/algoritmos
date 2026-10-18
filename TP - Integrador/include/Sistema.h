@@ -1,15 +1,16 @@
 #ifndef SISTEMA_H
 #define SISTEMA_H
+#include "HashEstaciones.h"
+#include <iostream>
+class Sistema {
+    HashEstaciones estaciones;
+    bool cargado = false;
 
-#include <string>
-
-// Orquesta el sistema. Por ahora solo esqueleto.
-// Pendiente: hash, ABB, colas, heap, grafo, backtracking.
-class Sistema
-{
-public:
-    // TODO: cargarDatos()
-    // TODO: modulos A, B, C, D
+    public:
+        bool CargarDatos(string carpeta, ostream& out);
+        void Resumen(ostream& out) const;
+        Estacion* BuscarEstacion(string codigo) const { return estaciones.BuscarEstacion(codigo); }
+        bool AgregarEstacion(string codigo, string nombre, string barrio, int capacidad, int disponible);
+        bool EliminarEstacion(string codigo);
 };
-
 #endif

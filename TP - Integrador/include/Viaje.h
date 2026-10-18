@@ -1,6 +1,7 @@
+using namespace std;
 #ifndef VIAJE_H
 #define VIAJE_H
-
+#include <iostream>
 #include <string>
 
 // TODO: implementar

@@ -1,7 +1,10 @@
+using namespace std;
+
 #ifndef BICICLETA_H
 #define BICICLETA_H
 
 #include <string>
+#include <iostream>
 
 // TODO: implementar
 class Bicicleta
