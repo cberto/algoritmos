@@ -105,6 +105,9 @@ static void probarTablaHash()
     TablaHash<int, string> tablaEnteros;
     assert(tablaEnteros.insertar(42, "valor"));
     assert(*tablaEnteros.buscar(42) == "valor");
+    string* referencia[1];
+    tablaEnteros.copiarReferencias(referencia);
+    assert(*referencia[0] == "valor");
 
 }
 

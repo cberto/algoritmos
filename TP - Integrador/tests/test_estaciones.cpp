@@ -43,9 +43,43 @@ static void probarAltaYBaja()
     assert(!sistema.eliminarEstacion("NEW"));
 }
 
+// Comprueba el orden por capacidad y por bicicletas disponibles.
+static void probarOrdenamiento()
+{
+    Sistema sistema;
+    assert(sistema.agregarEstacion("A", "A", "Barrio", 30, 5));
+    assert(sistema.agregarEstacion("B", "B", "Barrio", 10, 9));
+    assert(sistema.agregarEstacion("C", "C", "Barrio", 20, 7));
+
+    ostringstream datos;
+    streambuf* salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.listarEstacionesOrdenadas(1);
+    cout.rdbuf(salidaAnterior);
+    string texto = datos.str();
+    size_t posicionA = texto.find("Codigo: A");
+    size_t posicionB = texto.find("Codigo: B");
+    size_t posicionC = texto.find("Codigo: C");
+    assert(posicionA != string::npos && posicionB != string::npos
+           && posicionC != string::npos);
+    assert(posicionB < posicionC && posicionC < posicionA);
+
+    datos.str("");
+    salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.listarEstacionesOrdenadas(2);
+    cout.rdbuf(salidaAnterior);
+    texto = datos.str();
+    posicionA = texto.find("Codigo: A");
+    posicionB = texto.find("Codigo: B");
+    posicionC = texto.find("Codigo: C");
+    assert(posicionA != string::npos && posicionB != string::npos
+           && posicionC != string::npos);
+    assert(posicionA < posicionC && posicionC < posicionB);
+}
+
 // Ejecuta las pruebas del módulo de estaciones.
 int main()
 {
     probarBusquedaYPresentacion();
     probarAltaYBaja();
+    probarOrdenamiento();
 }

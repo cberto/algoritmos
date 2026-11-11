@@ -158,6 +158,23 @@ public:
         return cantidad;
     }
 
+    // Copia las direcciones de los valores en un arreglo.
+    void copiarReferencias(Valor* referencias[])
+    {
+        size_t cantidadCopiada = 0;
+        size_t i;
+        for (i = 0; i < capacidad; ++i)
+        {
+            Nodo* actual = buckets[i];
+            while (actual != nullptr)
+            {
+                referencias[cantidadCopiada] = &actual->valor;
+                ++cantidadCopiada;
+                actual = actual->siguiente;
+            }
+        }
+    }
+
     // Devuelve la cantidad de buckets.
     size_t cantidadBuckets() const
     {

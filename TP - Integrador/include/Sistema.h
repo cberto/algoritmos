@@ -35,6 +35,9 @@ public:
 
     // Elimina una estación por código.
     bool eliminarEstacion(string codigo);
+
+    // Lista las estaciones ordenadas por capacidad o bicicletas disponibles.
+    void listarEstacionesOrdenadas(int criterio);
 };
 
 #endif

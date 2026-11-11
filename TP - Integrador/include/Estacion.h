@@ -43,6 +43,18 @@ public:
         return codigo;
     }
 
+    // Devuelve la capacidad de anclajes.
+    int getCapacidadAnclajes()
+    {
+        return capacidadAnclajes;
+    }
+
+    // Devuelve la cantidad de bicicletas disponibles.
+    int getBicisDisponibles()
+    {
+        return bicisDisponibles;
+    }
+
     // Muestra los datos de la estación.
     void mostrarEstacion() const
     {

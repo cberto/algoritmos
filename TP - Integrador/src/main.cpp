@@ -51,7 +51,7 @@ static void mostrarMenu()
          << "11. Agregar estacion\n"
          << "12. Conectar estaciones                  [TODO]\n"
          << "13. Eliminar estacion\n"
-         << "14. Listar estaciones ordenadas          [TODO]\n"
+         << "14. Listar estaciones ordenadas\n"
          << "15. Ocupacion < 20%                      [TODO]\n"
          << "16. Camino minimo por ciclovias          [TODO]\n"
          << "----- Modulo B: Viajes y colas -----\n"
@@ -120,6 +120,12 @@ int main()
         {
 
             cout << (sistema.eliminarEstacion(leer<string>("Codigo:  ")) ? "Estacion eliminada" : "Error al eliminar estacion") << endl;
+            break;
+        }
+        case 14:
+        {
+            int criterio = leer<int>("Ordenar por capacidad (1) o bicicletas disponibles (2): ");
+            sistema.listarEstacionesOrdenadas(criterio);
             break;
         }
         default:

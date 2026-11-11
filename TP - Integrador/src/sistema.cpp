@@ -88,3 +88,72 @@ bool Sistema::eliminarEstacion(string codigo)
 {
     return estaciones.eliminar(codigo);
 }
+
+// Ordena las estaciones de menor a mayor según el criterio elegido.
+void Sistema::listarEstacionesOrdenadas(int criterio)
+{
+    if (criterio != 1 && criterio != 2)
+    {
+        cout << "Opcion invalida." << endl;
+        return;
+    }
+
+    size_t cantidadEstaciones = estaciones.tamano();
+    if (cantidadEstaciones == 0)
+    {
+        cout << "No hay estaciones cargadas." << endl;
+        return;
+    }
+
+    Estacion** ordenadas = new Estacion*[cantidadEstaciones];
+    estaciones.copiarReferencias(ordenadas);
+
+    size_t i;
+    size_t j;
+    size_t posicionMenor;
+    int valorActual;
+    int valorMenor;
+    // Selección: busca el menor de las estaciones que todavía no están ordenadas.
+    for (i = 0; i < cantidadEstaciones; ++i)
+    {
+        posicionMenor = i;
+        // Compara las estaciones siguientes con la menor encontrada.
+        for (j = i + 1; j < cantidadEstaciones; ++j)
+        {
+            if (criterio == 1)
+            {
+                valorActual = ordenadas[j]->getCapacidadAnclajes();
+                valorMenor = ordenadas[posicionMenor]->getCapacidadAnclajes();
+            }
+            else
+            {
+                valorActual = ordenadas[j]->getBicisDisponibles();
+                valorMenor = ordenadas[posicionMenor]->getBicisDisponibles();
+            }
+
+            if (valorActual < valorMenor)
+                posicionMenor = j;
+        }
+
+        // Coloca el menor valor encontrado en la posición actual.
+        if (posicionMenor != i)
+        {
+            Estacion* auxiliar = ordenadas[i];
+            ordenadas[i] = ordenadas[posicionMenor];
+            ordenadas[posicionMenor] = auxiliar;
+        }
+    }
+
+    if (criterio == 1)
+        cout << "Estaciones ordenadas por capacidad de anclajes:" << endl;
+    else
+        cout << "Estaciones ordenadas por bicicletas disponibles:" << endl;
+
+    for (i = 0; i < cantidadEstaciones; ++i)
+    {
+        ordenadas[i]->mostrarEstacion();
+        cout << "------------------------------" << endl;
+    }
+
+    delete[] ordenadas;
+}

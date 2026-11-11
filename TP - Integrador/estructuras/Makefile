@@ -16,8 +16,9 @@ all: test
 
 test: $(OUT)
 	./$(OUT)
+	@echo "Todas las pruebas de estructuras pasaron."
 
-$(OUT): $(TEST) ArbolBinarioBusqueda.h Cola.h FuncionHash.h Grafo.h ListaEnlazada.h MonticuloMinimo.h TablaHash.h
+$(OUT): Makefile $(TEST) ArbolBinarioBusqueda.h Cola.h FuncionHash.h Grafo.h ListaEnlazada.h MonticuloMinimo.h TablaHash.h
 	$(CXX) $(CXXFLAGS) -I. -o $(OUT) $(TEST)
 
 clean:
