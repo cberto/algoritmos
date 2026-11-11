@@ -10,18 +10,33 @@ using namespace std;
 template <class T>
 T leer(string mensaje)
 {
-    for (;;)
+    bool valorValido = false;
+    T valor{};
+    while (!valorValido)
     {
         cout << mensaje;
         string linea, sobrante;
         if (!getline(cin, linea))
             throw runtime_error("Fin de entrada");
         istringstream entrada(linea);
-        T valor{};
-        if (entrada >> valor && !(entrada >> sobrante))
-            return valor;
-        cout << "Entrada invalida. Ingrese un solo valor.\n";
+        entrada >> valor;
+        bool lecturaCorrecta = !entrada.fail();
+        bool hayDatoSobrante = false;
+        if (lecturaCorrecta)
+        {
+            entrada >> sobrante;
+            hayDatoSobrante = !entrada.fail();
+        }
+        if (lecturaCorrecta && !hayDatoSobrante)
+        {
+            valorValido = true;
+        }
+        else
+        {
+            cout << "Entrada invalida. Ingrese un solo valor.\n";
+        }
     }
+    return valor;
 }
 
 static void mostrarMenu()
