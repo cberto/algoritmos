@@ -28,10 +28,10 @@ static void mostrarMenu()
     << " 1. Cargar datos                         [TODO]\n"
     << " 2. Generar resumen                      [TODO]\n"
     << "----- Modulo A: Estaciones -----\n"
-    << "10. Buscar estacion                      [TODO]\n"
-    << "11. Agregar estacion                     [TODO]\n"
+    << "10. Buscar estacion\n"
+    << "11. Agregar estacion\n"
     << "12. Conectar estaciones                  [TODO]\n"
-    << "13. Eliminar estacion                    [TODO]\n"
+    << "13. Eliminar estacion\n"
     << "14. Listar estaciones ordenadas          [TODO]\n"
     << "15. Ocupacion < 20%                      [TODO]\n"
     << "16. Camino minimo por ciclovias          [TODO]\n"
@@ -68,15 +68,15 @@ int main()
             cout << opcion << " - Chau." << endl;
             break;
         case 1:
-            sistema.CargarDatos("data", cout);
+            sistema.cargarDatos("data", cout);
             break;
         case 2:
             cout << "Resumen del sistema" << endl;
             break;
         case 10: {
-            Estacion* est = sistema.BuscarEstacion(leer <string>("Ingrese el codigo de la estacion: ") );
+            Estacion* est = sistema.buscarEstacion(leer <string>("Ingrese el codigo de la estacion: ") );
             if(est){ 
-                est->MostrarEstacion(cout);
+                est->mostrarEstacion(cout);
             } else {
                  cout << "Estacion no encontrada" << endl; 
                 }
@@ -89,13 +89,13 @@ int main()
            int capacidad = leer <int>("Capacidad: ");
            int disponible = leer <int>("Disponibles: ");
            
-           cout << (sistema.AgregarEstacion(codigo, nombre, barrio, capacidad, disponible) ? "Estacion agregada" : "Error al agregar estacion") << endl;
+           cout << (sistema.agregarEstacion(codigo, nombre, barrio, capacidad, disponible) ? "Estacion agregada" : "Error al agregar estacion") << endl;
             break;
         
         }
         case 13: {
 
-            cout << (sistema.EliminarEstacion(leer <string>("Codigo:  ")) ? "Estacion eliminada" : "Error al eliminar estacion") << endl;
+            cout << (sistema.eliminarEstacion(leer <string>("Codigo:  ")) ? "Estacion eliminada" : "Error al eliminar estacion") << endl;
             break;
         }
         default:

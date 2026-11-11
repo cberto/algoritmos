@@ -1,16 +1,41 @@
 #ifndef SISTEMA_H
 #define SISTEMA_H
-#include "HashEstaciones.h"
-#include <iostream>
-class Sistema {
-    HashEstaciones estaciones;
-    bool cargado = false;
 
-    public:
-        bool CargarDatos(string carpeta, ostream& out);
-        void Resumen(ostream& out) const;
-        Estacion* BuscarEstacion(string codigo) const { return estaciones.BuscarEstacion(codigo); }
-        bool AgregarEstacion(string codigo, string nombre, string barrio, int capacidad, int disponible);
-        bool EliminarEstacion(string codigo);
+#include <iostream>
+#include <string>
+#include "Estacion.h"
+#include "TablaHash.h"
+
+using namespace std;
+
+class Sistema
+{
+private:
+    TablaHash<string, Estacion> estaciones;
+    bool cargado;
+
+public:
+    // Crea el sistema sin datos cargados.
+    Sistema()
+    {
+        cargado = false;
+    }
+
+    // Carga las estaciones desde la carpeta indicada.
+    bool cargarDatos(string carpeta, ostream& salida);
+
+    // Muestra un resumen del sistema.
+    void resumen(ostream& salida) const;
+
+    // Busca una estación por código.
+    Estacion* buscarEstacion(string codigo);
+
+    // Agrega una estación si sus datos son válidos y el código no existe.
+    bool agregarEstacion(string codigo, string nombre, string barrio,
+                         int capacidad, int disponibles);
+
+    // Elimina una estación por código.
+    bool eliminarEstacion(string codigo);
 };
+
 #endif

@@ -1,6 +1,6 @@
 # TP Integrador — Sistema de Bicicletas Públicas
 
-Esqueleto inicial del proyecto (`TP2C2026.pdf`). Todavía no hay lógica implementada.
+Implementación parcial del sistema descrito en `TP2C2026.pdf`. El módulo de estaciones carga, busca, agrega y elimina estaciones mediante una tabla hash desacoplada; las demás opciones del menú siguen pendientes.
 
 ## Compilar / correr
 
@@ -10,22 +10,32 @@ make
 ./bicis
 ```
 
+Las estructuras desacopladas tienen una prueba independiente:
+
+```bash
+cd "estructuras"
+make test
+```
+
+Las operaciones iniciales de estaciones también tienen pruebas:
+
+```bash
+cd "TP - Integrador"
+make test
+```
+
 ## Estructura
 
 ```
 TP - Integrador/
 ├── data/                 # archivos de entrada de ejemplo
-├── include/              # headers vacíos (Estacion, Bicicleta, Viaje, Sistema)
-├── src/main.cpp          # menú con TODOs
+├── estructuras/          # contenedores manuales genéricos y pruebas
+├── include/              # clases del dominio y Sistema
+├── src/                  # menú y coordinación del sistema
 ├── Makefile
 └── README.md
 ```
 
-## Orden sugerido de implementación
+`estructuras/` contiene lista enlazada, cola, tabla hash, ABB, min-heap y grafo con BFS. Son implementaciones manuales independientes de las clases del dominio y no usan contenedores STL. La tabla hash ya se usa para administrar estaciones; las demás estructuras todavía no están integradas.
 
-1. Clases de dominio + carga de `data/*.txt`
-2. Módulo C — ABB de bicicletas
-3. Módulo A — hash de estaciones + BFS
-4. Módulo B — colas y min-heap
-5. Módulo D — backtracking
-6. README con análisis Big O + UML
+Ver [ESTADO_ACTUAL.md](./ESTADO_ACTUAL.md) para el relevamiento del TP y [UML_ACTUAL.md](./UML_ACTUAL.md) para el diagrama vigente.
