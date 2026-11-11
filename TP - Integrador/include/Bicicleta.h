@@ -1,19 +1,19 @@
-using namespace std;
-
 #ifndef BICICLETA_H
 #define BICICLETA_H
 
 #include <string>
 #include <iostream>
 
+using namespace std;
+
 // TODO: implementar
 class Bicicleta
 {
 private:
     int biciId;
-    std::string codigoEstacion;
-    std::string tipo;   // Mecanica | Electrica
-    std::string estado; // OK | Averiada
+    string codigoEstacion;
+    string tipo;   // Mecanica | Electrica
+    string estado; // OK | Averiada
     int kilometros;
 
 public:
