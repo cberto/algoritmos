@@ -10,6 +10,7 @@ classDiagram
 
     class Sistema {
         -estaciones: TablaHash~string, Estacion~
+        -ciclovias: Grafo~string~
         -cargado: bool
         +cargarDatos(carpeta): bool
         +resumen(): void
@@ -18,6 +19,7 @@ classDiagram
         +eliminarEstacion(codigo): bool
         +listarEstacionesOrdenadas(criterio): void
         +listarEstacionesBajaOcupacion(): void
+        +mostrarCaminoMinimo(origen, destino): void
     }
 
     class Estacion {
@@ -96,6 +98,7 @@ classDiagram
     Main ..> Sistema : utiliza
     Main ..> Estacion : muestra resultados
     Sistema *-- TablaHash : estaciones por codigo
+    Sistema *-- Grafo : conexiones de ciclovia
     Sistema ..> Estacion : consulta y devuelve puntero
     TablaHash ..> Estacion : almacena valores
     Grafo ..> Cola : BFS
@@ -107,6 +110,7 @@ classDiagram
 
 - `Main` representa la función libre `main()` de `src/main.cpp`; usa `Sistema` y muestra la estación obtenida.
 - `Sistema` contiene una `TablaHash` genérica y guarda las estaciones por código. La tabla administra sus nodos y almacena cada `Estacion` por valor.
+- `Sistema` mantiene un grafo genérico con los vértices de las estaciones y las conexiones bidireccionales de `ciclovias.txt`; usa BFS para mostrar el camino con menos tramos.
 - `Bicicleta` y `Viaje` aparecen porque sus clases están declaradas en los headers, pero sus operaciones siguen pendientes y aún no están integradas con `Sistema`.
-- La cola, el min-heap, el ABB y el grafo están implementados en `estructuras/`, pero todavía no se integran al sistema.
+- La cola, el min-heap y el ABB están implementados en `estructuras/`, pero todavía no se integran al sistema.
 - El diagrama representa la propiedad actual: `Sistema` contiene la tabla hash; la tabla posee sus nodos y guarda los valores de estación.

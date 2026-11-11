@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Estacion.h"
+#include "Grafo.h"
 #include "TablaHash.h"
 
 using namespace std;
@@ -11,6 +12,7 @@ class Sistema
 {
 private:
     TablaHash<string, Estacion> estaciones;
+    Grafo<string> ciclovias;
     bool cargado;
 
 public:
@@ -41,6 +43,9 @@ public:
 
     // Muestra las estaciones con menos del 20% de ocupación.
     void listarEstacionesBajaOcupacion();
+
+    // Muestra el recorrido con menos tramos entre dos estaciones.
+    void mostrarCaminoMinimo(string origen, string destino);
 };
 
 #endif

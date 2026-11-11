@@ -1,6 +1,7 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -Iinclude -Iestructuras
 SRC = src/main.cpp src/sistema.cpp
+HEADERS = include/Estacion.h include/Sistema.h estructuras/TablaHash.h estructuras/Grafo.h estructuras/Cola.h estructuras/ListaEnlazada.h estructuras/FuncionHash.h
 OUT = bicis
 TEST_OUT = tests/test_estaciones.exe
 
@@ -8,13 +9,13 @@ TEST_OUT = tests/test_estaciones.exe
 
 all: $(OUT)
 
-$(OUT): $(SRC)
+$(OUT): Makefile $(SRC) $(HEADERS)
 	$(CXX) $(CXXFLAGS) -o $(OUT) $(SRC)
 
 test: $(TEST_OUT)
 	./$(TEST_OUT)
 
-$(TEST_OUT): tests/test_estaciones.cpp src/sistema.cpp include/Sistema.h include/Estacion.h estructuras/TablaHash.h
+$(TEST_OUT): Makefile tests/test_estaciones.cpp src/sistema.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -o $(TEST_OUT) tests/test_estaciones.cpp src/sistema.cpp
 
 run: $(OUT)

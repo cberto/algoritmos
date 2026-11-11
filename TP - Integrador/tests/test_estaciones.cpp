@@ -97,6 +97,31 @@ static void probarOcupacionBaja()
     assert(texto.find("Codigo: C") == string::npos);
 }
 
+// Captura el resultado que muestra el cálculo de camino mínimo.
+static string obtenerSalidaCamino(Sistema& sistema, string origen, string destino)
+{
+    ostringstream datos;
+    streambuf* salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.mostrarCaminoMinimo(origen, destino);
+    cout.rdbuf(salidaAnterior);
+    return datos.str();
+}
+
+// Comprueba el camino BFS y el caso de estaciones sin conexión.
+static void probarCaminoMinimo()
+{
+    Sistema sistema;
+    assert(sistema.cargarDatos("data"));
+
+    string texto = obtenerSalidaCamino(sistema, "PAL", "RET");
+    assert(texto.find("(3 tramos)") != string::npos);
+    assert(texto.find("PAL -> CAB -> PLZ -> RET") != string::npos);
+
+    assert(sistema.agregarEstacion("AIS", "Aislada", "Barrio", 10, 0));
+    texto = obtenerSalidaCamino(sistema, "PLZ", "AIS");
+    assert(texto.find("No existe un recorrido") != string::npos);
+}
+
 // Ejecuta las pruebas del módulo de estaciones.
 int main()
 {
@@ -104,4 +129,5 @@ int main()
     probarAltaYBaja();
     probarOrdenamiento();
     probarOcupacionBaja();
+    probarCaminoMinimo();
 }

@@ -60,6 +60,33 @@ bool Sistema::cargarDatos(string carpeta)
         }
     }
 
+    string estacionA;
+    string estacionB;
+    bool leyendoCiclovias = true;
+    while (leyendoCiclovias)
+    {
+        levantarCiclovias >> estacionA;
+        if (levantarCiclovias.fail())
+        {
+            leyendoCiclovias = false;
+        }
+        else
+        {
+            levantarCiclovias >> estacionB;
+            if (levantarCiclovias.fail())
+            {
+                cout << "Registro de ciclovia incompleto." << endl;
+                return false;
+            }
+
+            if (!ciclovias.conectar(estacionA, estacionB))
+            {
+                cout << "No se pudo conectar " << estacionA << " con " << estacionB << "." << endl;
+                return false;
+            }
+        }
+    }
+
     cargado = true;
     cout << "Datos cargados correctamente." << endl;
     return true;
@@ -80,12 +107,24 @@ bool Sistema::agregarEstacion(string codigo, string nombre, string barrio,
         return false;
 
     Estacion nueva(codigo, nombre, barrio, capacidad, disponibles);
-    return estaciones.insertar(codigo, nueva);
+    if (!estaciones.insertar(codigo, nueva))
+        return false;
+
+    if (!ciclovias.agregarVertice(codigo))
+    {
+        estaciones.eliminar(codigo);
+        return false;
+    }
+    return true;
 }
 
 // Elimina la estación y su valor de la tabla hash.
 bool Sistema::eliminarEstacion(string codigo)
 {
+    if (estaciones.buscar(codigo) == nullptr)
+        return false;
+
+    ciclovias.eliminarVertice(codigo);
     return estaciones.eliminar(codigo);
 }
 
@@ -198,4 +237,33 @@ void Sistema::listarEstacionesBajaOcupacion()
         cout << "No hay estaciones con menos del 20% de ocupacion." << endl;
 
     delete[] referencias;
+}
+
+// Muestra el recorrido por ciclovías con menor cantidad de tramos.
+void Sistema::mostrarCaminoMinimo(string origen, string destino)
+{
+    if (estaciones.buscar(origen) == nullptr || estaciones.buscar(destino) == nullptr)
+    {
+        cout << "La estacion de origen o destino no existe." << endl;
+        return;
+    }
+
+    ListaEnlazada<string> camino;
+    if (!ciclovias.caminoMinimo(origen, destino, camino))
+    {
+        cout << "No existe un recorrido entre las estaciones indicadas." << endl;
+        return;
+    }
+
+    cout << "Recorrido minimo (" << camino.tamano() - 1 << " tramos):" << endl;
+    string codigo;
+    size_t i;
+    for (i = 0; i < camino.tamano(); ++i)
+    {
+        camino.obtener(i, codigo);
+        cout << codigo;
+        if (i + 1 < camino.tamano())
+            cout << " -> ";
+    }
+    cout << endl;
 }

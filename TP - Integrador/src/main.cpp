@@ -49,11 +49,10 @@ static void mostrarMenu()
          << "----- Modulo A: Estaciones -----\n"
          << "10. Buscar estacion\n"
          << "11. Agregar estacion\n"
-         << "12. Conectar estaciones                  [TODO]\n"
          << "13. Eliminar estacion\n"
          << "14. Listar estaciones ordenadas\n"
          << "15. Ocupacion < 20%\n"
-         << "16. Camino minimo por ciclovias          [TODO]\n"
+         << "16. Camino minimo por ciclovias\n"
          << "----- Modulo B: Viajes y colas -----\n"
          << "20. Viajes por estacion y fechas         [TODO]\n"
          << "21. Viajes por DNI                       [TODO]\n"
@@ -131,6 +130,13 @@ int main()
         case 15:
             sistema.listarEstacionesBajaOcupacion();
             break;
+        case 16:
+        {
+            string origen = leer<string>("Codigo de la estacion de origen: ");
+            string destino = leer<string>("Codigo de la estacion de destino: ");
+            sistema.mostrarCaminoMinimo(origen, destino);
+            break;
+        }
         default:
             cout << opcion << " - Opcion no valida." << endl;
         }
