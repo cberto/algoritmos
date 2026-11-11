@@ -76,10 +76,32 @@ static void probarOrdenamiento()
     assert(posicionA < posicionC && posicionC < posicionB);
 }
 
+// Comprueba el filtro de ocupación y el límite estricto del 20%.
+static void probarOcupacionBaja()
+{
+    Sistema sistema;
+    assert(sistema.agregarEstacion("A", "A", "Barrio", 20, 3));
+    assert(sistema.agregarEstacion("B", "B", "Barrio", 10, 2));
+    assert(sistema.agregarEstacion("C", "C", "Barrio", 50, 15));
+    assert(sistema.agregarEstacion("D", "D", "Barrio", 40, 7));
+
+    ostringstream datos;
+    streambuf* salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.listarEstacionesBajaOcupacion();
+    cout.rdbuf(salidaAnterior);
+
+    string texto = datos.str();
+    assert(texto.find("Codigo: A") != string::npos);
+    assert(texto.find("Codigo: D") != string::npos);
+    assert(texto.find("Codigo: B") == string::npos);
+    assert(texto.find("Codigo: C") == string::npos);
+}
+
 // Ejecuta las pruebas del módulo de estaciones.
 int main()
 {
     probarBusquedaYPresentacion();
     probarAltaYBaja();
     probarOrdenamiento();
+    probarOcupacionBaja();
 }

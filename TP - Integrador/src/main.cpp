@@ -52,7 +52,7 @@ static void mostrarMenu()
          << "12. Conectar estaciones                  [TODO]\n"
          << "13. Eliminar estacion\n"
          << "14. Listar estaciones ordenadas\n"
-         << "15. Ocupacion < 20%                      [TODO]\n"
+         << "15. Ocupacion < 20%\n"
          << "16. Camino minimo por ciclovias          [TODO]\n"
          << "----- Modulo B: Viajes y colas -----\n"
          << "20. Viajes por estacion y fechas         [TODO]\n"
@@ -128,6 +128,9 @@ int main()
             sistema.listarEstacionesOrdenadas(criterio);
             break;
         }
+        case 15:
+            sistema.listarEstacionesBajaOcupacion();
+            break;
         default:
             cout << opcion << " - Opcion no valida." << endl;
         }

@@ -38,6 +38,9 @@ public:
 
     // Lista las estaciones ordenadas por capacidad o bicicletas disponibles.
     void listarEstacionesOrdenadas(int criterio);
+
+    // Muestra las estaciones con menos del 20% de ocupación.
+    void listarEstacionesBajaOcupacion();
 };
 
 #endif

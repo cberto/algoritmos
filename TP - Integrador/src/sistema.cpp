@@ -157,3 +157,45 @@ void Sistema::listarEstacionesOrdenadas(int criterio)
 
     delete[] ordenadas;
 }
+
+// Muestra las estaciones cuya disponibilidad es menor al 20% de capacidad.
+void Sistema::listarEstacionesBajaOcupacion()
+{
+    size_t cantidadEstaciones = estaciones.tamano();
+    if (cantidadEstaciones == 0)
+    {
+        cout << "No hay estaciones cargadas." << endl;
+        return;
+    }
+
+    Estacion** referencias = new Estacion*[cantidadEstaciones];
+    estaciones.copiarReferencias(referencias);
+
+    bool hayEstacionesParaMostrar = false;
+    size_t i;
+    int capacidad;
+    int disponibles;
+    double porcentajeOcupacion;
+    for (i = 0; i < cantidadEstaciones; ++i)
+    {
+        capacidad = referencias[i]->getCapacidadAnclajes();
+        disponibles = referencias[i]->getBicisDisponibles();
+        if (capacidad > 0)
+        {
+            porcentajeOcupacion = 100.0 * disponibles / capacidad;
+            if (porcentajeOcupacion < 20.0)
+            {
+                if (!hayEstacionesParaMostrar)
+                    cout << "Estaciones con menos del 20% de ocupacion:" << endl;
+                referencias[i]->mostrarEstacion();
+                cout << "------------------------------" << endl;
+                hayEstacionesParaMostrar = true;
+            }
+        }
+    }
+
+    if (!hayEstacionesParaMostrar)
+        cout << "No hay estaciones con menos del 20% de ocupacion." << endl;
+
+    delete[] referencias;
+}

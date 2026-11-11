@@ -11,11 +11,13 @@ classDiagram
     class Sistema {
         -estaciones: TablaHash~string, Estacion~
         -cargado: bool
-        +cargarDatos(carpeta, salida): bool
-        +resumen(salida): void
+        +cargarDatos(carpeta): bool
+        +resumen(): void
         +buscarEstacion(codigo): Estacion*
         +agregarEstacion(codigo, nombre, barrio, capacidad, disponibles): bool
         +eliminarEstacion(codigo): bool
+        +listarEstacionesOrdenadas(criterio): void
+        +listarEstacionesBajaOcupacion(): void
     }
 
     class Estacion {
@@ -27,7 +29,9 @@ classDiagram
         +Estacion()
         +Estacion(codigo, nombre, barrio, capacidadAnclajes, bicisDisponibles)
         +getCodigo(): string
-        +mostrarEstacion(salida): void
+        +getCapacidadAnclajes(): int
+        +getBicisDisponibles(): int
+        +mostrarEstacion(): void
     }
 
     class Bicicleta {
@@ -65,6 +69,7 @@ classDiagram
         +insertar(clave, valor) bool
         +buscar(clave) Valor*
         +eliminar(clave) bool
+        +copiarReferencias(referencias)
         +factorCarga() double
     }
 
