@@ -1,173 +1,158 @@
-/**
-1)
+/*
+TP2 - Cuentas resumidas
 
-j=j-2;				            //2
-i=j*12;				            //2
-printf("%d\n",i);		      //1
+El desarrollo paso a paso, los supuestos y la explicación de los ejemplos están
+en Soluciones.md. Para estas cuentas se usa el criterio de clase: cada línea
+tiene el costo indicado y el encabezado de un for se aproxima como 4 operaciones
+por iteración, sin sumar la comparación final que falla.
 
-ANÁLISIS DE COMPLEJIDAD ALGORÍTMICA: 
-  
-  1. Identificar n
-      N/A. No depende de datos de entrada variable.
-  
-  2. Identificar peor caso
-      No hay. Peor caso = caso promedio = mejor caso.
-  
-  3. Cantidad de operaciones
-      1 por línea: (Operación + reasignación) x 2 + imprimir en pantalla
-      T(n) = 5
-  
-  4. COMPLEJIDAD:
-      T(n) = 5    ====>   O(1) (Constante)
+1) OPERACIONES CONSTANTES
 
---------------------------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------------------------
+j = j - 2;             // 2: resta + asignación
+i = j * 12;            // 2: multiplicación + asignación
+printf("%d\n", i);     // 1
 
-2)    
+T = 2 + 2 + 1 = 5
+Complejidad: O(1), constante.
 
-Scanner leer = new Scanner(System. in);   		        //+1
-int n = leer.nextInt(), c = 0;       					        //+2
+----------------------------------------------------------------------------
 
-while (n-- > 0)								                        //+1n
+2) SUMA DE IMPARES PARA CADA CASO
+
+Scanner leer = new Scanner(System.in);          // 1
+int n = leer.nextInt(), c = 0;                  // 2
+
+while (n-- > 0)                                 // n
 {
-  c++;                              						      //+2n
-  int res = 0;                            			      //+1n leemos rangos	
-  int b = leer.nextInt();						                  //+1n
-  
-  for (int a = 0; i <= b; i++) 					              //+4n
-    if (i % 2 == 1)							                      //+1n.b
-    res = res + i;						                        //+2n.b
-  
-  System. out .printf( "Case %d: %d\n" , c, res);		  //+1n
+    c++;                                        // 2n
+    int res = 0;                                // n
+    int b = leer.nextInt();                     // n
+
+    for (int a = 0; a <= b; a++)                // 4n(b + 1)
+        if (a % 2 == 1)                         // n(b + 1)
+            res = res + a;                      // 2n floor((b + 1) / 2)
+
+    System.out.printf("Case %d: %d\n", c, res); // n
 }
 
-ANÁLISIS DE COMPLEJIDAD ALGORÍTMICA: 
-  
-  1. Identificar n
-      ?
-      
-  2. Identificar peor caso
-      ?
-  
-  3. Cantidad de operaciones
-      T(n) = ?
-  
-  4. COMPLEJIDAD:
-        O(n.b) ??
+Corrección del enunciado: el for declara a, por eso la condición y el incremento
+también deben usar a (no i).
 
---------------------------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------------------------
+El rango incluye ambos extremos: a = 0, 1, ..., b; son b + 1 iteraciones.
+Se supone b >= 0. Entre esos valores hay floor((b + 1) / 2) impares.
 
-3)
+Si todos los casos tienen el mismo límite b:
+T(n,b) = 3 + 6n + 5n(b + 1) + 2n floor((b + 1) / 2)
+Complejidad: O(n(b + 1)); si b crece, también puede escribirse O(nb).
 
-for (i = 0; i < n; i++) 		                //+4n
-printf("%d\n",i);			                      //+1n
-i=0;								                        //+1
-while (i<n)							                    //+1n
+Si cada caso tiene un límite b_i distinto:
+T = 3 + 6n + sum[i=1..n](5(b_i + 1) + 2 floor((b_i + 1) / 2))
+Complejidad: O(n + sum b_i).
+
+----------------------------------------------------------------------------
+
+3) DOS RECORRIDOS DE 0 A n-1
+
+for (i = 0; i < n; i++)       // 4n
+    printf("%d\n", i);        // n
+
+i = 0;                        // 1
+while (i < n)                 // n
 {
-printf("%d\n", i);					                //+1n
-i++;							                          //+2n 
+    printf("%d\n", i);        // n
+    i++;                      // 2n
 }
 
-ANÁLISIS DE COMPLEJIDAD ALGORÍTMICA: 
-  
-  1. Identificar n
-      ?
-      
-  2. Identificar peor caso
-      ?
-  
-  3. Cantidad de operaciones
-      T(n) = ?
-  
-  4. COMPLEJIDAD:
-      (O(n)+O(n)) = O(n) (Lineal)
---------------------------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------------------------
+T(n) = (4n + n) + (1 + n + n + 2n)
+     = 5n + 1 + 4n
+     = 9n + 1
+Complejidad: O(n), lineal.
 
-4)
+----------------------------------------------------------------------------
 
-for (i = 0; i < n; i++) {                   //+4n       
-    for (j = 0; j < n; j++)                 //+4n*4n= 16n²
-         printf("%d\n",i+j);                ////+4n*4n= 16n²
+4) BUCLES ANIDADOS Y BUCLE EXTERNO FIJO
+
+for (i = 0; i < n; i++) {     // 4n
+    for (j = 0; j < n; j++)   // 4n^2
+        printf("%d\n", i+j);  // n^2
 }
 
-i=0;
-while (i<10) {                              // +10
-    // begin B 
-    j=0;                                    // +10
-    while (j<n) {                           //n
-        printf("%d\n",i+j);                 //n
-        j++;                                //n
-    } 
-    i++;            
+i = 0;                        // 1
+while (i < 10) {              // 10
+    j = 0;                    // 10
+    while (j < n) {           // 10n
+        printf("%d\n", i+j);  // 10n
+        j++;                  // 20n
+    }
+    i++;                      // 20
 }
 
-ANÁLISIS DE COMPLEJIDAD ALGORÍTMICA: 
-  
-  1. Identificar n
-      ?
-      
-  2. Identificar peor caso
-      ?
-  
-  3. Cantidad de operaciones
-      T(n) = ?
-  
-  4. COMPLEJIDAD:
-      O(n²)+O(n) =  O(n²) (Cuadrática)
---------------------------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------------------------
+T(n) = (4n + 4n^2 + n^2) + (1 + 10 + 10 + 10n + 10n + 20n + 20)
+     = 5n^2 + 44n + 41
+Complejidad: O(n^2), cuadrática. El 10 del while exterior es constante.
 
-5) Desarrollar un algoritmo para calcular el promedio de un vector de n elementos. 
-Calcular luego, su tiempo de ejecución.
+----------------------------------------------------------------------------
 
---------------------------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------------------------
+5) PROMEDIO DE UN VECTOR
 
-6) Desarrollar un algoritmo para calcular el elemento máximo de un vector y luego 
-calcular su tiempo de ejecución.
+float promedio(int[] v, int n) {
+    float suma = 0;                 // 1
+    for (int i = 0; i < n; i++)     // 4n
+        suma = suma + v[i];         // 2n
+    return suma / n;                // 1
+}
 
---------------------------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------------------------
+Precondición: n > 0.
+T(n) = 1 + 4n + 2n + 1 = 6n + 2
+Complejidad: O(n), lineal.
 
-7) Dadas las clases NodoInt y ListaInt cuyas variables de instancia son las siguientes: 
- 
-public class NodoInt 
-{ 
-int elemento; 
-NodoInt siguiente; 
-} 
- 
-public class ListaInt 
-{ 
-NodoInt primero; 
-... 
-} 
- 
-Dada una ListaInt, decimos que un par de números (a; b) son contiguos divisibles en la 
-lista si a aparece justo antes que b y a es divisible por b. Dada esta definición, se pide:
+----------------------------------------------------------------------------
 
-- Escribir el método de instancia void separarContiguosDivisibles() de orden lineal, es 
-decir, O(n) donde n es la cantidad de elementos de la lista, que por cada par (a; b) de 
-contiguos divisibles de la lista, agrega entre ellos el número a/b. 
+6) MÁXIMO DE UN VECTOR
 
-Por ejemplo:
-- Si la lista es [20, 10, 6, 3], los pares de contiguos divisibles son (20,10) y (6,3), y por lo 
-  tanto la lista deberá quedar como [20, 2, 10, 6, 2, 3]. 
+int maximo(int[] v, int n) {
+    int max = v[0];                 // 2
+    for (int i = 1; i < n; i++)     // 4(n - 1)
+        if (v[i] > max)             // n - 1
+            max = v[i];             // 2(n - 1), peor caso
+    return max;                     // 1
+}
 
-- Si la lista es [20, 10, 2, 3], los pares de contiguos divisibles son (20,10) y (10,2), y por lo 
-  tanto la lista deberá quedar como [20, 2, 10, 5, 2, 3]. 
+Precondición: n > 0.
+Peor caso: vector estrictamente creciente; la asignación se ejecuta n - 1 veces.
+T(n) = 2 + 4(n - 1) + (n - 1) + 2(n - 1) + 1
+     = 3 + 7(n - 1)
+     = 7n - 4
+Complejidad: O(n), lineal.
 
-- Si la lista es [7, 6, 2, 7, 6], el único par de contiguos divisibles es (6,2) con lo cual la lista 
-  deberá quedar como [7, 6, 3, 2, 7, 6]. 
+----------------------------------------------------------------------------
 
-- Si la lista es [1, 1], el par (1,1) es de contiguos divisibles y por lo tanto la lista deberá 
-  quedar como [1, 1, 1]. 
+7) INSERTAR EL COCIENTE ENTRE NODOS CONTIGUOS DIVISIBLES
 
-- Si la lista es [50, 5], el par (50,5) es de contiguos divisibles y por lo tanto la lista deberá 
-  quedar como [50, 10, 5]. Notar que la nueva lista contiene el par de contiguos 
-  consecutivos (10,5), sin embargo, este par no se separa por no ser parte de la lista original.
+public void separarContiguosDivisibles() {
+    NodoInt actual = primero;
 
+    while (actual != null && actual.siguiente != null) {
+        NodoInt siguienteOriginal = actual.siguiente;
+        int a = actual.elemento;
+        int b = siguienteOriginal.elemento;
 
+        if (b != 0 && a % b == 0) {
+            NodoInt nuevo = new NodoInt();
+            nuevo.elemento = a / b;
+            nuevo.siguiente = siguienteOriginal;
+            actual.siguiente = nuevo;
+        }
+
+        actual = siguienteOriginal;
+    }
+}
+
+Se avanza al siguiente nodo original, no al recién insertado. Así cada par
+original se revisa una sola vez y no se procesan pares nuevos creados al insertar.
+La condición b != 0 evita dividir o calcular el resto por cero.
+
+El while recorre como máximo n - 1 pares y cada vuelta cuesta O(1):
+T(n) = c(n - 1), para alguna constante c.
+Complejidad: O(n), lineal.
 */

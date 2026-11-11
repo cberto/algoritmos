@@ -9,14 +9,15 @@ using namespace std;
 static void probarBusquedaYPresentacion()
 {
     Sistema sistema;
-    ostringstream mensajes;
-    assert(sistema.cargarDatos("data", mensajes));
+    assert(sistema.cargarDatos("data"));
 
     Estacion* estacion = sistema.buscarEstacion("PLZ");
     assert(estacion != nullptr);
 
     ostringstream datos;
-    estacion->mostrarEstacion(datos);
+    streambuf* salidaAnterior = cout.rdbuf(datos.rdbuf());
+    estacion->mostrarEstacion();
+    cout.rdbuf(salidaAnterior);
     string texto = datos.str();
     assert(texto.find("PlazaDeMayo") != string::npos);
     assert(texto.find("Monserrat") != string::npos);

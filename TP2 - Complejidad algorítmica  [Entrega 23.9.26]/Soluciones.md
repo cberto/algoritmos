@@ -2,6 +2,12 @@
 
 Soluciones y análisis de complejidad de los ejercicios del TP2.
 
+Para que las cuentas sigan el criterio usado en clase, cada línea tiene el costo
+indicado junto al código y el costo del encabezado de un `for` se aproxima como
+4 operaciones por iteración. En esa cuenta simplificada no se suma la última
+comparación que falla. Esto alcanza para comparar órdenes de crecimiento; no es
+una medición exacta de tiempo de ejecución.
+
 ---
 
 ## Ejercicio 1
@@ -45,9 +51,9 @@ while (n-- > 0)                                 // +1n
     int res = 0;                                // +1n
     int b = leer.nextInt();                     // +1n
 
-    for (int a = 0; a <= b; a++)                // +4n.b
-        if (a % 2 == 1)                         // +1n.b
-            res = res + a;                      // +2n.b
+    for (int a = 0; a <= b; a++)                // +4n(b+1)
+        if (a % 2 == 1)                         // +n(b+1)
+            res = res + a;                      // +2n·floor((b+1)/2)
 
     System.out.printf("Case %d: %d\n", c, res); // +1n
 }
@@ -61,48 +67,57 @@ while (n-- > 0)                                 // +1n
 
    Acá hay **dos tamaños de entrada**, no uno solo:
    - `n`: la cantidad de casos de prueba (controla cuántas veces se ejecuta el `while`).
-   - `b`: el rango leído en cada caso (controla cuántas veces se ejecuta el `for` interno).
+   - `bᵢ`: el límite leído para el caso `i` (controla las iteraciones del `for` de ese caso).
 
-   Como `b` puede variar libremente y no está acotado por `n`, no podemos "esconderlo" dentro de una sola variable. Vamos a dejar el resultado en función de ambos.
+   Suponemos `bᵢ ≥ 0`, como corresponde a un rango que empieza en cero.
+   El `for` recorre `a = 0, 1, ..., bᵢ`, así que hace **bᵢ + 1 iteraciones**.
+   Si todos los casos usan el mismo límite `b`, se puede expresar el resultado
+   en función de `n` y `b`. Si los límites varían, se usa la suma de los `bᵢ`.
 
 2. **Identificar peor caso**
 
-   El `if (a % 2 == 1)` se evalúa siempre, sin importar los datos (n.b veces). La única diferencia entre "peor" y "mejor" caso es si `res = res + a` se ejecuta o no en cada vuelta, pero eso solo cambia una constante (como mucho el doble de operaciones), **no cambia el orden**. Por eso tomamos como peor caso el que hace que la asignación se ejecute siempre.
+   El `if` se evalúa en las `bᵢ + 1` iteraciones. Como `a` toma valores
+   consecutivos desde 0, la suma se ejecuta exactamente
+   `floor((bᵢ + 1) / 2)` veces (una por cada número impar del rango). No hay
+   variación por los datos una vez fijado `bᵢ`.
 
 3. **Cantidad de operaciones**
 
-   Sumamos línea por línea, igual que en el Ejercicio 1, pero separando lo que depende de `n` de lo que depende de `n.b`:
+   Sumamos línea por línea, igual que en el Ejercicio 1, separando el costo fijo
+   y el que depende de la cantidad de casos `n` y del límite `b`:
 
    ```
-   T(n,b) = 1                    (Scanner)
-          + 2                    (n, c = 0)
-          + 1·n                  (while n-- > 0)
-          + 2·n                  (c++)
-          + 1·n                  (res = 0)
-          + 1·n                  (b = leer.nextInt())
-          + 4·n·b                (for: init + test + incremento)
-          + 1·n·b                (if a % 2 == 1)
-          + 2·n·b                (res = res + a, peor caso)
-          + 1·n                  (printf)
+   T(n,b) = 1                              (Scanner)
+          + 2                              (n, c = 0)
+          + 1·n                            (while, según el criterio de clase)
+          + 2·n                            (c++)
+          + 1·n                            (res = 0)
+          + 1·n                            (b = leer.nextInt())
+          + 4·n·(b + 1)                    (for: b + 1 iteraciones)
+          + n·(b + 1)                      (if, se evalúa en cada iteración)
+          + 2·n·floor((b + 1) / 2)         (suma de los impares)
+          + 1·n                            (printf)
    ```
 
-   Agrupando los términos que multiplican a `n` solo:
-   `(1 + 2 + 1 + 1 + 1)·n = 6n`
+   ```
+   T(n,b) = 3 + 6n + 5n(b + 1) + 2n·floor((b + 1) / 2)
+   ```
 
-   Agrupando los términos que multiplican a `n.b`:
-   `(4 + 1 + 2)·n.b = 7n.b`
-
-   Y sumando las constantes sueltas: `1 + 2 = 3`
+   Si cada caso tiene un límite distinto `bᵢ`, la cuenta queda:
 
    ```
-   T(n,b) = 3 + 6n + 7n.b
+   T(n, b₁, ..., bₙ) = 3 + 6n
+                      + Σ[i=1..n] (5(bᵢ + 1) + 2·floor((bᵢ + 1) / 2))
    ```
 
 4. **Complejidad**
 
-   El término que crece más rápido es `7n.b` (crece con el *producto* de los dos tamaños de entrada), así que:
+   Con un mismo límite `b`, el orden es **O(n(b + 1))** (equivalente a
+   **O(nb)** cuando `b` crece). Si los límites varían, el orden es
+   **O(n + Σbᵢ)**.
 
-   **O(n.b)**
+   No conviene escribir solo `O(n)` u ocultar `b`: el trabajo del `for`
+   depende también del límite de cada caso.
 
 ---
 
@@ -234,6 +249,8 @@ while (i < 10) {                    // +1·10 (constante, no depende de n)
 
 Calcular luego, su tiempo de ejecución.
 
+Se supone `n > 0`, porque el promedio de un vector vacío no está definido.
+
 ```java
 float promedio(int[] v, int n) {
     float suma = 0;                 // +1
@@ -275,6 +292,8 @@ float promedio(int[] v, int n) {
 ## Ejercicio 6
 
 **Desarrollar un algoritmo para calcular el elemento máximo de un vector** y luego calcular su tiempo de ejecución.
+
+Se supone `n > 0`, porque se inicializa el máximo con `v[0]`.
 
 ```java
 int maximo(int[] v, int n) {

@@ -87,7 +87,7 @@ int main()
             cout << opcion << " - Chau." << endl;
             break;
         case 1:
-            sistema.cargarDatos("data", cout);
+            sistema.cargarDatos("data");
             break;
         case 2:
             cout << "Resumen del sistema" << endl;
@@ -97,7 +97,7 @@ int main()
             Estacion *est = sistema.buscarEstacion(leer<string>("Ingrese el codigo de la estacion: "));
             if (est)
             {
-                est->mostrarEstacion(cout);
+                est->mostrarEstacion();
             }
             else
             {

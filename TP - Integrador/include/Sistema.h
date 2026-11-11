@@ -1,7 +1,6 @@
 #ifndef SISTEMA_H
 #define SISTEMA_H
 
-#include <iostream>
 #include <string>
 #include "Estacion.h"
 #include "TablaHash.h"
@@ -22,10 +21,10 @@ public:
     }
 
     // Carga las estaciones desde la carpeta indicada.
-    bool cargarDatos(string carpeta, ostream& salida);
+    bool cargarDatos(string carpeta);
 
     // Muestra un resumen del sistema.
-    void resumen(ostream& salida) const;
+    void resumen() const;
 
     // Busca una estación por código.
     Estacion* buscarEstacion(string codigo);

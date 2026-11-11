@@ -1,15 +1,16 @@
 #include <fstream>
+#include <iostream>
 #include "Sistema.h"
 
 using namespace std;
 
 // Carga los archivos de datos y agrega las estaciones a la tabla hash.
-bool Sistema::cargarDatos(string carpeta, ostream& salida)
+bool Sistema::cargarDatos(string carpeta)
 {
-    salida << "Cargando datos desde archivos..." << endl;
+    cout << "Cargando datos desde archivos..." << endl;
     if (cargado)
     {
-        salida << "Los datos ya fueron cargados. Reinicie para restaurarlos." << endl;
+        cout << "Los datos ya fueron cargados. Reinicie para restaurarlos." << endl;
         return false;
     }
 
@@ -20,7 +21,7 @@ bool Sistema::cargarDatos(string carpeta, ostream& salida)
 
     if (!levantarEstaciones || !levantarBicicletas || !levantarViajes || !levantarCiclovias)
     {
-        salida << "No se pudieron abrir los archivos de datos." << endl;
+        cout << "No se pudieron abrir los archivos de datos." << endl;
         return false;
     }
 
@@ -30,17 +31,37 @@ bool Sistema::cargarDatos(string carpeta, ostream& salida)
     int capacidad;
     int disponibles;
 
-    while (levantarEstaciones >> codigo >> nombre >> barrio >> capacidad >> disponibles)
+    bool lecturaCorrecta = true;
+    while (lecturaCorrecta)
     {
-        if (!agregarEstacion(codigo, nombre, barrio, capacidad, disponibles))
+        levantarEstaciones >> codigo;
+        if (levantarEstaciones.fail())
         {
-            salida << "Estacion invalida o repetida: " << codigo << endl;
-            return false;
+            lecturaCorrecta = false;
+        }
+        else
+        {
+            levantarEstaciones >> nombre;
+            levantarEstaciones >> barrio;
+            levantarEstaciones >> capacidad;
+            levantarEstaciones >> disponibles;
+
+            if (levantarEstaciones.fail())
+            {
+                cout << "Registro de estacion incompleto o invalido." << endl;
+                return false;
+            }
+
+            if (!agregarEstacion(codigo, nombre, barrio, capacidad, disponibles))
+            {
+                cout << "Estacion invalida o repetida: " << codigo << endl;
+                return false;
+            }
         }
     }
 
     cargado = true;
-    salida << "Datos cargados correctamente." << endl;
+    cout << "Datos cargados correctamente." << endl;
     return true;
 }
 

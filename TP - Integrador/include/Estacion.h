@@ -44,17 +44,17 @@ public:
     }
 
     // Muestra los datos de la estación.
-    void mostrarEstacion(ostream& salida) const
+    void mostrarEstacion() const
     {
-        salida << "Codigo: " << codigo << endl;
-        salida << "Nombre: " << nombre << endl;
-        salida << "Barrio: " << barrio << endl;
-        salida << "Capacidad de anclajes: " << capacidadAnclajes << endl;
+        cout << "Codigo: " << codigo << endl;
+        cout << "Nombre: " << nombre << endl;
+        cout << "Barrio: " << barrio << endl;
+        cout << "Capacidad de anclajes: " << capacidadAnclajes << endl;
         if (capacidadAnclajes > 0)
-            salida << "Ocupacion: " << 100.0 * bicisDisponibles / capacidadAnclajes << "%" << endl;
+            cout << "Ocupacion: " << 100.0 * bicisDisponibles / capacidadAnclajes << "%" << endl;
         else
-            salida << "Ocupacion: no disponible" << endl;
-        salida << "Bicis disponibles: " << bicisDisponibles << endl;
+            cout << "Ocupacion: no disponible" << endl;
+        cout << "Bicis disponibles: " << bicisDisponibles << endl;
     }
 };
 
