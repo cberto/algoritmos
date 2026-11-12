@@ -228,6 +228,40 @@ static void probarColaDeEspera()
     assert(texto.find("La estacion ya esta completa.") != string::npos);
 }
 
+// Comprueba el ingreso por prioridad y la extracción del más urgente.
+static void probarTaller()
+{
+    Sistema sistema;
+    assert(sistema.cargarDatos("data"));
+
+    ostringstream datos;
+    streambuf* salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.ingresarBicicletaAlTaller(501);
+    sistema.ingresarBicicletaAlTaller(505);
+    sistema.ingresarBicicletaAlTaller(502);
+    sistema.ingresarBicicletaAlTaller(999);
+    sistema.extraerBicicletaDelTaller();
+    sistema.extraerBicicletaDelTaller();
+    sistema.extraerBicicletaDelTaller();
+    cout.rdbuf(salidaAnterior);
+
+    string texto = datos.str();
+    size_t bicicletaElectrica = texto.find("Bicicleta: 502");
+    size_t bicicletaMecanica = texto.find("Bicicleta: 505");
+    size_t prioridadElectrica = texto.find("Prioridad: 1");
+    size_t prioridadMecanica = texto.find("Prioridad: 2");
+    assert(texto.find("Solo se pueden ingresar bicicletas averiadas") != string::npos);
+    assert(texto.find("Bicicleta no encontrada") != string::npos);
+    assert(bicicletaElectrica != string::npos);
+    assert(bicicletaMecanica != string::npos);
+    assert(bicicletaElectrica < bicicletaMecanica);
+    assert(prioridadElectrica != string::npos);
+    assert(prioridadMecanica != string::npos);
+    assert(prioridadElectrica < bicicletaElectrica);
+    assert(prioridadMecanica < bicicletaMecanica);
+    assert(texto.find("No hay bicicletas en el taller.") != string::npos);
+}
+
 // Ejecuta las pruebas del módulo de estaciones.
 int main()
 {
@@ -240,4 +274,5 @@ int main()
     probarViajesPorDni();
     probarBicicletasPorKilometraje();
     probarColaDeEspera();
+    probarTaller();
 }

@@ -7,6 +7,7 @@
 #include "Estacion.h"
 #include "Grafo.h"
 #include "ListaEnlazada.h"
+#include "MonticuloMinimo.h"
 #include "TablaHash.h"
 #include "Viaje.h"
 
@@ -20,6 +21,7 @@ private:
     TablaHash<string, Cola<int>> colasEspera;
     ListaEnlazada<Bicicleta> bicicletas;
     ListaEnlazada<Viaje> viajes;
+    MonticuloMinimo<BicicletaTaller> taller;
     bool cargado;
 
     // Carga las estaciones desde su archivo.
@@ -80,6 +82,12 @@ public:
 
     // Registra una devolución y atiende primero la cola de la estación.
     void devolverBicicleta(string codigoEstacion);
+
+    // Inserta una bicicleta averiada en el min-heap del taller.
+    void ingresarBicicletaAlTaller(int biciId);
+
+    // Extrae y muestra la bicicleta más urgente del taller.
+    void extraerBicicletaDelTaller();
 };
 
 #endif

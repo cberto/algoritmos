@@ -558,3 +558,79 @@ void Sistema::devolverBicicleta(string codigoEstacion)
         cout << "La estacion ya esta completa." << endl;
     }
 }
+
+// Asigna prioridad y agrega al montículo una bicicleta averiada por ID.
+void Sistema::ingresarBicicletaAlTaller(int biciId)
+{
+    if (biciId <= 0)
+    {
+        cout << "El identificador debe ser positivo." << endl;
+        return;
+    }
+
+    size_t cantidadBicicletas = bicicletas.tamano();
+    Bicicleta* bicicletasCargadas = new Bicicleta[cantidadBicicletas];
+    bicicletas.copiarElementos(bicicletasCargadas);
+
+    Bicicleta bicicletaEncontrada;
+    bool encontrada = false;
+    size_t i;
+    for (i = 0; i < cantidadBicicletas; ++i)
+    {
+        if (bicicletasCargadas[i].getBiciId() == biciId)
+        {
+            bicicletaEncontrada = bicicletasCargadas[i];
+            encontrada = true;
+            break;
+        }
+    }
+    delete[] bicicletasCargadas;
+
+    if (!encontrada)
+    {
+        cout << "Bicicleta no encontrada." << endl;
+        return;
+    }
+    if (bicicletaEncontrada.getEstado() != "Averiada")
+    {
+        cout << "Solo se pueden ingresar bicicletas averiadas al taller." << endl;
+        return;
+    }
+
+    int prioridad;
+    if (bicicletaEncontrada.getTipo() == "Electrica")
+    {
+        prioridad = 1;
+    }
+    else if (bicicletaEncontrada.getTipo() == "Mecanica")
+    {
+        if (bicicletaEncontrada.getKilometros() > 1600)
+            prioridad = 2;
+        else
+            prioridad = 3;
+    }
+    else
+    {
+        cout << "El tipo de bicicleta no es valido." << endl;
+        return;
+    }
+
+    BicicletaTaller bicicletaParaTaller(bicicletaEncontrada, prioridad);
+    taller.insertar(bicicletaParaTaller);
+    cout << "Bicicleta ingresada al taller con prioridad "
+         << prioridad << "." << endl;
+}
+
+// Extrae del montículo la bicicleta con la prioridad más urgente.
+void Sistema::extraerBicicletaDelTaller()
+{
+    BicicletaTaller bicicletaExtraida;
+    if (!taller.extraerMinimo(bicicletaExtraida))
+    {
+        cout << "No hay bicicletas en el taller." << endl;
+        return;
+    }
+
+    cout << "Bicicleta enviada a reparacion:" << endl;
+    bicicletaExtraida.mostrarBicicleta();
+}

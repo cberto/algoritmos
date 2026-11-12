@@ -1,6 +1,6 @@
 # TP Integrador — Sistema de Bicicletas Públicas
 
-Implementación parcial del sistema descrito en `TP2C2026.pdf`. El módulo de estaciones carga, busca, agrega y elimina estaciones, permite listarlas ordenadas por capacidad o bicicletas disponibles, filtra las que tienen menos del 20% de ocupación y calcula caminos mínimos por ciclovías. En el módulo B, B1 cuenta viajes por estación y rango de fechas, B2 muestra viajes por DNI y suma sus duraciones, B3 lista bicicletas por kilometraje y B4 administra la cola de espera por estación. Las demás opciones del menú siguen pendientes.
+Implementación parcial del sistema descrito en `TP2C2026.pdf`. El módulo de estaciones carga, busca, agrega y elimina estaciones, permite listarlas ordenadas por capacidad o bicicletas disponibles, filtra las que tienen menos del 20% de ocupación y calcula caminos mínimos por ciclovías. En el módulo B están implementados B1–B5: consultas de viajes, listado de bicicletas por kilometraje, colas de espera por estación y prioridad del taller. Los módulos C y D siguen pendientes.
 
 ## Compilar / correr
 
@@ -17,7 +17,7 @@ cd "estructuras"
 make test
 ```
 
-Las operaciones iniciales de estaciones también tienen pruebas:
+Las operaciones implementadas de estaciones y del módulo B también tienen pruebas:
 
 ```bash
 cd "TP - Integrador"
@@ -36,7 +36,7 @@ TP - Integrador/
 └── README.md
 ```
 
-`estructuras/` contiene lista enlazada, cola, tabla hash, ABB, min-heap y grafo con BFS. Son implementaciones manuales independientes de las clases del dominio y no usan contenedores STL. La tabla hash, el grafo, la lista enlazada y la cola se usan para administrar estaciones, ciclovías, bicicletas, viajes y esperas; el ABB y el min-heap todavía no están integrados a los puntos pendientes.
+`estructuras/` contiene lista enlazada, cola, tabla hash, ABB, min-heap y grafo con BFS. Son implementaciones manuales independientes de las clases del dominio y no usan contenedores STL. La tabla hash, el grafo, la lista enlazada, la cola y el min-heap se usan para estaciones, ciclovías, bicicletas, viajes, esperas y taller; el ABB todavía no está integrado.
 
 El listado ordenado de estaciones usa selección directa de menor a mayor y permite elegir entre capacidad de anclajes y bicicletas disponibles. El filtro de ocupación compara las bicicletas disponibles con la capacidad de cada estación. Los caminos mínimos se calculan con BFS sobre las conexiones cargadas desde `data/ciclovias.txt`. Los viajes se cargan desde `data/viajes.txt` y B1 considera incluidos ambos extremos del rango de fechas.
 
@@ -52,6 +52,7 @@ Símbolos usados en el análisis:
 - **T**: cantidad de viajes.
 - **N_b**: cantidad de bicicletas.
 - **Q**: cantidad de usuarios que esperan en la cola de una estación.
+- **H**: cantidad de bicicletas actualmente en el taller.
 - **B**: cantidad de buckets (posiciones) de la tabla hash; en esta implementación es 11.
 - **n**: cantidad de elementos guardados en la tabla hash.
 
@@ -80,5 +81,7 @@ La tabla hash resuelve colisiones mediante encadenamiento. Sus operaciones son *
 3. **Listar bicicletas con más de X kilómetros — O(N_b) tiempo y O(N_b) espacio auxiliar por consulta.** Las bicicletas se guardan en una lista enlazada porque se cargan secuencialmente y la cantidad no se conoce de antemano. Como el criterio es un umbral de kilometraje y no una búsqueda por identificador, se recorre la lista completa y se muestran solo las que tienen estrictamente más de X kilómetros.
 
 4. **Cola de espera por estación — O(1) promedio por solicitud o devolución; O(S) peor caso por búsquedas en la tabla hash.** Una tabla hash asocia cada código de estación con su propia `Cola<int>`, donde se encolan los DNI de quienes esperan. La cola respeta el orden FIFO y permite encolar o atender al primero en O(1); la estación reduce su disponibilidad al retirar y asigna directamente una bicicleta devuelta al primero en espera.
+
+5. **Taller de reparaciones — insertar: O(N_b + log H) promedio/amortizado; extraer: O(log H).** Se usa el min-heap porque su raíz permite extraer la bicicleta de menor número de prioridad, donde 1 es la más urgente. Para insertar, primero se busca el ID en la lista de bicicletas; las eléctricas averiadas reciben prioridad 1, las mecánicas averiadas con más de 1600 km prioridad 2 y las demás mecánicas averiadas prioridad 3. El heap puede tardar O(H) en una inserción puntual cuando debe ampliar su arreglo dinámico.
 
 Ver [ESTADO_ACTUAL.md](./ESTADO_ACTUAL.md) para el relevamiento del TP y [UML_ACTUAL.md](./UML_ACTUAL.md) para el diagrama vigente.

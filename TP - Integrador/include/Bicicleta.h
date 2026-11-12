@@ -78,4 +78,44 @@ public:
     }
 };
 
+class BicicletaTaller
+{
+private:
+    Bicicleta bicicleta;
+    int prioridad;
+
+public:
+    // Crea un elemento vacío para el arreglo del montículo.
+    BicicletaTaller()
+    {
+        prioridad = 0;
+    }
+
+    // Guarda una bicicleta y su prioridad de reparación.
+    BicicletaTaller(Bicicleta bicicletaNueva, int prioridadNueva)
+    {
+        bicicleta = bicicletaNueva;
+        prioridad = prioridadNueva;
+    }
+
+    // Devuelve la prioridad de reparación.
+    int getPrioridad()
+    {
+        return prioridad;
+    }
+
+    // Muestra la prioridad y los datos de la bicicleta.
+    void mostrarBicicleta()
+    {
+        cout << "Prioridad: " << prioridad << endl;
+        bicicleta.mostrarBicicleta();
+    }
+
+    // Permite que el montículo compare primero las prioridades menores.
+    bool operator<(BicicletaTaller otra) const
+    {
+        return prioridad < otra.prioridad;
+    }
+};
+
 #endif

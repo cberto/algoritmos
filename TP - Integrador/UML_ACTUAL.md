@@ -18,6 +18,7 @@ classDiagram
         -colasEspera: TablaHash~string, Cola<int>~
         -bicicletas: ListaEnlazada~Bicicleta~
         -viajes: ListaEnlazada~Viaje~
+        -taller: MonticuloMinimo~BicicletaTaller~
         -cargado: bool
         +cargarDatos(carpeta): bool
         +resumen(): void
@@ -32,6 +33,8 @@ classDiagram
         +listarBicicletasMasKilometros(kilometrosMinimos): void
         +solicitarBicicleta(codigoEstacion, dniUsuario): void
         +devolverBicicleta(codigoEstacion): void
+        +ingresarBicicletaAlTaller(biciId): void
+        +extraerBicicletaDelTaller(): void
     }
 
     class Estacion {
@@ -63,6 +66,15 @@ classDiagram
         +getTipo(): string
         +getEstado(): string
         +getKilometros(): int
+        +mostrarBicicleta(): void
+    }
+
+    class BicicletaTaller {
+        -bicicleta: Bicicleta
+        -prioridad: int
+        +BicicletaTaller()
+        +BicicletaTaller(bicicleta, prioridad)
+        +getPrioridad(): int
         +mostrarBicicleta(): void
     }
 
@@ -134,6 +146,7 @@ classDiagram
     Sistema *-- TablaHash~string, Cola<int>~ : codigo => cola de espera
     Sistema *-- ListaEnlazada~Bicicleta~ : bicicletas cargadas
     Sistema *-- ListaEnlazada~Viaje~ : viajes cargados
+    Sistema *-- MonticuloMinimo~BicicletaTaller~ : bicicletas para reparar
     Sistema ..> Estacion : consulta y devuelve puntero
     TablaHash ..> Estacion : Valor almacenado
     ListaEnlazada ..> Viaje : elementos almacenados
@@ -152,5 +165,6 @@ classDiagram
 - `Sistema` conserva los viajes de `viajes.txt` en una `ListaEnlazada<Viaje>`; B1 consulta el origen y la fecha para contar los viajes dentro del rango solicitado, y B2 los consulta por DNI y suma las duraciones.
 - `Sistema` conserva las bicicletas de `bicicletas.txt` en una `ListaEnlazada<Bicicleta>`; B3 recorre la lista para mostrar las que superan el kilometraje ingresado.
 - `Sistema` mantiene una cola FIFO por estación, indexada por código en una tabla hash. Al devolver una bicicleta, la entrega al primer DNI en espera; si no hay nadie esperando, aumenta la disponibilidad de la estación.
-- La cola, el min-heap y el ABB están implementados en `estructuras/`, pero todavía no se integran al sistema.
+- `Sistema` usa un `MonticuloMinimo<BicicletaTaller>` para B5; la prioridad acompaña a cada bicicleta y permite extraer primero la más urgente.
+- La cola y el min-heap están integrados con el módulo B; el ABB está implementado en `estructuras/` y queda pendiente de integrar con el módulo C.
 - `Sistema` posee la tabla hash, el grafo y la lista; estas estructuras mantienen sus propios nodos y almacenan los tipos indicados en el diagrama.

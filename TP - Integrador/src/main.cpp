@@ -58,7 +58,7 @@ static void mostrarMenu()
          << "21. Viajes por DNI\n"
          << "22. Bicicletas con mas de X km\n"
          << "23. Espera: solicitar o devolver bicicleta\n"
-         << "24. Taller (min-heap)                    [TODO]\n"
+         << "24. Taller (min-heap)\n"
          << "----- Modulo C: ABB bicicletas -----\n"
          << "30. Buscar bicicleta por ID              [TODO]\n"
          << "31. Listar bicicletas inorder            [TODO]\n"
@@ -191,6 +191,27 @@ int main()
             {
                 string codigoEstacion = leer<string>("Codigo de la estacion: ");
                 sistema.devolverBicicleta(codigoEstacion);
+            }
+            else
+            {
+                cout << "Opcion invalida." << endl;
+            }
+            break;
+        }
+        case 24:
+        {
+            cout << "Mecanicas averiadas: mas de 1600 km, prioridad 2; "
+                 << "1600 km o menos, prioridad 3." << endl;
+            cout << "Electricas averiadas: prioridad 1." << endl;
+            int accion = leer<int>("Ingresar bicicleta (1) o enviar la mas urgente (2): ");
+            if (accion == 1)
+            {
+                int biciId = leer<int>("Identificador de la bicicleta: ");
+                sistema.ingresarBicicletaAlTaller(biciId);
+            }
+            else if (accion == 2)
+            {
+                sistema.extraerBicicletaDelTaller();
             }
             else
             {
