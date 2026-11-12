@@ -54,7 +54,7 @@ static void mostrarMenu()
          << "15. Ocupacion < 20%\n"
          << "16. Camino minimo por ciclovias\n"
          << "----- Modulo B: Viajes y colas -----\n"
-         << "20. Viajes por estacion y fechas         [TODO]\n"
+         << "20. Viajes por estacion y fechas\n"
          << "21. Viajes por DNI                       [TODO]\n"
          << "22. Bicicletas con mas de X km           [TODO]\n"
          << "23. Cola de espera por estacion          [TODO]\n"
@@ -135,6 +135,28 @@ int main()
             string origen = leer<string>("Codigo de la estacion de origen: ");
             string destino = leer<string>("Codigo de la estacion de destino: ");
             sistema.mostrarCaminoMinimo(origen, destino);
+            break;
+        }
+        case 20:
+        {
+            string codigoEstacion = leer<string>("Codigo de la estacion: ");
+            int fechaInicio = leer<int>("Fecha inicial (AAAAMMDD): ");
+            int fechaFin = leer<int>("Fecha final (AAAAMMDD): ");
+
+            if (sistema.buscarEstacion(codigoEstacion) == nullptr)
+            {
+                cout << "Estacion no encontrada." << endl;
+            }
+            else if (fechaInicio > fechaFin)
+            {
+                cout << "El rango de fechas es invalido." << endl;
+            }
+            else
+            {
+                int cantidadViajes = sistema.contarViajesSalidos(
+                    codigoEstacion, fechaInicio, fechaFin);
+                cout << "Cantidad de viajes: " << cantidadViajes << endl;
+            }
             break;
         }
         default:

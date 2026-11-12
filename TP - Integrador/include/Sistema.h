@@ -4,7 +4,9 @@
 #include <string>
 #include "Estacion.h"
 #include "Grafo.h"
+#include "ListaEnlazada.h"
 #include "TablaHash.h"
+#include "Viaje.h"
 
 using namespace std;
 
@@ -13,7 +15,17 @@ class Sistema
 private:
     TablaHash<string, Estacion> estaciones;
     Grafo<string> ciclovias;
+    ListaEnlazada<Viaje> viajes;
     bool cargado;
+
+    // Carga las estaciones desde su archivo.
+    bool cargarEstaciones(string carpeta);
+
+    // Carga los viajes desde su archivo.
+    bool cargarViajes(string carpeta);
+
+    // Carga las conexiones de ciclovía desde su archivo.
+    bool cargarCiclovias(string carpeta);
 
 public:
     // Crea el sistema sin datos cargados.
@@ -46,6 +58,9 @@ public:
 
     // Muestra el recorrido con menos tramos entre dos estaciones.
     void mostrarCaminoMinimo(string origen, string destino);
+
+    // Cuenta los viajes que salieron de una estación en el rango inclusivo.
+    int contarViajesSalidos(string codigoEstacion, int fechaInicio, int fechaFin);
 };
 
 #endif

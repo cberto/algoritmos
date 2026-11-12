@@ -4,7 +4,7 @@
 
 using namespace std;
 
-// Carga los archivos de datos y agrega las estaciones a la tabla hash.
+// Coordina la carga de los archivos de datos.
 bool Sistema::cargarDatos(string carpeta)
 {
     cout << "Cargando datos desde archivos..." << endl;
@@ -14,14 +14,32 @@ bool Sistema::cargarDatos(string carpeta)
         return false;
     }
 
-    ifstream levantarEstaciones(carpeta + "/estaciones.txt");
     ifstream levantarBicicletas(carpeta + "/bicicletas.txt");
-    ifstream levantarViajes(carpeta + "/viajes.txt");
-    ifstream levantarCiclovias(carpeta + "/ciclovias.txt");
-
-    if (!levantarEstaciones || !levantarBicicletas || !levantarViajes || !levantarCiclovias)
+    if (!levantarBicicletas)
     {
         cout << "No se pudieron abrir los archivos de datos." << endl;
+        return false;
+    }
+
+    if (!cargarEstaciones(carpeta))
+        return false;
+    if (!cargarViajes(carpeta))
+        return false;
+    if (!cargarCiclovias(carpeta))
+        return false;
+
+    cargado = true;
+    cout << "Datos cargados correctamente." << endl;
+    return true;
+}
+
+// Carga los registros de estaciones en la tabla hash y el grafo.
+bool Sistema::cargarEstaciones(string carpeta)
+{
+    ifstream levantarEstaciones(carpeta + "/estaciones.txt");
+    if (!levantarEstaciones)
+    {
+        cout << "No se pudo abrir estaciones.txt." << endl;
         return false;
     }
 
@@ -59,6 +77,66 @@ bool Sistema::cargarDatos(string carpeta)
             }
         }
     }
+    return true;
+}
+
+// Carga los viajes en la lista enlazada.
+bool Sistema::cargarViajes(string carpeta)
+{
+    ifstream levantarViajes(carpeta + "/viajes.txt");
+    if (!levantarViajes)
+    {
+        cout << "No se pudo abrir viajes.txt." << endl;
+        return false;
+    }
+
+    int viajeId;
+    int biciId;
+    int dniUsuario;
+    string origenViaje;
+    string destinoViaje;
+    int fechaViaje;
+    int duracionMinutos;
+    bool leyendoViajes = true;
+    while (leyendoViajes)
+    {
+        levantarViajes >> viajeId;
+        if (levantarViajes.fail())
+        {
+            leyendoViajes = false;
+        }
+        else
+        {
+            levantarViajes >> biciId;
+            levantarViajes >> dniUsuario;
+            levantarViajes >> origenViaje;
+            levantarViajes >> destinoViaje;
+            levantarViajes >> fechaViaje;
+            levantarViajes >> duracionMinutos;
+
+            if (levantarViajes.fail())
+            {
+                cout << "Registro de viaje incompleto o invalido." << endl;
+                return false;
+            }
+
+            Viaje nuevoViaje(viajeId, biciId, dniUsuario, origenViaje,
+                             destinoViaje, fechaViaje, duracionMinutos);
+            viajes.insertarAlFinal(nuevoViaje);
+        }
+    }
+    return true;
+}
+
+// Carga las conexiones bidireccionales de ciclovías en el grafo.
+bool Sistema::cargarCiclovias(string carpeta)
+{
+    ifstream levantarCiclovias(carpeta + "/ciclovias.txt");
+    if (!levantarCiclovias)
+    {
+        cout << "No se pudo abrir ciclovias.txt." << endl;
+        return false;
+    }
 
     string estacionA;
     string estacionB;
@@ -86,9 +164,6 @@ bool Sistema::cargarDatos(string carpeta)
             }
         }
     }
-
-    cargado = true;
-    cout << "Datos cargados correctamente." << endl;
     return true;
 }
 
@@ -266,4 +341,30 @@ void Sistema::mostrarCaminoMinimo(string origen, string destino)
             cout << " -> ";
     }
     cout << endl;
+}
+
+// Cuenta los viajes cuya estación de origen y fecha coinciden con la consulta.
+int Sistema::contarViajesSalidos(string codigoEstacion, int fechaInicio, int fechaFin)
+{
+    size_t cantidadViajes = viajes.tamano();
+    if (cantidadViajes == 0)
+        return 0;
+
+    Viaje* viajesCargados = new Viaje[cantidadViajes];
+    viajes.copiarElementos(viajesCargados);
+
+    int cantidadEncontrada = 0;
+    size_t i;
+    for (i = 0; i < cantidadViajes; ++i)
+    {
+        if (viajesCargados[i].getEstacionOrigen() == codigoEstacion
+            && viajesCargados[i].getFecha() >= fechaInicio
+            && viajesCargados[i].getFecha() <= fechaFin)
+        {
+            ++cantidadEncontrada;
+        }
+    }
+
+    delete[] viajesCargados;
+    return cantidadEncontrada;
 }

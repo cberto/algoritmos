@@ -1,6 +1,6 @@
 # UML actual — TP Integrador
 
-Este diagrama describe las clases del TP y las estructuras reutilizables existentes al 11/11/2026. Distingue las estructuras ya integradas de las que todavía no usa `Sistema`.
+Este diagrama describe las clases del TP y las estructuras reutilizables existentes al 12/11/2026. Muestra los tipos almacenados en las estructuras integradas y distingue las que todavía no usa `Sistema`.
 
 ```mermaid
 classDiagram
@@ -9,8 +9,12 @@ classDiagram
     }
 
     class Sistema {
+        -cargarEstaciones(carpeta): bool
+        -cargarViajes(carpeta): bool
+        -cargarCiclovias(carpeta): bool
         -estaciones: TablaHash~string, Estacion~
         -ciclovias: Grafo~string~
+        -viajes: ListaEnlazada~Viaje~
         -cargado: bool
         +cargarDatos(carpeta): bool
         +resumen(): void
@@ -20,6 +24,7 @@ classDiagram
         +listarEstacionesOrdenadas(criterio): void
         +listarEstacionesBajaOcupacion(): void
         +mostrarCaminoMinimo(origen, destino): void
+        +contarViajesSalidos(codigoEstacion, fechaInicio, fechaFin): int
     }
 
     class Estacion {
@@ -52,6 +57,10 @@ classDiagram
         -estacionDestino: string
         -fecha: int
         -duracionMin: int
+        +Viaje()
+        +Viaje(viajeId, biciId, dniUsuario, origen, destino, fecha, duracion)
+        +getEstacionOrigen(): string
+        +getFecha(): int
     }
 
     class ListaEnlazada~T~ {
@@ -59,6 +68,7 @@ classDiagram
         +insertarAlFinal(dato)
         +eliminar(dato) bool
         +obtener(posicion, dato) bool
+        +copiarElementos(elementos[])
     }
 
     class Cola~T~ {
@@ -97,10 +107,12 @@ classDiagram
 
     Main ..> Sistema : utiliza
     Main ..> Estacion : muestra resultados
-    Sistema *-- TablaHash : estaciones por codigo
-    Sistema *-- Grafo : conexiones de ciclovia
+    Sistema *-- TablaHash~string, Estacion~ : codigo => Estacion
+    Sistema *-- Grafo~string~ : vertices identificados por codigo
+    Sistema *-- ListaEnlazada~Viaje~ : viajes cargados
     Sistema ..> Estacion : consulta y devuelve puntero
-    TablaHash ..> Estacion : almacena valores
+    TablaHash ..> Estacion : Valor almacenado
+    ListaEnlazada ..> Viaje : elementos almacenados
     Grafo ..> Cola : BFS
     Grafo ..> TablaHash : indice de vertices
     Grafo ..> ListaEnlazada : camino resultante
@@ -109,8 +121,10 @@ classDiagram
 ## Lectura del diagrama
 
 - `Main` representa la función libre `main()` de `src/main.cpp`; usa `Sistema` y muestra la estación obtenida.
-- `Sistema` contiene una `TablaHash` genérica y guarda las estaciones por código. La tabla administra sus nodos y almacena cada `Estacion` por valor.
+- `Sistema` contiene una `TablaHash<string, Estacion>`: la clave es el código de estación (`string`) y cada valor es un objeto `Estacion`.
 - `Sistema` mantiene un grafo genérico con los vértices de las estaciones y las conexiones bidireccionales de `ciclovias.txt`; usa BFS para mostrar el camino con menos tramos.
-- `Bicicleta` y `Viaje` aparecen porque sus clases están declaradas en los headers, pero sus operaciones siguen pendientes y aún no están integradas con `Sistema`.
+- `Grafo<string>` almacena los códigos de estación como vértices, no objetos `Estacion`.
+- `Sistema` conserva los viajes de `viajes.txt` en una `ListaEnlazada<Viaje>`; B1 consulta el origen y la fecha para contar los viajes dentro del rango solicitado.
+- `Bicicleta` todavía no está integrada con `Sistema`.
 - La cola, el min-heap y el ABB están implementados en `estructuras/`, pero todavía no se integran al sistema.
-- El diagrama representa la propiedad actual: `Sistema` contiene la tabla hash; la tabla posee sus nodos y guarda los valores de estación.
+- `Sistema` posee la tabla hash, el grafo y la lista; estas estructuras mantienen sus propios nodos y almacenan los tipos indicados en el diagrama.

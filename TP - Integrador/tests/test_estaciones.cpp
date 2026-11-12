@@ -122,6 +122,17 @@ static void probarCaminoMinimo()
     assert(texto.find("No existe un recorrido") != string::npos);
 }
 
+// Comprueba el conteo por origen y rango inclusivo de fechas.
+static void probarCantidadViajesSalidos()
+{
+    Sistema sistema;
+    assert(sistema.cargarDatos("data"));
+
+    assert(sistema.contarViajesSalidos("PLZ", 20260310, 20260315) == 2);
+    assert(sistema.contarViajesSalidos("PLZ", 20260311, 20260314) == 0);
+    assert(sistema.contarViajesSalidos("PAL", 20260311, 20260311) == 1);
+}
+
 // Ejecuta las pruebas del módulo de estaciones.
 int main()
 {
@@ -130,4 +141,5 @@ int main()
     probarOrdenamiento();
     probarOcupacionBaja();
     probarCaminoMinimo();
+    probarCantidadViajesSalidos();
 }

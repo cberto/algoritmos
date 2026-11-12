@@ -91,6 +91,18 @@ public:
         return true;
     }
 
+    // Copia los elementos de la lista en un arreglo.
+    void copiarElementos(T elementos[]) const
+    {
+        Nodo* actual = primero;
+        size_t i;
+        for (i = 0; i < cantidad; ++i)
+        {
+            elementos[i] = actual->dato;
+            actual = actual->siguiente;
+        }
+    }
+
     // Quita el primer elemento y lo devuelve en dato.
     bool eliminarPrimero(T& dato)
     {

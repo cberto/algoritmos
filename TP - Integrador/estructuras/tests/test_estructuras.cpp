@@ -63,6 +63,9 @@ static void probarLista()
     lista.insertarAlFinal(3);
     assert(lista.tamano() == 3);
     assert(lista.obtener(1, dato) && dato == 2);
+    int elementos[3];
+    lista.copiarElementos(elementos);
+    assert(elementos[0] == 1 && elementos[1] == 2 && elementos[2] == 3);
     assert(lista.eliminar(2));
     assert(!lista.eliminar(9));
     assert(lista.eliminarPrimero(dato) && dato == 1);
