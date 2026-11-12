@@ -368,3 +368,39 @@ int Sistema::contarViajesSalidos(string codigoEstacion, int fechaInicio, int fec
     delete[] viajesCargados;
     return cantidadEncontrada;
 }
+
+// Muestra los viajes asociados al DNI y suma sus duraciones.
+void Sistema::mostrarViajesPorDni(int dniUsuario)
+{
+    size_t cantidadViajes = viajes.tamano();
+    Viaje* viajesCargados = nullptr;
+    if (cantidadViajes > 0)
+    {
+        viajesCargados = new Viaje[cantidadViajes];
+        viajes.copiarElementos(viajesCargados);
+    }
+
+    bool encontroViajes = false;
+    int totalMinutos = 0;
+    size_t i;
+    for (i = 0; i < cantidadViajes; ++i)
+    {
+        if (viajesCargados[i].getDniUsuario() == dniUsuario)
+        {
+            cout << "Viaje: " << viajesCargados[i].getViajeId()
+                 << " | Bici: " << viajesCargados[i].getBiciId()
+                 << " | Origen: " << viajesCargados[i].getEstacionOrigen()
+                 << " | Destino: " << viajesCargados[i].getEstacionDestino()
+                 << " | Fecha: " << viajesCargados[i].getFecha()
+                 << " | Duracion: " << viajesCargados[i].getDuracionMin()
+                 << " minutos" << endl;
+            totalMinutos += viajesCargados[i].getDuracionMin();
+            encontroViajes = true;
+        }
+    }
+
+    if (!encontroViajes)
+        cout << "No se encontraron viajes para el DNI indicado." << endl;
+    cout << "Total de minutos pedaleados: " << totalMinutos << endl;
+    delete[] viajesCargados;
+}

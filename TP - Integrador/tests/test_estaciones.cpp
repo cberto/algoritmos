@@ -133,6 +133,31 @@ static void probarCantidadViajesSalidos()
     assert(sistema.contarViajesSalidos("PAL", 20260311, 20260311) == 1);
 }
 
+// Comprueba la lista de viajes por DNI y la suma de sus duraciones.
+static void probarViajesPorDni()
+{
+    Sistema sistema;
+    assert(sistema.cargarDatos("data"));
+
+    ostringstream datos;
+    streambuf* salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.mostrarViajesPorDni(30123456);
+    cout.rdbuf(salidaAnterior);
+
+    string texto = datos.str();
+    assert(texto.find("Viaje: 9001") != string::npos);
+    assert(texto.find("Viaje: 9003") != string::npos);
+    assert(texto.find("Total de minutos pedaleados: 43") != string::npos);
+
+    datos.str("");
+    salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.mostrarViajesPorDni(11111111);
+    cout.rdbuf(salidaAnterior);
+    texto = datos.str();
+    assert(texto.find("No se encontraron viajes") != string::npos);
+    assert(texto.find("Total de minutos pedaleados: 0") != string::npos);
+}
+
 // Ejecuta las pruebas del módulo de estaciones.
 int main()
 {
@@ -142,4 +167,5 @@ int main()
     probarOcupacionBaja();
     probarCaminoMinimo();
     probarCantidadViajesSalidos();
+    probarViajesPorDni();
 }

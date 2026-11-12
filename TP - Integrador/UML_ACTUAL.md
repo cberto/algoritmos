@@ -25,6 +25,7 @@ classDiagram
         +listarEstacionesBajaOcupacion(): void
         +mostrarCaminoMinimo(origen, destino): void
         +contarViajesSalidos(codigoEstacion, fechaInicio, fechaFin): int
+        +mostrarViajesPorDni(dniUsuario): void
     }
 
     class Estacion {
@@ -59,8 +60,13 @@ classDiagram
         -duracionMin: int
         +Viaje()
         +Viaje(viajeId, biciId, dniUsuario, origen, destino, fecha, duracion)
+        +getViajeId(): int
+        +getBiciId(): int
+        +getDniUsuario(): int
         +getEstacionOrigen(): string
+        +getEstacionDestino(): string
         +getFecha(): int
+        +getDuracionMin(): int
     }
 
     class ListaEnlazada~T~ {
@@ -124,7 +130,7 @@ classDiagram
 - `Sistema` contiene una `TablaHash<string, Estacion>`: la clave es el código de estación (`string`) y cada valor es un objeto `Estacion`.
 - `Sistema` mantiene un grafo genérico con los vértices de las estaciones y las conexiones bidireccionales de `ciclovias.txt`; usa BFS para mostrar el camino con menos tramos.
 - `Grafo<string>` almacena los códigos de estación como vértices, no objetos `Estacion`.
-- `Sistema` conserva los viajes de `viajes.txt` en una `ListaEnlazada<Viaje>`; B1 consulta el origen y la fecha para contar los viajes dentro del rango solicitado.
+- `Sistema` conserva los viajes de `viajes.txt` en una `ListaEnlazada<Viaje>`; B1 consulta el origen y la fecha para contar los viajes dentro del rango solicitado, y B2 los consulta por DNI y suma las duraciones.
 - `Bicicleta` todavía no está integrada con `Sistema`.
 - La cola, el min-heap y el ABB están implementados en `estructuras/`, pero todavía no se integran al sistema.
 - `Sistema` posee la tabla hash, el grafo y la lista; estas estructuras mantienen sus propios nodos y almacenan los tipos indicados en el diagrama.

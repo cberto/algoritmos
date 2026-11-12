@@ -61,6 +61,9 @@ public:
 
     // Cuenta los viajes que salieron de una estación en el rango inclusivo.
     int contarViajesSalidos(string codigoEstacion, int fechaInicio, int fechaFin);
+
+    // Muestra los viajes de un usuario y el total de minutos pedaleados.
+    void mostrarViajesPorDni(int dniUsuario);
 };
 
 #endif

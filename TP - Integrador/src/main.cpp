@@ -55,7 +55,7 @@ static void mostrarMenu()
          << "16. Camino minimo por ciclovias\n"
          << "----- Modulo B: Viajes y colas -----\n"
          << "20. Viajes por estacion y fechas\n"
-         << "21. Viajes por DNI                       [TODO]\n"
+         << "21. Viajes por DNI\n"
          << "22. Bicicletas con mas de X km           [TODO]\n"
          << "23. Cola de espera por estacion          [TODO]\n"
          << "24. Taller (min-heap)                    [TODO]\n"
@@ -156,6 +156,19 @@ int main()
                 int cantidadViajes = sistema.contarViajesSalidos(
                     codigoEstacion, fechaInicio, fechaFin);
                 cout << "Cantidad de viajes: " << cantidadViajes << endl;
+            }
+            break;
+        }
+        case 21:
+        {
+            int dniUsuario = leer<int>("DNI del usuario: ");
+            if (dniUsuario <= 0)
+            {
+                cout << "El DNI debe ser positivo." << endl;
+            }
+            else
+            {
+                sistema.mostrarViajesPorDni(dniUsuario);
             }
             break;
         }

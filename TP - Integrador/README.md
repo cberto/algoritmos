@@ -1,6 +1,6 @@
 # TP Integrador — Sistema de Bicicletas Públicas
 
-Implementación parcial del sistema descrito en `TP2C2026.pdf`. El módulo de estaciones carga, busca, agrega y elimina estaciones, permite listarlas ordenadas por capacidad o bicicletas disponibles, filtra las que tienen menos del 20% de ocupación y calcula caminos mínimos por ciclovías. El punto B1 cuenta los viajes que salieron de una estación dentro de un rango inclusivo de fechas. Se usan estructuras desacopladas para la tabla hash, el grafo y la lista de viajes; las demás opciones del menú siguen pendientes.
+Implementación parcial del sistema descrito en `TP2C2026.pdf`. El módulo de estaciones carga, busca, agrega y elimina estaciones, permite listarlas ordenadas por capacidad o bicicletas disponibles, filtra las que tienen menos del 20% de ocupación y calcula caminos mínimos por ciclovías. En el módulo B, B1 cuenta viajes por estación y rango de fechas, y B2 muestra viajes por DNI y suma sus duraciones. Se usan estructuras desacopladas para la tabla hash, el grafo y la lista de viajes; las demás opciones del menú siguen pendientes.
 
 ## Compilar / correr
 
@@ -44,7 +44,16 @@ La carga se organiza en subtareas: `cargarDatos` coordina y los métodos privado
 
 ## Complejidad y elección de estructuras
 
-Sea **S** la cantidad de estaciones, **V** la cantidad de vértices del grafo, **E** la cantidad de conexiones de ciclovía, **T** la cantidad de viajes y **B** la cantidad de buckets de la tabla hash. La tabla hash usa encadenamiento y tiene 11 buckets en esta implementación: sus operaciones son **O(1) promedio** y **O(n) en el peor caso**, si muchas claves caen en el mismo bucket.
+Símbolos usados en el análisis:
+
+- **S**: cantidad de estaciones.
+- **V**: cantidad de vértices del grafo. En este TP hay un vértice por estación, por eso **V = S**.
+- **E**: cantidad de conexiones de ciclovía.
+- **T**: cantidad de viajes.
+- **B**: cantidad de buckets (posiciones) de la tabla hash; en esta implementación es 11.
+- **n**: cantidad de elementos guardados en la tabla hash.
+
+La tabla hash resuelve colisiones mediante encadenamiento. Sus operaciones son **O(1) en promedio** y **O(n) en el peor caso**, si muchas claves terminan en el mismo bucket.
 
 ### Módulo A — Gestión de estaciones
 
@@ -63,5 +72,7 @@ Sea **S** la cantidad de estaciones, **V** la cantidad de vértices del grafo, *
 ### Módulo B — Viajes y colas de espera
 
 1. **Contar viajes que salieron de una estación en un rango de fechas — O(T) tiempo y O(T) espacio auxiliar por consulta.** Los viajes se conservan en una lista enlazada: permite agregarlos al final en O(1) sin conocer de antemano cuántos habrá. En cada consulta se copian y recorren los registros una vez para comparar origen y fechas, por eso el tiempo es O(T) y el arreglo temporal usa O(T) espacio.
+
+2. **Buscar viajes por DNI y sumar los minutos — O(T) tiempo y O(T) espacio auxiliar por consulta.** Se usa la misma lista enlazada para conservar cada viaje completo sin acoplar la estructura al dominio. La consulta recorre todos los registros, muestra los coincidentes y acumula sus duraciones; la copia temporal permite procesarlos con un recorrido lineal.
 
 Ver [ESTADO_ACTUAL.md](./ESTADO_ACTUAL.md) para el relevamiento del TP y [UML_ACTUAL.md](./UML_ACTUAL.md) para el diagrama vigente.
