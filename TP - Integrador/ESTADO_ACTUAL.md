@@ -1,52 +1,59 @@
 # TP Integrador — estado actual
 
-**Revisión:** 11/11/2026 — implementación inicial de los puntos 1–3 del módulo A.
+**Revisión:** 12/11/2026 — módulo A completo y módulo B implementado.
 
 ## Resumen
 
-El proyecto tiene un esqueleto de menú. Los tres primeros puntos del módulo A —mostrar, agregar y eliminar estaciones— ya funcionan a través de `Sistema` y una tabla hash genérica. El resto de los módulos del enunciado todavía no está implementado.
+El menú coordina las operaciones implementadas del módulo A —mostrar, agregar y eliminar estaciones, ordenarlas, filtrar por ocupación y encontrar caminos mínimos por ciclovías— a través de `Sistema` y estructuras genéricas. El módulo B está implementado: incluye consultas de viajes, bicicletas por kilometraje, colas de espera y prioridad para el taller. Los módulos C y D siguen pendientes.
 
-La carpeta [estructuras/](./estructuras/) contiene implementaciones separadas del dominio. `Sistema` usa `TablaHash<string, Estacion>` para indexar estaciones; las demás estructuras siguen pendientes de integración.
+La carpeta [estructuras/](./estructuras/) contiene implementaciones desacopladas del dominio. `Sistema` usa `TablaHash<string, Estacion>` para indexar estaciones, `Grafo<string>` para las ciclovías y listas enlazadas para conservar bicicletas y viajes.
+
+La carga de datos está dividida en subtareas privadas de `Sistema`: `cargarDatos` coordina y cada método auxiliar procesa estaciones, bicicletas, viajes o ciclovías por separado.
+
+## Criterios de desarrollo acordados
+
+- Avanzar punto por punto según el enunciado. Al terminar cada punto, detenerse, mostrar qué se implementó y esperar la revisión del usuario antes de empezar el siguiente.
+- Mantener las estructuras genéricas en `estructuras/`: no deben conocer las clases del TP. `Sistema` conecta esas estructuras con los datos del dominio.
+- Implementar a mano las estructuras y algoritmos pedidos, usando las estructuras vistas en la cursada y respetando las restricciones del enunciado. No agregar contenedores STL para resolverlos.
+- Mantener un estilo didáctico: nombres claros, variables intermedias, lecturas separadas y comentarios breves que expliquen la idea central del algoritmo que resuelve cada punto.
+- Evitar recursos que el usuario indicó que no se vieron o que dificultan seguir el código: `explicit`, parámetros `const`, listas de inicialización, `operator=`, ciclos `for (;;)` y expresiones de lectura encadenadas dentro de condiciones.
+- En los ciclos `for`, declarar el índice antes del ciclo y escribir el recorrido de forma explícita en el cuerpo cuando corresponda. Usar llaves y `using namespace std;`.
+- Preferir interacciones sencillas con `cout` antes que pasar `ostream&` a las funciones de presentación o carga.
+- Después de cada punto, actualizar las pruebas y la documentación directamente relacionada. Verificar compilación y pruebas antes de presentar el resultado.
+
+## Forma de integrar un punto
+
+1. Revisar el enunciado del punto y las estructuras genéricas disponibles.
+2. Implementar la operación en `Sistema` usando las estructuras desacopladas, sin trasladar la lógica del problema a los contenedores.
+3. Conectar la operación con la opción correspondiente del menú.
+4. Probar el comportamiento normal y los casos límite relevantes; actualizar README, estado actual y UML si corresponde.
+5. Presentar el punto terminado y detenerse para recibir conformidad antes de continuar.
 
 ## Estado por componente
 
 | Componente | Estado observado |
 |---|---|
-| Menú | Se implementaron cargar estaciones, buscar, agregar y eliminar. Las demás opciones siguen marcadas como TODO. |
-| `Estacion` | Tiene constructores, código y presentación; la espera y otras operaciones del sistema siguen pendientes. |
-| `Bicicleta` y `Viaje` | Los atributos están declarados, pero sus operaciones siguen pendientes. |
+| Menú | Se implementaron la carga de estaciones, bicicletas, ciclovías y viajes, búsqueda, alta, baja, listado ordenado, filtro por ocupación, camino mínimo, consultas de viajes, filtro por kilometraje, cola de espera y taller con min-heap. Las opciones de los módulos C y D siguen marcadas como TODO. |
+| `Estacion` | Tiene constructores, código, capacidad, bicicletas disponibles, presentación y operaciones para retirar o recibir una bicicleta. |
+| `Viaje` | Se cargan sus registros. B1 consulta el origen y la fecha; B2 consulta el DNI, muestra los viajes coincidentes y suma sus duraciones. |
+| `Bicicleta` | Sus registros se cargan en una lista enlazada; B3 filtra por kilometraje y B5 envía bicicletas averiadas al taller según su prioridad. |
 | Hash de estaciones | `Sistema` utiliza `TablaHash<string, Estacion>` con encadenamiento. La estructura no conoce el tipo de estación y expone colisiones y factor de carga. |
-| Estructuras desacopladas | En `estructuras/` existen lista enlazada, cola, tabla hash, ABB, min-heap y grafo con BFS, más pruebas independientes. Solo la tabla hash está integrada con el módulo de estaciones. |
-| Carga de datos | Se abren los cuatro archivos, pero solo se procesan estaciones. Bicicletas, viajes y ciclovías están comentados. |
-| Módulo A | Implementados mostrar, agregar y eliminar. Pendientes: conexiones, ordenamiento, ocupación menor al 20 % y BFS. |
-| Módulo B | Pendiente: consultas de viajes, búsqueda por DNI, listado por kilometraje, cola de espera y min-heap del taller. |
+| Estructuras desacopladas | En `estructuras/` existen lista enlazada, cola, tabla hash, ABB, min-heap y grafo con BFS, más pruebas independientes. La tabla hash, el grafo, las listas enlazadas, las colas y el min-heap están integrados con los módulos implementados. |
+| Carga de datos | Se procesan los cuatro archivos: estaciones, bicicletas, viajes y conexiones de ciclovía. |
+| Módulo A | Implementados mostrar, agregar, eliminar, ordenamiento manual ascendente por capacidad o disponibilidad, filtro de ocupación menor al 20 % y camino mínimo por BFS. |
+| Módulo B | Implementados B1: cantidad de viajes que salieron de una estación en un rango inclusivo de fechas; B2: viajes de un DNI y total de minutos pedaleados; B3: bicicletas que superan el kilometraje indicado; B4: cola FIFO por estación; B5: min-heap del taller, con prioridades 1 a 3. |
 | Módulo C | Pendiente en este proyecto: ABB de bicicletas, búsqueda, recorrido inorder, conteo de averiadas y altura. |
 | Módulo D | Pendiente: enumeración de subconjuntos mediante backtracking. |
-| Entrega | El README actual no contiene análisis Big O ni resultados de colisiones/factor de carga. Hay pruebas automatizadas para las estructuras y para los primeros puntos de estaciones. El UML está en [UML_ACTUAL.md](./UML_ACTUAL.md). |
+| Entrega | El README contiene el análisis Big O de A y B1–B5. Las métricas de colisiones y factor de carga todavía no se informan en el programa. Hay pruebas automatizadas para las estructuras y los puntos implementados; el UML está en [UML_ACTUAL.md](./UML_ACTUAL.md). |
 
 ## Datos de ejemplo
 
-Los archivos actuales contienen 6 estaciones, 7 bicicletas, 5 viajes y 6 conexiones de ciclovía. La carga disponible solo incorpora las 6 estaciones.
+Los archivos actuales contienen 6 estaciones, 7 bicicletas, 5 viajes y 6 conexiones de ciclovía. La carga incorpora los registros de los cuatro archivos en las estructuras correspondientes.
 
 Con el hash actual, el tamaño fijo de 11 buckets y el orden del archivo de estaciones, los datos de ejemplo producen **1 colisión de inserción** y un factor de carga de **6/11 ≈ 0,55**. El programa todavía no informa estas métricas; habría que incorporarlas al resumen y documentarlas en el README.
 
-## Compilación comprobada
-
-La compilación del menú terminó correctamente sin warnings. `make test` comprueba la carga, búsqueda, presentación, alta, validación de datos, rechazo de duplicados y baja de estaciones.
-
-Durante la revisión se detectó que el `Makefile` listaba únicamente `src/main.cpp`, lo que impedía enlazar las implementaciones de `Sistema`. Se actualizó para incluir `src/sistema.cpp` y se verificó la compilación y una prueba de uso del menú.
-
-## Desacoplamiento y referencias de la cátedra
-
-La carpeta `estructuras/` separa las operaciones de los contenedores de los tipos del dominio. `Sistema` coordina `TablaHash` con `Estacion`; las otras estructuras se integrarán a medida que se implementen sus puntos del TP.
-
-En particular, el proyecto necesitará una tabla hash, una representación de grafo y BFS, una cola, un min-heap, un ABB y una solución de backtracking. Las estructuras manuales deben respetar la restricción del enunciado de no usar contenedores STL prohibidos (`vector`, `map`, `unordered_map`, `queue`, `priority_queue` y `set`).
-
-Como referencia de organización, [TP5 — `arbol.h`](../TP5-%20Arboles/arbol.h) y [TP5 — `arbol.cpp`](../TP5-%20Arboles/arbol.cpp) separan la interfaz del árbol de su implementación y del nodo. Ese ABB usa `Dato = int`, por lo que sirve como referencia de organización y manejo de memoria, no como estructura genérica lista para integrar. [TP3 — Solución](../TP3%20-%20Punteros%20%5BEntrega%2030.9.26%5D/Solución.md) sirve de apoyo para el trabajo con punteros y memoria dinámica.
-
 ## Próximos pasos sugeridos
 
-1. Implementar los puntos restantes del módulo A y conectar el grafo con las estaciones.
-2. Completar las clases de dominio y la carga de los cuatro archivos.
-3. Integrar cola, heap y ABB en sus módulos y habilitar las opciones del menú.
-4. Completar README, complejidades Big O y UML.
+1. Implementar los puntos del módulo C de a uno y con revisión.
+2. Implementar el módulo D.
+3. Completar README con complejidades Big O de los puntos restantes.
