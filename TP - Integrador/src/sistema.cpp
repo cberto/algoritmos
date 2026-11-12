@@ -229,6 +229,14 @@ bool Sistema::agregarEstacion(string codigo, string nombre, string barrio,
         estaciones.eliminar(codigo);
         return false;
     }
+
+    Cola<int> colaNueva;
+    if (!colasEspera.insertar(codigo, colaNueva))
+    {
+        ciclovias.eliminarVertice(codigo);
+        estaciones.eliminar(codigo);
+        return false;
+    }
     return true;
 }
 
@@ -239,6 +247,7 @@ bool Sistema::eliminarEstacion(string codigo)
         return false;
 
     ciclovias.eliminarVertice(codigo);
+    colasEspera.eliminar(codigo);
     return estaciones.eliminar(codigo);
 }
 
@@ -481,4 +490,71 @@ void Sistema::listarBicicletasMasKilometros(int kilometrosMinimos)
         cout << "No hay bicicletas con mas de " << kilometrosMinimos << " kilometros." << endl;
 
     delete[] bicicletasCargadas;
+}
+
+// Atiende el pedido o agrega el DNI al final de la cola de esa estación.
+void Sistema::solicitarBicicleta(string codigoEstacion, int dniUsuario)
+{
+    Estacion* estacion = estaciones.buscar(codigoEstacion);
+    if (estacion == nullptr)
+    {
+        cout << "Estacion no encontrada." << endl;
+        return;
+    }
+    if (dniUsuario <= 0)
+    {
+        cout << "El DNI debe ser positivo." << endl;
+        return;
+    }
+
+    Cola<int>* cola = colasEspera.buscar(codigoEstacion);
+    if (cola == nullptr)
+    {
+        cout << "No se encontro la cola de espera de la estacion." << endl;
+        return;
+    }
+
+    if (cola->vacia() && estacion->retirarBicicleta())
+    {
+        cout << "Bicicleta disponible para el usuario " << dniUsuario << "." << endl;
+    }
+    else
+    {
+        cola->encolar(dniUsuario);
+        cout << "No hay bicicletas disponibles. Usuario " << dniUsuario
+             << " agregado a la cola de espera." << endl;
+    }
+}
+
+// Devuelve una bicicleta al primero de la cola o aumenta la disponibilidad.
+void Sistema::devolverBicicleta(string codigoEstacion)
+{
+    Estacion* estacion = estaciones.buscar(codigoEstacion);
+    if (estacion == nullptr)
+    {
+        cout << "Estacion no encontrada." << endl;
+        return;
+    }
+
+    Cola<int>* cola = colasEspera.buscar(codigoEstacion);
+    if (cola == nullptr)
+    {
+        cout << "No se encontro la cola de espera de la estacion." << endl;
+        return;
+    }
+
+    int dniUsuario;
+    if (cola->desencolar(dniUsuario))
+    {
+        cout << "Bicicleta asignada al primer usuario en espera: "
+             << dniUsuario << "." << endl;
+    }
+    else if (estacion->recibirBicicleta())
+    {
+        cout << "Bicicleta devuelta a la estacion." << endl;
+    }
+    else
+    {
+        cout << "La estacion ya esta completa." << endl;
+    }
 }

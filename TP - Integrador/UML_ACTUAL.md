@@ -15,6 +15,7 @@ classDiagram
         -cargarCiclovias(carpeta): bool
         -estaciones: TablaHash~string, Estacion~
         -ciclovias: Grafo~string~
+        -colasEspera: TablaHash~string, Cola<int>~
         -bicicletas: ListaEnlazada~Bicicleta~
         -viajes: ListaEnlazada~Viaje~
         -cargado: bool
@@ -29,6 +30,8 @@ classDiagram
         +contarViajesSalidos(codigoEstacion, fechaInicio, fechaFin): int
         +mostrarViajesPorDni(dniUsuario): void
         +listarBicicletasMasKilometros(kilometrosMinimos): void
+        +solicitarBicicleta(codigoEstacion, dniUsuario): void
+        +devolverBicicleta(codigoEstacion): void
     }
 
     class Estacion {
@@ -42,6 +45,8 @@ classDiagram
         +getCodigo(): string
         +getCapacidadAnclajes(): int
         +getBicisDisponibles(): int
+        +retirarBicicleta(): bool
+        +recibirBicicleta(): bool
         +mostrarEstacion(): void
     }
 
@@ -126,6 +131,7 @@ classDiagram
     Main ..> Estacion : muestra resultados
     Sistema *-- TablaHash~string, Estacion~ : codigo => Estacion
     Sistema *-- Grafo~string~ : vertices identificados por codigo
+    Sistema *-- TablaHash~string, Cola<int>~ : codigo => cola de espera
     Sistema *-- ListaEnlazada~Bicicleta~ : bicicletas cargadas
     Sistema *-- ListaEnlazada~Viaje~ : viajes cargados
     Sistema ..> Estacion : consulta y devuelve puntero
@@ -145,5 +151,6 @@ classDiagram
 - `Grafo<string>` almacena los códigos de estación como vértices, no objetos `Estacion`.
 - `Sistema` conserva los viajes de `viajes.txt` en una `ListaEnlazada<Viaje>`; B1 consulta el origen y la fecha para contar los viajes dentro del rango solicitado, y B2 los consulta por DNI y suma las duraciones.
 - `Sistema` conserva las bicicletas de `bicicletas.txt` en una `ListaEnlazada<Bicicleta>`; B3 recorre la lista para mostrar las que superan el kilometraje ingresado.
+- `Sistema` mantiene una cola FIFO por estación, indexada por código en una tabla hash. Al devolver una bicicleta, la entrega al primer DNI en espera; si no hay nadie esperando, aumenta la disponibilidad de la estación.
 - La cola, el min-heap y el ABB están implementados en `estructuras/`, pero todavía no se integran al sistema.
 - `Sistema` posee la tabla hash, el grafo y la lista; estas estructuras mantienen sus propios nodos y almacenan los tipos indicados en el diagrama.

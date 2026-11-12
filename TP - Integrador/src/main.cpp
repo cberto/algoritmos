@@ -57,7 +57,7 @@ static void mostrarMenu()
          << "20. Viajes por estacion y fechas\n"
          << "21. Viajes por DNI\n"
          << "22. Bicicletas con mas de X km\n"
-         << "23. Cola de espera por estacion          [TODO]\n"
+         << "23. Espera: solicitar o devolver bicicleta\n"
          << "24. Taller (min-heap)                    [TODO]\n"
          << "----- Modulo C: ABB bicicletas -----\n"
          << "30. Buscar bicicleta por ID              [TODO]\n"
@@ -176,6 +176,26 @@ int main()
         {
             int kilometrosMinimos = leer<int>("Kilometraje minimo: ");
             sistema.listarBicicletasMasKilometros(kilometrosMinimos);
+            break;
+        }
+        case 23:
+        {
+            int accion = leer<int>("Solicitar bicicleta (1) o registrar devolucion (2): ");
+            if (accion == 1)
+            {
+                string codigoEstacion = leer<string>("Codigo de la estacion: ");
+                int dniUsuario = leer<int>("DNI del usuario: ");
+                sistema.solicitarBicicleta(codigoEstacion, dniUsuario);
+            }
+            else if (accion == 2)
+            {
+                string codigoEstacion = leer<string>("Codigo de la estacion: ");
+                sistema.devolverBicicleta(codigoEstacion);
+            }
+            else
+            {
+                cout << "Opcion invalida." << endl;
+            }
             break;
         }
         default:

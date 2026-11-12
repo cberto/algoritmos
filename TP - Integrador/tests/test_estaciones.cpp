@@ -190,6 +190,44 @@ static void probarBicicletasPorKilometraje()
     assert(texto.find("debe ser cero o mayor") != string::npos);
 }
 
+// Comprueba la espera FIFO independiente para cada estación.
+static void probarColaDeEspera()
+{
+    Sistema sistema;
+    assert(sistema.agregarEstacion("Q1", "EstacionUno", "Barrio", 2, 1));
+    assert(sistema.agregarEstacion("Q2", "EstacionDos", "Barrio", 2, 0));
+
+    ostringstream datos;
+    streambuf* salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.solicitarBicicleta("Q1", 100);
+    sistema.solicitarBicicleta("Q1", 101);
+    sistema.solicitarBicicleta("Q1", 102);
+    sistema.solicitarBicicleta("Q2", 201);
+
+    assert(sistema.buscarEstacion("Q1")->getBicisDisponibles() == 0);
+    sistema.devolverBicicleta("Q1");
+    assert(sistema.buscarEstacion("Q1")->getBicisDisponibles() == 0);
+    sistema.devolverBicicleta("Q1");
+    assert(sistema.buscarEstacion("Q1")->getBicisDisponibles() == 0);
+    sistema.devolverBicicleta("Q1");
+    assert(sistema.buscarEstacion("Q1")->getBicisDisponibles() == 1);
+    sistema.devolverBicicleta("Q1");
+    assert(sistema.buscarEstacion("Q1")->getBicisDisponibles() == 2);
+    sistema.devolverBicicleta("Q1");
+    sistema.devolverBicicleta("Q2");
+    cout.rdbuf(salidaAnterior);
+
+    string texto = datos.str();
+    size_t usuario101 = texto.find("asignada al primer usuario en espera: 101");
+    size_t usuario102 = texto.find("asignada al primer usuario en espera: 102");
+    size_t usuario201 = texto.find("asignada al primer usuario en espera: 201");
+    assert(usuario101 != string::npos);
+    assert(usuario102 != string::npos);
+    assert(usuario201 != string::npos);
+    assert(usuario101 < usuario102);
+    assert(texto.find("La estacion ya esta completa.") != string::npos);
+}
+
 // Ejecuta las pruebas del módulo de estaciones.
 int main()
 {
@@ -201,4 +239,5 @@ int main()
     probarCantidadViajesSalidos();
     probarViajesPorDni();
     probarBicicletasPorKilometraje();
+    probarColaDeEspera();
 }

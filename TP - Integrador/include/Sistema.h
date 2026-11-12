@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Bicicleta.h"
+#include "Cola.h"
 #include "Estacion.h"
 #include "Grafo.h"
 #include "ListaEnlazada.h"
@@ -16,6 +17,7 @@ class Sistema
 private:
     TablaHash<string, Estacion> estaciones;
     Grafo<string> ciclovias;
+    TablaHash<string, Cola<int>> colasEspera;
     ListaEnlazada<Bicicleta> bicicletas;
     ListaEnlazada<Viaje> viajes;
     bool cargado;
@@ -72,6 +74,12 @@ public:
 
     // Lista las bicicletas que superan el kilometraje indicado.
     void listarBicicletasMasKilometros(int kilometrosMinimos);
+
+    // Atiende un pedido de bicicleta o lo agrega a la espera.
+    void solicitarBicicleta(string codigoEstacion, int dniUsuario);
+
+    // Registra una devolución y atiende primero la cola de la estación.
+    void devolverBicicleta(string codigoEstacion);
 };
 
 #endif

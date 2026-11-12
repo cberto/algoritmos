@@ -55,6 +55,24 @@ public:
         return bicisDisponibles;
     }
 
+    // Retira una bicicleta disponible de la estación.
+    bool retirarBicicleta()
+    {
+        if (bicisDisponibles == 0)
+            return false;
+        --bicisDisponibles;
+        return true;
+    }
+
+    // Recibe una bicicleta si queda capacidad libre.
+    bool recibirBicicleta()
+    {
+        if (bicisDisponibles >= capacidadAnclajes)
+            return false;
+        ++bicisDisponibles;
+        return true;
+    }
+
     // Muestra los datos de la estación.
     void mostrarEstacion() const
     {
