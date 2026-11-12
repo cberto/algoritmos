@@ -10,10 +10,12 @@ classDiagram
 
     class Sistema {
         -cargarEstaciones(carpeta): bool
+        -cargarBicicletas(carpeta): bool
         -cargarViajes(carpeta): bool
         -cargarCiclovias(carpeta): bool
         -estaciones: TablaHash~string, Estacion~
         -ciclovias: Grafo~string~
+        -bicicletas: ListaEnlazada~Bicicleta~
         -viajes: ListaEnlazada~Viaje~
         -cargado: bool
         +cargarDatos(carpeta): bool
@@ -26,6 +28,7 @@ classDiagram
         +mostrarCaminoMinimo(origen, destino): void
         +contarViajesSalidos(codigoEstacion, fechaInicio, fechaFin): int
         +mostrarViajesPorDni(dniUsuario): void
+        +listarBicicletasMasKilometros(kilometrosMinimos): void
     }
 
     class Estacion {
@@ -48,6 +51,14 @@ classDiagram
         -tipo: string
         -estado: string
         -kilometros: int
+        +Bicicleta()
+        +Bicicleta(biciId, codigoEstacion, tipo, estado, kilometros)
+        +getBiciId(): int
+        +getCodigoEstacion(): string
+        +getTipo(): string
+        +getEstado(): string
+        +getKilometros(): int
+        +mostrarBicicleta(): void
     }
 
     class Viaje {
@@ -115,10 +126,12 @@ classDiagram
     Main ..> Estacion : muestra resultados
     Sistema *-- TablaHash~string, Estacion~ : codigo => Estacion
     Sistema *-- Grafo~string~ : vertices identificados por codigo
+    Sistema *-- ListaEnlazada~Bicicleta~ : bicicletas cargadas
     Sistema *-- ListaEnlazada~Viaje~ : viajes cargados
     Sistema ..> Estacion : consulta y devuelve puntero
     TablaHash ..> Estacion : Valor almacenado
     ListaEnlazada ..> Viaje : elementos almacenados
+    ListaEnlazada ..> Bicicleta : elementos almacenados
     Grafo ..> Cola : BFS
     Grafo ..> TablaHash : indice de vertices
     Grafo ..> ListaEnlazada : camino resultante
@@ -131,6 +144,6 @@ classDiagram
 - `Sistema` mantiene un grafo genérico con los vértices de las estaciones y las conexiones bidireccionales de `ciclovias.txt`; usa BFS para mostrar el camino con menos tramos.
 - `Grafo<string>` almacena los códigos de estación como vértices, no objetos `Estacion`.
 - `Sistema` conserva los viajes de `viajes.txt` en una `ListaEnlazada<Viaje>`; B1 consulta el origen y la fecha para contar los viajes dentro del rango solicitado, y B2 los consulta por DNI y suma las duraciones.
-- `Bicicleta` todavía no está integrada con `Sistema`.
+- `Sistema` conserva las bicicletas de `bicicletas.txt` en una `ListaEnlazada<Bicicleta>`; B3 recorre la lista para mostrar las que superan el kilometraje ingresado.
 - La cola, el min-heap y el ABB están implementados en `estructuras/`, pero todavía no se integran al sistema.
 - `Sistema` posee la tabla hash, el grafo y la lista; estas estructuras mantienen sus propios nodos y almacenan los tipos indicados en el diagrama.

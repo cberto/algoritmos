@@ -56,7 +56,7 @@ static void mostrarMenu()
          << "----- Modulo B: Viajes y colas -----\n"
          << "20. Viajes por estacion y fechas\n"
          << "21. Viajes por DNI\n"
-         << "22. Bicicletas con mas de X km           [TODO]\n"
+         << "22. Bicicletas con mas de X km\n"
          << "23. Cola de espera por estacion          [TODO]\n"
          << "24. Taller (min-heap)                    [TODO]\n"
          << "----- Modulo C: ABB bicicletas -----\n"
@@ -170,6 +170,12 @@ int main()
             {
                 sistema.mostrarViajesPorDni(dniUsuario);
             }
+            break;
+        }
+        case 22:
+        {
+            int kilometrosMinimos = leer<int>("Kilometraje minimo: ");
+            sistema.listarBicicletasMasKilometros(kilometrosMinimos);
             break;
         }
         default:

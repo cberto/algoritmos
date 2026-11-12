@@ -158,6 +158,38 @@ static void probarViajesPorDni()
     assert(texto.find("Total de minutos pedaleados: 0") != string::npos);
 }
 
+// Comprueba el filtro estricto de kilometraje y los casos sin resultados.
+static void probarBicicletasPorKilometraje()
+{
+    Sistema sistema;
+    assert(sistema.cargarDatos("data"));
+
+    ostringstream datos;
+    streambuf* salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.listarBicicletasMasKilometros(1500);
+    cout.rdbuf(salidaAnterior);
+
+    string texto = datos.str();
+    assert(texto.find("Bicicleta: 502") != string::npos);
+    assert(texto.find("Bicicleta: 504") != string::npos);
+    assert(texto.find("Bicicleta: 505") != string::npos);
+    assert(texto.find("Bicicleta: 507") == string::npos);
+
+    datos.str("");
+    salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.listarBicicletasMasKilometros(5000);
+    cout.rdbuf(salidaAnterior);
+    texto = datos.str();
+    assert(texto.find("No hay bicicletas con mas de 5000 kilometros") != string::npos);
+
+    datos.str("");
+    salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.listarBicicletasMasKilometros(-1);
+    cout.rdbuf(salidaAnterior);
+    texto = datos.str();
+    assert(texto.find("debe ser cero o mayor") != string::npos);
+}
+
 // Ejecuta las pruebas del módulo de estaciones.
 int main()
 {
@@ -168,4 +200,5 @@ int main()
     probarCaminoMinimo();
     probarCantidadViajesSalidos();
     probarViajesPorDni();
+    probarBicicletasPorKilometraje();
 }

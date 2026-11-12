@@ -14,14 +14,9 @@ bool Sistema::cargarDatos(string carpeta)
         return false;
     }
 
-    ifstream levantarBicicletas(carpeta + "/bicicletas.txt");
-    if (!levantarBicicletas)
-    {
-        cout << "No se pudieron abrir los archivos de datos." << endl;
-        return false;
-    }
-
     if (!cargarEstaciones(carpeta))
+        return false;
+    if (!cargarBicicletas(carpeta))
         return false;
     if (!cargarViajes(carpeta))
         return false;
@@ -75,6 +70,50 @@ bool Sistema::cargarEstaciones(string carpeta)
                 cout << "Estacion invalida o repetida: " << codigo << endl;
                 return false;
             }
+        }
+    }
+    return true;
+}
+
+// Carga las bicicletas en la lista enlazada.
+bool Sistema::cargarBicicletas(string carpeta)
+{
+    ifstream levantarBicicletas(carpeta + "/bicicletas.txt");
+    if (!levantarBicicletas)
+    {
+        cout << "No se pudo abrir bicicletas.txt." << endl;
+        return false;
+    }
+
+    int biciId;
+    string codigoEstacion;
+    string tipo;
+    string estado;
+    int kilometros;
+    bool leyendoBicicletas = true;
+    while (leyendoBicicletas)
+    {
+        levantarBicicletas >> biciId;
+        if (levantarBicicletas.fail())
+        {
+            leyendoBicicletas = false;
+        }
+        else
+        {
+            levantarBicicletas >> codigoEstacion;
+            levantarBicicletas >> tipo;
+            levantarBicicletas >> estado;
+            levantarBicicletas >> kilometros;
+
+            if (levantarBicicletas.fail())
+            {
+                cout << "Registro de bicicleta incompleto o invalido." << endl;
+                return false;
+            }
+
+            Bicicleta nuevaBicicleta(biciId, codigoEstacion, tipo,
+                                     estado, kilometros);
+            bicicletas.insertarAlFinal(nuevaBicicleta);
         }
     }
     return true;
@@ -403,4 +442,43 @@ void Sistema::mostrarViajesPorDni(int dniUsuario)
         cout << "No se encontraron viajes para el DNI indicado." << endl;
     cout << "Total de minutos pedaleados: " << totalMinutos << endl;
     delete[] viajesCargados;
+}
+
+// Lista las bicicletas que superan el kilometraje indicado.
+void Sistema::listarBicicletasMasKilometros(int kilometrosMinimos)
+{
+    if (kilometrosMinimos < 0)
+    {
+        cout << "El kilometraje debe ser cero o mayor." << endl;
+        return;
+    }
+
+    size_t cantidadBicicletas = bicicletas.tamano();
+    if (cantidadBicicletas == 0)
+    {
+        cout << "No hay bicicletas cargadas." << endl;
+        return;
+    }
+
+    Bicicleta* bicicletasCargadas = new Bicicleta[cantidadBicicletas];
+    bicicletas.copiarElementos(bicicletasCargadas);
+
+    bool encontroBicicletas = false;
+    size_t i;
+    for (i = 0; i < cantidadBicicletas; ++i)
+    {
+        if (bicicletasCargadas[i].getKilometros() > kilometrosMinimos)
+        {
+            if (!encontroBicicletas)
+                cout << "Bicicletas con mas de " << kilometrosMinimos << " kilometros:" << endl;
+            bicicletasCargadas[i].mostrarBicicleta();
+            cout << "------------------------------" << endl;
+            encontroBicicletas = true;
+        }
+    }
+
+    if (!encontroBicicletas)
+        cout << "No hay bicicletas con mas de " << kilometrosMinimos << " kilometros." << endl;
+
+    delete[] bicicletasCargadas;
 }

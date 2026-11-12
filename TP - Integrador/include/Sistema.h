@@ -2,6 +2,7 @@
 #define SISTEMA_H
 
 #include <string>
+#include "Bicicleta.h"
 #include "Estacion.h"
 #include "Grafo.h"
 #include "ListaEnlazada.h"
@@ -15,11 +16,15 @@ class Sistema
 private:
     TablaHash<string, Estacion> estaciones;
     Grafo<string> ciclovias;
+    ListaEnlazada<Bicicleta> bicicletas;
     ListaEnlazada<Viaje> viajes;
     bool cargado;
 
     // Carga las estaciones desde su archivo.
     bool cargarEstaciones(string carpeta);
+
+    // Carga las bicicletas desde su archivo.
+    bool cargarBicicletas(string carpeta);
 
     // Carga los viajes desde su archivo.
     bool cargarViajes(string carpeta);
@@ -64,6 +69,9 @@ public:
 
     // Muestra los viajes de un usuario y el total de minutos pedaleados.
     void mostrarViajesPorDni(int dniUsuario);
+
+    // Lista las bicicletas que superan el kilometraje indicado.
+    void listarBicicletasMasKilometros(int kilometrosMinimos);
 };
 
 #endif
