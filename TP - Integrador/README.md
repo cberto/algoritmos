@@ -20,7 +20,7 @@ g++ -std=c++17 -Wall -Wextra -Iinclude src/*.cpp -o bicis
 
 El programa compila sin warnings con esos flags. Hay que ejecutarlo desde `TP - Integrador/`, porque la opción 1 lee los archivos de `data/` con ruta relativa.
 
-En VS Code o Cursor, `Cmd+Shift+B` (`Ctrl+Shift+B` en Windows/Linux) ejecuta la tarea "Compilar TP Integrador", que genera `src/output/main`. En `COMPILAR.md` hay alternativas con CMake y scripts para Windows.
+En `COMPILAR.md` hay instrucciones detalladas por sistema, con alternativas usando CMake y los scripts para Windows.
 
 ### Memoria
 
@@ -299,7 +299,7 @@ Las bicicletas se guardan en un **árbol binario de búsqueda ordenado por `bici
 
 | Operación | Complejidad |
 | --- | --- |
-| Insertar / Buscar / Eliminar | O(h): O(log n) si está balanceado, O(n) si está degenerado |
+| Insertar / Buscar / Eliminar | O(h): O(log n) si está balanceado, O(n) si está desbalanceado |
 | Listar inorder | O(n) |
 | Contar averiadas | O(n) |
 | Altura | O(n) |
@@ -311,7 +311,7 @@ Además, se implementó **eliminar una bicicleta** (el opcional, opción 34; no 
 
 ### Pregunta de análisis: ¿qué pasa si las bicicletas se cargan ordenadas por ID?
 
-El árbol **degenera en una lista**: cada bicicleta nueva es mayor que todas las anteriores, así que siempre se inserta como hijo derecho del último nodo. La altura queda en **n − 1**, la máxima posible, y la búsqueda pasa de O(log n) a **O(n)**.
+El árbol **queda desbalanceado, como una lista**: cada bicicleta nueva es mayor que todas las anteriores, así que siempre se inserta como hijo derecho del último nodo. La altura queda en **n − 1**, la máxima posible, y la búsqueda pasa de O(log n) a **O(n)**.
 
 Ejemplo con 5 bicicletas insertadas en orden (501, 502, 503, 504, 505):
 
@@ -329,7 +329,7 @@ Cargadas ordenadas (altura 4)      Cargadas en otro orden: 503, 501, 504, 502, 5
         505
 ```
 
-Buscar la 505 cuesta **5 comparaciones** en el árbol degenerado y **3** en el otro. Con 1000 bicicletas la diferencia sería de 1000 comparaciones contra unas 10.
+Buscar la 505 cuesta **5 comparaciones** en el árbol desbalanceado y **3** en el otro. Con 1000 bicicletas la diferencia sería de 1000 comparaciones contra unas 10.
 
 Con los datos de prueba pasa exactamente esto: `data/bicicletas.txt` tiene los IDs 501 a 507 en orden, y la opción 32 muestra **altura 6** (n − 1 con n = 7).
 

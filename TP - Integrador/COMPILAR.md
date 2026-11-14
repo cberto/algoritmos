@@ -5,6 +5,7 @@ Esta guía permite preparar el entorno, compilar y ejecutar el proyecto en Windo
 ## Qué incluye esta base
 
 - `CMakeLists.txt`: configuración compartida para los tres sistemas.
+- `Makefile`: compilación directa con `make` en Linux y macOS, sin necesidad de CMake.
 - `src/main.cpp`: punto de entrada del programa.
 - `src/Sistema.cpp`: implementación del sistema, incluida en la compilación.
 - `include/`: carpeta para los encabezados `.h` o `.hpp`.
@@ -27,6 +28,24 @@ Si ya instalaste las herramientas, podés configurar y compilar con un solo coma
 En Windows, `compilar.bat` prepara las herramientas automáticamente; solo `compilar-cmake.bat` requiere una terminal de desarrollo de Visual Studio. En Linux y macOS, `compilar.sh` detecta el sistema y elige el compilador correspondiente. Al invocarlo con `bash`, no hace falta darle permisos de ejecución.
 
 Los scripts localizan el proyecto a partir de su propia ubicación, por lo que también podés invocarlos por su ruta desde otra carpeta. Para ejecutar el programa con sus datos, usá la raíz del proyecto como directorio de trabajo.
+
+## Opción más simple en Linux y macOS: `make`
+
+Si tenés G++ (Linux) o las Command Line Tools (macOS) instaladas, el proyecto incluye un `Makefile` que compila **sin necesidad de CMake**. Es el camino más corto. Desde la raíz del proyecto:
+
+```bash
+make        # compila y genera el ejecutable ./bicis
+make run    # compila si hace falta y lo ejecuta
+make clean  # borra el ejecutable
+```
+
+Usa `g++ -std=c++17 -Wall -Wextra`, compila `src/*.cpp` con los encabezados de `include/` y deja el binario **`bicis`** en la raíz. En macOS, `g++` suele ser un alias de Apple Clang, así que funciona igual sin cambiar nada. Para ejecutarlo directamente:
+
+```bash
+./bicis
+```
+
+Recordá correrlo desde la raíz para que encuentre los archivos de `data/`. En Windows, en cambio, usá `compilar.bat` o CMake como se explica más abajo.
 
 ## Windows
 
@@ -191,8 +210,9 @@ Ejecutá el comando correspondiente desde la raíz:
 | --- | --- |
 | Windows (MSVC directo) | `.\compilar.bat` |
 | Windows (CMake opcional) | `.\compilar-cmake.bat` |
-| Linux | `cmake --build build/linux --parallel` |
-| macOS | `cmake --build build/macos --parallel` |
+| Linux y macOS (Make) | `make` |
+| Linux (CMake) | `cmake --build build/linux --parallel` |
+| macOS (CMake) | `cmake --build build/macos --parallel` |
 
 Volvé a ejecutar el programa después de que termine la compilación sin errores.
 
@@ -241,4 +261,9 @@ Para más detalles sobre configuración y compilación, consultá la [guía ofic
 
 ## Alcance de la verificación
 
-Se ejecutó `compilar.bat` y se comprobó que inicializa Visual Studio 2022 Community y llama a MSVC. La compilación se detuvo por errores del código actual: falta un `;` en `include/Estacion.h`, no se encuentra `mostrarMenu` en `src/main.cpp` y existen advertencias de ocultamiento de `cout` que `/WX` trata como errores. No se generó un ejecutable exitosamente. No se realizaron pruebas de las variantes CMake, Linux o macOS.
+El código compila **sin errores ni advertencias** con el estándar C++17. Se verificó en macOS compilando `src/main.cpp` y `src/Sistema.cpp` de varias formas, todas con resultado limpio:
+
+- `make` (usa `g++ -std=c++17 -Wall -Wextra`), que genera el ejecutable `./bicis`.
+- `g++` / Apple Clang directo con `-Wall -Wextra -Wpedantic` (los mismos avisos que aplica CMake), sin ninguna advertencia.
+
+Las variantes de Windows (`compilar.bat` con MSVC y `/W4 /WX`) y Linux no se re-ejecutaron en esta validación, pero usan los mismos fuentes y flags equivalentes; como no aparece ninguna advertencia bajo `-Wpedantic`, es esperable que también compilen limpio.
