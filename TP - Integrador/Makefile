@@ -1,13 +1,14 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -Iinclude
-SRC = src/main.cpp
+SRC = $(wildcard src/*.cpp)
+HEADERS = $(wildcard include/*.h)
 OUT = bicis
 
 .PHONY: all clean run
 
 all: $(OUT)
 
-$(OUT): $(SRC)
+$(OUT): $(SRC) $(HEADERS)
 	$(CXX) $(CXXFLAGS) -o $(OUT) $(SRC)
 
 run: $(OUT)
