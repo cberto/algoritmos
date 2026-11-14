@@ -1,42 +1,61 @@
-using namespace std;
 #ifndef ESTACION_H
 #define ESTACION_H
+
 #include <iostream>
 #include <string>
 
+#include "Estructuras.h"
 
-class Estacion
-{
-private:
-    string codigo;
-    string nombre;
-    string barrio;
-    int capacidadAnclajes;
-    int bicisDisponibles;
+using namespace std;
 
-public:
+class Estacion {
+    private:
+        string codigo;
+        string nombre;
+        string barrio;
+        int capacidadAnclajes;
+        int bicisDisponibles;
 
-
-Estacion(string codigo, string nombre, string barrio, int capacidadAnclajes, int bicisDisponibles){
-    this->codigo = codigo;
-    this->nombre = nombre;
-    this->barrio = barrio;
-    this->capacidadAnclajes = capacidadAnclajes;
-    this->bicisDisponibles = bicisDisponibles;
-}
+    public:
+        Cola<int> espera;
+    Estacion(string codigo, string nombre, string barrio, int capacidadAnclajes, int bicisDisponibles) {
+        this->codigo = codigo;
+        this->nombre = nombre;
+        this->barrio = barrio;
+        this->capacidadAnclajes = capacidadAnclajes;
+        this->bicisDisponibles = bicisDisponibles;
+    }
    
-string GetCodigo(){
-    return codigo;
-}
-  void MostrarEstacion(ostream& cout) const{
-    cout << "Codigo: " << codigo << endl;
-    cout << "Nombre: " << nombre << endl;
-    cout << "Barrio: " << barrio << endl;
-    cout << "Capacidad de anclajes: " << capacidadAnclajes << endl;
-    cout << "Ocupacion: " << 100.0 * bicisDisponibles / capacidadAnclajes << "%" << endl;
-    cout << "Espera: WIP" << endl; //WIP
-    cout << "Bicis disponibles: " << bicisDisponibles << endl;
-  }
-  
+    string getCodigo() const {
+        return codigo;
+    }
+
+    int getCapacidad() const {
+        return capacidadAnclajes;
+    }
+
+    int getDisponible() const {
+        return bicisDisponibles;
+    }
+
+    void restarDisponible() {
+        --bicisDisponibles;
+    }
+
+    bool sumarDisponible() {
+        if (bicisDisponibles >= capacidadAnclajes) return false;
+        ++bicisDisponibles;
+        return true;
+    }
+ 
+    void mostrarEstacion() const{
+        cout << " | Codigo: " << codigo << endl
+             << " | Nombre: " << nombre << endl
+             << " | Barrio: " << barrio << endl
+             << " | Capacidad de anclajes: " << capacidadAnclajes << endl
+             << " | Ocupacion: " << 100.0 * bicisDisponibles / capacidadAnclajes << "%" << endl
+             << " | Personas en espera: " << espera.cantidad() << endl
+             << " | Bicis disponibles: " << bicisDisponibles << endl;
+    }
 };
 #endif
