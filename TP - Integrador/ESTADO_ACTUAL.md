@@ -1,10 +1,10 @@
 # TP Integrador — estado actual
 
-**Revisión:** 12/11/2026 — módulo A completo y módulo B implementado.
+**Revisión:** 15/11/2026 — módulo A completo, módulo B implementado y C1 integrado.
 
 ## Resumen
 
-El menú coordina las operaciones implementadas del módulo A —mostrar, agregar y eliminar estaciones, ordenarlas, filtrar por ocupación y encontrar caminos mínimos por ciclovías— a través de `Sistema` y estructuras genéricas. El módulo B está implementado: incluye consultas de viajes, bicicletas por kilometraje, colas de espera y prioridad para el taller. Los módulos C y D siguen pendientes.
+El menú coordina las operaciones implementadas del módulo A —mostrar, agregar y eliminar estaciones, ordenarlas, filtrar por ocupación y encontrar caminos mínimos por ciclovías— a través de `Sistema` y estructuras genéricas. El módulo B está implementado: incluye consultas de viajes, bicicletas por kilometraje, colas de espera y prioridad para el taller. C1 inserta en un ABB las bicicletas al cargarlas; C2–C5 y el módulo D siguen pendientes.
 
 La carpeta [estructuras/](./estructuras/) contiene implementaciones desacopladas del dominio. `Sistema` usa `TablaHash<string, Estacion>` para indexar estaciones, `Grafo<string>` para las ciclovías y listas enlazadas para conservar bicicletas y viajes.
 
@@ -33,16 +33,16 @@ La carga de datos está dividida en subtareas privadas de `Sistema`: `cargarDato
 
 | Componente | Estado observado |
 |---|---|
-| Menú | Se implementaron la carga de estaciones, bicicletas, ciclovías y viajes, búsqueda, alta, baja, listado ordenado, filtro por ocupación, camino mínimo, consultas de viajes, filtro por kilometraje, cola de espera y taller con min-heap. Las opciones de los módulos C y D siguen marcadas como TODO. |
+| Menú | Se implementaron la carga de estaciones, bicicletas, ciclovías y viajes, búsqueda, alta, baja, listado ordenado, filtro por ocupación, camino mínimo, consultas de viajes, filtro por kilometraje, cola de espera y taller con min-heap. La carga inserta las bicicletas en el ABB (C1); C2–C5 y las opciones del módulo D siguen pendientes. |
 | `Estacion` | Tiene constructores, código, capacidad, bicicletas disponibles, presentación y operaciones para retirar o recibir una bicicleta. |
 | `Viaje` | Se cargan sus registros. B1 consulta el origen y la fecha; B2 consulta el DNI, muestra los viajes coincidentes y suma sus duraciones. |
 | `Bicicleta` | Sus registros se cargan en una lista enlazada; B3 filtra por kilometraje y B5 envía bicicletas averiadas al taller según su prioridad. |
 | Hash de estaciones | `Sistema` utiliza `TablaHash<string, Estacion>` con encadenamiento. La estructura no conoce el tipo de estación y expone colisiones y factor de carga. |
-| Estructuras desacopladas | En `estructuras/` existen lista enlazada, cola, tabla hash, ABB, min-heap y grafo con BFS, más pruebas independientes. La tabla hash, el grafo, las listas enlazadas, las colas y el min-heap están integrados con los módulos implementados. |
+| Estructuras desacopladas | En `estructuras/` existen lista enlazada, cola, tabla hash, ABB, min-heap y grafo con BFS, más pruebas independientes. La tabla hash, el grafo, las listas enlazadas, las colas, el min-heap y el ABB están integrados con los módulos implementados. |
 | Carga de datos | Se procesan los cuatro archivos: estaciones, bicicletas, viajes y conexiones de ciclovía. |
 | Módulo A | Implementados mostrar, agregar, eliminar, ordenamiento manual ascendente por capacidad o disponibilidad, filtro de ocupación menor al 20 % y camino mínimo por BFS. |
 | Módulo B | Implementados B1: cantidad de viajes que salieron de una estación en un rango inclusivo de fechas; B2: viajes de un DNI y total de minutos pedaleados; B3: bicicletas que superan el kilometraje indicado; B4: cola FIFO por estación; B5: min-heap del taller, con prioridades 1 a 3. |
-| Módulo C | Pendiente en este proyecto: ABB de bicicletas, búsqueda, recorrido inorder, conteo de averiadas y altura. |
+| Módulo C | C1 implementado: cada bicicleta cargada se inserta en el ABB con `bici_id` como clave y se rechazan claves repetidas. Pendientes C2: búsqueda; C3: recorrido inorder; C4: conteo de averiadas; C5: altura. |
 | Módulo D | Pendiente: enumeración de subconjuntos mediante backtracking. |
 | Entrega | El README contiene el análisis Big O de A y B1–B5. Las métricas de colisiones y factor de carga todavía no se informan en el programa. Hay pruebas automatizadas para las estructuras y los puntos implementados; el UML está en [UML_ACTUAL.md](./UML_ACTUAL.md). |
 

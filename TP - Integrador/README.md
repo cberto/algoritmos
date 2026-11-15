@@ -1,6 +1,6 @@
 # TP Integrador — Sistema de Bicicletas Públicas
 
-Implementación parcial del sistema descrito en `TP2C2026.pdf`. El módulo de estaciones carga, busca, agrega y elimina estaciones, permite listarlas ordenadas por capacidad o bicicletas disponibles, filtra las que tienen menos del 20% de ocupación y calcula caminos mínimos por ciclovías. En el módulo B están implementados B1–B5: consultas de viajes, listado de bicicletas por kilometraje, colas de espera por estación y prioridad del taller. Los módulos C y D siguen pendientes.
+Implementación parcial del sistema descrito en `TP2C2026.pdf`. El módulo de estaciones carga, busca, agrega y elimina estaciones, permite listarlas ordenadas por capacidad o bicicletas disponibles, filtra las que tienen menos del 20% de ocupación y calcula caminos mínimos por ciclovías. En el módulo B están implementados B1–B5: consultas de viajes, listado de bicicletas por kilometraje, colas de espera por estación y prioridad del taller. Del módulo C está implementado C1: al cargar los datos, se insertan las bicicletas en un ABB ordenado por `bici_id`; C2–C5 y el módulo D siguen pendientes.
 
 ## Compilar / correr
 
@@ -36,7 +36,7 @@ TP - Integrador/
 └── README.md
 ```
 
-`estructuras/` contiene lista enlazada, cola, tabla hash, ABB, min-heap y grafo con BFS. Son implementaciones manuales independientes de las clases del dominio y no usan contenedores STL. La tabla hash, el grafo, la lista enlazada, la cola y el min-heap se usan para estaciones, ciclovías, bicicletas, viajes, esperas y taller; el ABB todavía no está integrado.
+`estructuras/` contiene lista enlazada, cola, tabla hash, ABB, min-heap y grafo con BFS. Son implementaciones manuales independientes de las clases del dominio y no usan contenedores STL. La tabla hash, el grafo, las listas enlazadas, la cola, el min-heap y el ABB se usan para estaciones, ciclovías, bicicletas, viajes, esperas y taller.
 
 El listado ordenado de estaciones usa selección directa de menor a mayor y permite elegir entre capacidad de anclajes y bicicletas disponibles. El filtro de ocupación compara las bicicletas disponibles con la capacidad de cada estación. Los caminos mínimos se calculan con BFS sobre las conexiones cargadas desde `data/ciclovias.txt`. Los viajes se cargan desde `data/viajes.txt` y B1 considera incluidos ambos extremos del rango de fechas.
 
@@ -83,5 +83,9 @@ La tabla hash resuelve colisiones mediante encadenamiento. Sus operaciones son *
 4. **Cola de espera por estación — O(1) promedio por solicitud o devolución; O(S) peor caso por búsquedas en la tabla hash.** Una tabla hash asocia cada código de estación con su propia `Cola<int>`, donde se encolan los DNI de quienes esperan. La cola respeta el orden FIFO y permite encolar o atender al primero en O(1); la estación reduce su disponibilidad al retirar y asigna directamente una bicicleta devuelta al primero en espera.
 
 5. **Taller de reparaciones — insertar: O(N_b + log H) promedio/amortizado; extraer: O(log H).** Se usa el min-heap porque su raíz permite extraer la bicicleta de menor número de prioridad, donde 1 es la más urgente. Para insertar, primero se busca el ID en la lista de bicicletas; las eléctricas averiadas reciben prioridad 1, las mecánicas averiadas con más de 1600 km prioridad 2 y las demás mecánicas averiadas prioridad 3. El heap puede tardar O(H) en una inserción puntual cuando debe ampliar su arreglo dinámico.
+
+### Módulo C — Registro de bicicletas
+
+1. **Insertar bicicletas en el ABB (C1) — O(h) por bicicleta; O(N_b²) para cargar N_b bicicletas en el peor caso.** El ABB usa `bici_id` como clave y conserva una copia de cada bicicleta cargada; si el ID ya existe, la inserción se rechaza. Cada inserción cuesta O(h), donde h es la altura actual del árbol; si el orden de carga produce un árbol degenerado, h puede llegar a N_b - 1.
 
 Ver [ESTADO_ACTUAL.md](./ESTADO_ACTUAL.md) para el relevamiento del TP y [UML_ACTUAL.md](./UML_ACTUAL.md) para el diagrama vigente.

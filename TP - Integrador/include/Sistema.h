@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Bicicleta.h"
+#include "ArbolBinarioBusqueda.h"
 #include "Cola.h"
 #include "Estacion.h"
 #include "Grafo.h"
@@ -20,6 +21,7 @@ private:
     Grafo<string> ciclovias;
     TablaHash<string, Cola<int>> colasEspera;
     ListaEnlazada<Bicicleta> bicicletas;
+    ArbolBinarioBusqueda<int, Bicicleta> bicicletasPorId;
     ListaEnlazada<Viaje> viajes;
     MonticuloMinimo<BicicletaTaller> taller;
     bool cargado;
@@ -76,6 +78,9 @@ public:
 
     // Lista las bicicletas que superan el kilometraje indicado.
     void listarBicicletasMasKilometros(int kilometrosMinimos);
+
+    // Inserta una bicicleta en el ABB si su identificador no existe.
+    bool insertarBicicletaEnABB(Bicicleta bicicleta);
 
     // Atiende un pedido de bicicleta o lo agrega a la espera.
     void solicitarBicicleta(string codigoEstacion, int dniUsuario);

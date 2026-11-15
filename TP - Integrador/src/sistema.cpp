@@ -113,9 +113,16 @@ bool Sistema::cargarBicicletas(string carpeta)
 
             Bicicleta nuevaBicicleta(biciId, codigoEstacion, tipo,
                                      estado, kilometros);
+            if (!insertarBicicletaEnABB(nuevaBicicleta))
+            {
+                cout << "Identificador de bicicleta repetido: "
+                     << biciId << endl;
+                return false;
+            }
             bicicletas.insertarAlFinal(nuevaBicicleta);
         }
     }
+    cout << "Bicicletas insertadas en el ABB." << endl;
     return true;
 }
 
@@ -490,6 +497,12 @@ void Sistema::listarBicicletasMasKilometros(int kilometrosMinimos)
         cout << "No hay bicicletas con mas de " << kilometrosMinimos << " kilometros." << endl;
 
     delete[] bicicletasCargadas;
+}
+
+// Inserta cada bicicleta usando su ID como clave única del ABB.
+bool Sistema::insertarBicicletaEnABB(Bicicleta bicicleta)
+{
+    return bicicletasPorId.insertar(bicicleta.getBiciId(), bicicleta);
 }
 
 // Atiende el pedido o agrega el DNI al final de la cola de esa estación.

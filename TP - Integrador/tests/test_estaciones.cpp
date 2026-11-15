@@ -190,6 +190,19 @@ static void probarBicicletasPorKilometraje()
     assert(texto.find("debe ser cero o mayor") != string::npos);
 }
 
+// Comprueba que la carga inserta las bicicletas y que el ABB rechaza IDs repetidos.
+static void probarInsercionBicicletasEnABB()
+{
+    Sistema sistema;
+    assert(sistema.cargarDatos("data"));
+
+    Bicicleta existente(501, "PLZ", "Mecanica", "OK", 1240);
+    Bicicleta nueva(508, "BOE", "Mecanica", "OK", 100);
+    assert(!sistema.insertarBicicletaEnABB(existente));
+    assert(sistema.insertarBicicletaEnABB(nueva));
+    assert(!sistema.insertarBicicletaEnABB(nueva));
+}
+
 // Comprueba la espera FIFO independiente para cada estación.
 static void probarColaDeEspera()
 {
@@ -273,6 +286,7 @@ int main()
     probarCantidadViajesSalidos();
     probarViajesPorDni();
     probarBicicletasPorKilometraje();
+    probarInsercionBicicletasEnABB();
     probarColaDeEspera();
     probarTaller();
 }

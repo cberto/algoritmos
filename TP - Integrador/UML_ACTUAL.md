@@ -1,6 +1,6 @@
 # UML actual — TP Integrador
 
-Este diagrama describe las clases del TP y las estructuras reutilizables existentes al 12/11/2026. Muestra los tipos almacenados en las estructuras integradas y distingue las que todavía no usa `Sistema`.
+Este diagrama describe las clases del TP y las estructuras reutilizables existentes al 15/11/2026. Muestra los tipos almacenados en las estructuras integradas y distingue las que todavía no usa `Sistema`.
 
 ```mermaid
 classDiagram
@@ -17,6 +17,7 @@ classDiagram
         -ciclovias: Grafo~string~
         -colasEspera: TablaHash~string, Cola<int>~
         -bicicletas: ListaEnlazada~Bicicleta~
+        -bicicletasPorId: ArbolBinarioBusqueda~int, Bicicleta~
         -viajes: ListaEnlazada~Viaje~
         -taller: MonticuloMinimo~BicicletaTaller~
         -cargado: bool
@@ -31,6 +32,7 @@ classDiagram
         +contarViajesSalidos(codigoEstacion, fechaInicio, fechaFin): int
         +mostrarViajesPorDni(dniUsuario): void
         +listarBicicletasMasKilometros(kilometrosMinimos): void
+        +insertarBicicletaEnABB(bicicleta): bool
         +solicitarBicicleta(codigoEstacion, dniUsuario): void
         +devolverBicicleta(codigoEstacion): void
         +ingresarBicicletaAlTaller(biciId): void
@@ -145,6 +147,7 @@ classDiagram
     Sistema *-- Grafo~string~ : vertices identificados por codigo
     Sistema *-- TablaHash~string, Cola<int>~ : codigo => cola de espera
     Sistema *-- ListaEnlazada~Bicicleta~ : bicicletas cargadas
+    Sistema *-- ArbolBinarioBusqueda~int, Bicicleta~ : bici_id => bicicleta (C1)
     Sistema *-- ListaEnlazada~Viaje~ : viajes cargados
     Sistema *-- MonticuloMinimo~BicicletaTaller~ : bicicletas para reparar
     Sistema ..> Estacion : consulta y devuelve puntero
@@ -164,7 +167,8 @@ classDiagram
 - `Grafo<string>` almacena los códigos de estación como vértices, no objetos `Estacion`.
 - `Sistema` conserva los viajes de `viajes.txt` en una `ListaEnlazada<Viaje>`; B1 consulta el origen y la fecha para contar los viajes dentro del rango solicitado, y B2 los consulta por DNI y suma las duraciones.
 - `Sistema` conserva las bicicletas de `bicicletas.txt` en una `ListaEnlazada<Bicicleta>`; B3 recorre la lista para mostrar las que superan el kilometraje ingresado.
+- C1 inserta cada bicicleta cargada también en `ArbolBinarioBusqueda<int, Bicicleta>`, con `bici_id` como clave; el ABB rechaza identificadores duplicados. C2–C5 aún no están integrados.
 - `Sistema` mantiene una cola FIFO por estación, indexada por código en una tabla hash. Al devolver una bicicleta, la entrega al primer DNI en espera; si no hay nadie esperando, aumenta la disponibilidad de la estación.
 - `Sistema` usa un `MonticuloMinimo<BicicletaTaller>` para B5; la prioridad acompaña a cada bicicleta y permite extraer primero la más urgente.
-- La cola y el min-heap están integrados con el módulo B; el ABB está implementado en `estructuras/` y queda pendiente de integrar con el módulo C.
+- La cola y el min-heap están integrados con el módulo B; el ABB genérico está implementado en `estructuras/` y C1 ya lo integra con las bicicletas.
 - `Sistema` posee la tabla hash, el grafo y la lista; estas estructuras mantienen sus propios nodos y almacenan los tipos indicados en el diagrama.
