@@ -60,11 +60,13 @@ static void mostrarMenu()
          << "23. Espera: solicitar o devolver bicicleta\n"
          << "24. Taller (min-heap)\n"
          << "----- Modulo C: ABB bicicletas -----\n"
-         << "30. Buscar bicicleta por ID              [TODO - C2]\n"
-         << "31. Listar bicicletas inorder            [TODO]\n"
-         << "32. Contar averiadas / altura ABB        [TODO]\n"
+         << "30. Buscar bicicleta por ID\n"
+         << "31. Listar bicicletas inorder\n"
+         << "32. Contar bicicletas averiadas\n"
+         << "33. Calcular altura del ABB\n"
+         << "34. Eliminar bicicleta del ABB\n"
          << "----- Modulo D: Backtracking -----\n"
-         << "40. Redistribucion (suma = C)            [TODO]\n"
+         << "40. Redistribucion de bicicletas         [D1]\n"
          << "============================================\n"
          << "Opcion: ";
 }
@@ -217,6 +219,43 @@ int main()
             {
                 cout << "Opcion invalida." << endl;
             }
+            break;
+        }
+        case 30:
+        {
+            int biciId = leer<int>("Identificador de la bicicleta: ");
+            sistema.mostrarBicicletaPorId(biciId);
+            break;
+        }
+        case 31:
+            sistema.listarBicicletasInorden();
+            break;
+        case 32:
+        {
+            size_t cantidadAveriadas = sistema.contarBicicletasAveriadas();
+            cout << "Cantidad de bicicletas averiadas: "
+                 << cantidadAveriadas << endl;
+            break;
+        }
+        case 33:
+        {
+            int altura = sistema.alturaBicicletasABB();
+            cout << "Altura del ABB: " << altura << endl;
+            break;
+        }
+        case 34:
+        {
+            int biciId = leer<int>("Identificador de la bicicleta a eliminar: ");
+            if (sistema.eliminarBicicletaDelABB(biciId))
+                cout << "Bicicleta eliminada del ABB." << endl;
+            else
+                cout << "Bicicleta no encontrada en el ABB." << endl;
+            break;
+        }
+        case 40:
+        {
+            int capacidadCamion = leer<int>("Capacidad del camion: ");
+            sistema.buscarRedistribuciones(capacidadCamion);
             break;
         }
         default:

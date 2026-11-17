@@ -1,6 +1,6 @@
 # TP Integrador — Sistema de Bicicletas Públicas
 
-Implementación parcial del sistema descrito en `TP2C2026.pdf`. El módulo de estaciones carga, busca, agrega y elimina estaciones, permite listarlas ordenadas por capacidad o bicicletas disponibles, filtra las que tienen menos del 20% de ocupación y calcula caminos mínimos por ciclovías. En el módulo B están implementados B1–B5: consultas de viajes, listado de bicicletas por kilometraje, colas de espera por estación y prioridad del taller. Del módulo C está implementado C1: al cargar los datos, se insertan las bicicletas en un ABB ordenado por `bici_id`; C2–C5 y el módulo D siguen pendientes.
+Implementación parcial del sistema descrito en `TP2C2026.pdf`. El módulo de estaciones carga, busca, agrega y elimina estaciones, permite listarlas ordenadas por capacidad o bicicletas disponibles, filtra las que tienen menos del 20% de ocupación y calcula caminos mínimos por ciclovías. En el módulo B están implementados B1–B5: consultas de viajes, listado de bicicletas por kilometraje, colas de espera por estación y prioridad del taller. El módulo C está implementado: C1 carga en ABB por `bici_id`, C2 busca por ID, C3 lista por inorder, C4 cuenta las averiadas y C5 calcula la altura y C6 implementa la eliminación opcional de bicicletas del ABB. D1 resuelve la redistribución y el módulo D está implementado.
 
 ## Compilar / correr
 
@@ -58,6 +58,8 @@ Símbolos usados en el análisis:
 
 La tabla hash resuelve colisiones mediante encadenamiento. Sus operaciones son **O(1) en promedio** y **O(n) en el peor caso**, si muchas claves terminan en el mismo bucket.
 
+Con los datos de prueba, la tabla de 11 buckets registra **1 colisión de inserción**. Al cargar las 6 estaciones, el factor de carga final es **6/11 ≈ 0,55**.
+
 ### Módulo A — Gestión de estaciones
 
 1. **Buscar y mostrar una estación — O(1) promedio, O(S) peor caso.** Se usa una tabla hash porque la consulta parte de un código exacto y no requiere recorrer las estaciones. El encadenamiento resuelve colisiones; si todas las claves caen en un mismo bucket, la búsqueda debe revisar hasta S elementos.
@@ -87,5 +89,20 @@ La tabla hash resuelve colisiones mediante encadenamiento. Sus operaciones son *
 ### Módulo C — Registro de bicicletas
 
 1. **Insertar bicicletas en el ABB (C1) — O(h) por bicicleta; O(N_b²) para cargar N_b bicicletas en el peor caso.** El ABB usa `bici_id` como clave y conserva una copia de cada bicicleta cargada; si el ID ya existe, la inserción se rechaza. Cada inserción cuesta O(h), donde h es la altura actual del árbol; si el orden de carga produce un árbol degenerado, h puede llegar a N_b - 1.
+2. **Buscar una bicicleta por ID y mostrar sus datos (C2) — O(h) tiempo y O(1) espacio auxiliar; O(log N_b) promedio y O(N_b) en el peor caso.** Se busca por `bici_id` en el ABB, avanzando a izquierda o derecha según la comparación de claves. Si no existe, el sistema informa que no se encontró.
+3. **Listar bicicletas ordenadas por ID mediante inorder (C3) — O(N_b) tiempo y O(h) espacio de pila.** El recorrido visita primero el subárbol izquierdo, luego la bicicleta del nodo y finalmente el subárbol derecho, así que las claves se muestran en orden creciente. La recursión usa una pila proporcional a la altura del ABB.
+4. **Contar bicicletas averiadas recorriendo el ABB (C4) — O(N_b) tiempo y O(h) espacio de pila.** Se visita cada nodo y se cuenta el valor cuyo estado es `Averiada`; el ABB ofrece un recorrido completo con un predicado, sin acoplar la estructura al dominio. La pila recursiva depende de la altura h del árbol.
+
+5. **Calcular la altura del ABB (C5) — O(N_b) tiempo y O(h) espacio de pila.** El algoritmo recursivo calcula las alturas de los dos subárboles de cada nodo y conserva la mayor, sumando un nivel. La altura de un árbol vacío es -1 y la de un árbol con una sola bicicleta es 0.
+
+6. **Eliminar una bicicleta del ABB (C6, opcional) — O(h) tiempo y O(h) espacio de pila.** Se busca el ID y se elimina el nodo conservando el orden del árbol. El ABB contempla hoja, un hijo y dos hijos; en este último caso lo reemplaza por el mínimo del subárbol derecho.
+
+**Pregunta de análisis de C:** si se insertan cinco bicicletas en orden creciente de ID, cada una queda como hijo derecho de la anterior. El árbol tiene altura 4 (medida en aristas) y se degenera en una lista; buscar el último ID requiere revisar las cinco bicicletas, por lo que la búsqueda cuesta O(N_b) en este caso, en vez de O(log N_b) en un árbol balanceado. Por ejemplo, al insertar los IDs 101, 102, 103, 104 y 105, buscar 105 compara los cinco nodos.
+
+### Módulo D — Redistribución con backtracking
+
+1. **Encontrar todos los subconjuntos cuya suma de faltantes sea C (D1) — O(2^S + S*R) tiempo, O(S*2^S) incluyendo la salida y O(S) espacio auxiliar (R es la cantidad de soluciones).** Para cada estación candidata se exploran dos decisiones: incluirla o excluirla; una rama se descarta cuando el faltante excede la capacidad restante. El faltante se calcula como capacidad de anclajes menos bicicletas disponibles, y se muestran todas las combinaciones exactas o un aviso si no hay ninguna.
+
+2. **Complejidad temporal en el peor caso (D2).** Sea S la cantidad de estaciones candidatas y R la cantidad de soluciones. La exploración tiene como máximo O(2^S) decisiones; mostrar las soluciones agrega O(S*R), porque cada una puede contener hasta S estaciones. El tiempo total es O(2^S + S*R), acotado por O(S*2^S) en el peor caso. El espacio auxiliar es O(S) por los arreglos de selección y la pila recursiva.
 
 Ver [ESTADO_ACTUAL.md](./ESTADO_ACTUAL.md) para el relevamiento del TP y [UML_ACTUAL.md](./UML_ACTUAL.md) para el diagrama vigente.

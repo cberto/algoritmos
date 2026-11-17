@@ -203,6 +203,279 @@ static void probarInsercionBicicletasEnABB()
     assert(!sistema.insertarBicicletaEnABB(nueva));
 }
 
+// Comprueba la búsqueda por ID, la presentación y el ID inexistente.
+static void probarBusquedaBicicletaPorId()
+{
+    Sistema sistema;
+    assert(sistema.cargarDatos("data"));
+
+    ostringstream datos;
+    streambuf* salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.mostrarBicicletaPorId(502);
+    sistema.mostrarBicicletaPorId(999);
+    cout.rdbuf(salidaAnterior);
+
+    string texto = datos.str();
+    assert(texto.find("Bicicleta encontrada:") != string::npos);
+    assert(texto.find("Bicicleta: 502") != string::npos);
+    assert(texto.find("Estacion: PAL") != string::npos);
+    assert(texto.find("Tipo: Electrica") != string::npos);
+    assert(texto.find("Estado: Averiada") != string::npos);
+    assert(texto.find("Kilometros: 3810") != string::npos);
+    assert(texto.find("Bicicleta no encontrada.") != string::npos);
+}
+
+// Comprueba que inorder presenta IDs ascendentes y resuelve el árbol vacío.
+static void probarListadoBicicletasInorden()
+{
+    Sistema sistema;
+    ostringstream datos;
+    streambuf* salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.listarBicicletasInorden();
+    cout.rdbuf(salidaAnterior);
+    assert(datos.str().find("No hay bicicletas en el ABB.") != string::npos);
+
+    Bicicleta bicicleta30(30, "B", "Mecanica", "OK", 300);
+    Bicicleta bicicleta10(10, "A", "Electrica", "OK", 100);
+    Bicicleta bicicleta20(20, "C", "Mecanica", "Averiada", 200);
+    assert(sistema.insertarBicicletaEnABB(bicicleta30));
+    assert(sistema.insertarBicicletaEnABB(bicicleta10));
+    assert(sistema.insertarBicicletaEnABB(bicicleta20));
+
+    datos.str("");
+    salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.listarBicicletasInorden();
+    cout.rdbuf(salidaAnterior);
+
+    string texto = datos.str();
+    size_t posicion10 = texto.find("Bicicleta: 10");
+    size_t posicion20 = texto.find("Bicicleta: 20");
+    size_t posicion30 = texto.find("Bicicleta: 30");
+    assert(posicion10 != string::npos);
+    assert(posicion20 != string::npos);
+    assert(posicion30 != string::npos);
+    assert(posicion10 < posicion20 && posicion20 < posicion30);
+}
+
+// Comprueba el conteo por estado y el resultado para el ABB vacío.
+static void probarConteoBicicletasAveriadas()
+{
+    Sistema vacio;
+    assert(vacio.contarBicicletasAveriadas() == 0);
+
+    Sistema sistema;
+    assert(sistema.cargarDatos("data"));
+    assert(sistema.contarBicicletasAveriadas() == 2);
+
+    Bicicleta averiada(508, "BOE", "Mecanica", "Averiada", 700);
+    Bicicleta enBuenEstado(509, "BOE", "Mecanica", "OK", 800);
+    assert(sistema.insertarBicicletaEnABB(averiada));
+    assert(sistema.insertarBicicletaEnABB(enBuenEstado));
+    assert(sistema.contarBicicletasAveriadas() == 3);
+}
+
+// Comprueba la altura vacía, balanceada y degenerada del ABB.
+static void probarAlturaBicicletasABB()
+{
+    Sistema vacio;
+    assert(vacio.alturaBicicletasABB() == -1);
+
+    Sistema balanceado;
+    Bicicleta bicicleta20(20, "A", "Mecanica", "OK", 200);
+    Bicicleta bicicleta10(10, "A", "Mecanica", "OK", 100);
+    Bicicleta bicicleta30(30, "A", "Mecanica", "OK", 300);
+    Bicicleta bicicleta5(5, "A", "Mecanica", "OK", 50);
+    assert(balanceado.insertarBicicletaEnABB(bicicleta20));
+    assert(balanceado.insertarBicicletaEnABB(bicicleta10));
+    assert(balanceado.insertarBicicletaEnABB(bicicleta30));
+    assert(balanceado.alturaBicicletasABB() == 1);
+    assert(balanceado.insertarBicicletaEnABB(bicicleta5));
+    assert(balanceado.alturaBicicletasABB() == 2);
+
+    Sistema degenerado;
+    Bicicleta bicicleta1(1, "A", "Mecanica", "OK", 10);
+    Bicicleta bicicleta2(2, "A", "Mecanica", "OK", 20);
+    Bicicleta bicicleta3(3, "A", "Mecanica", "OK", 30);
+    assert(degenerado.insertarBicicletaEnABB(bicicleta1));
+    assert(degenerado.insertarBicicletaEnABB(bicicleta2));
+    assert(degenerado.insertarBicicletaEnABB(bicicleta3));
+    assert(degenerado.alturaBicicletasABB() == 2);
+}
+
+// Captura el listado inorder para comprobar que el ABB conserva su orden.
+static string obtenerListadoBicicletas(Sistema& sistema)
+{
+    ostringstream datos;
+    streambuf* salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.listarBicicletasInorden();
+    cout.rdbuf(salidaAnterior);
+    return datos.str();
+}
+
+// Comprueba la eliminación de hojas, nodos con un hijo y nodos con dos hijos.
+static void probarEliminacionBicicletasDelABB()
+{
+    Sistema hoja;
+    Bicicleta bicicleta20(20, "A", "Mecanica", "OK", 200);
+    Bicicleta bicicleta10(10, "A", "Mecanica", "OK", 100);
+    Bicicleta bicicleta30(30, "A", "Mecanica", "OK", 300);
+    assert(hoja.insertarBicicletaEnABB(bicicleta20));
+    assert(hoja.insertarBicicletaEnABB(bicicleta10));
+    assert(hoja.insertarBicicletaEnABB(bicicleta30));
+    assert(hoja.eliminarBicicletaDelABB(10));
+    assert(!hoja.eliminarBicicletaDelABB(10));
+    string texto = obtenerListadoBicicletas(hoja);
+    size_t posicion20 = texto.find("Bicicleta: 20");
+    size_t posicion30 = texto.find("Bicicleta: 30");
+    assert(posicion20 != string::npos && posicion30 != string::npos);
+    assert(posicion20 < posicion30);
+    assert(texto.find("Bicicleta: 10") == string::npos);
+
+    Sistema unHijo;
+    Bicicleta bicicleta40(40, "A", "Mecanica", "OK", 400);
+    Bicicleta bicicleta35(35, "A", "Mecanica", "OK", 350);
+    Bicicleta bicicleta50(50, "A", "Mecanica", "OK", 500);
+    assert(unHijo.insertarBicicletaEnABB(bicicleta40));
+    assert(unHijo.insertarBicicletaEnABB(bicicleta35));
+    assert(unHijo.insertarBicicletaEnABB(bicicleta50));
+    Bicicleta bicicleta30UnHijo(30, "A", "Mecanica", "OK", 300);
+    assert(unHijo.insertarBicicletaEnABB(bicicleta30UnHijo));
+    assert(unHijo.eliminarBicicletaDelABB(35));
+    assert(!unHijo.eliminarBicicletaDelABB(35));
+    texto = obtenerListadoBicicletas(unHijo);
+    size_t posicion30UnHijo = texto.find("Bicicleta: 30");
+    size_t posicion40UnHijo = texto.find("Bicicleta: 40");
+    size_t posicion50UnHijo = texto.find("Bicicleta: 50");
+    assert(posicion30UnHijo != string::npos && posicion40UnHijo != string::npos
+           && posicion50UnHijo != string::npos);
+    assert(posicion30UnHijo < posicion40UnHijo
+           && posicion40UnHijo < posicion50UnHijo);
+    assert(texto.find("Bicicleta: 35") == string::npos);
+
+    Sistema dosHijos;
+    Bicicleta bicicleta60(60, "A", "Mecanica", "OK", 600);
+    Bicicleta bicicleta55(55, "A", "Mecanica", "OK", 550);
+    Bicicleta bicicleta70(70, "A", "Mecanica", "OK", 700);
+    Bicicleta bicicleta65(65, "A", "Mecanica", "OK", 650);
+    Bicicleta bicicleta75(75, "A", "Mecanica", "OK", 750);
+    assert(dosHijos.insertarBicicletaEnABB(bicicleta60));
+    assert(dosHijos.insertarBicicletaEnABB(bicicleta55));
+    assert(dosHijos.insertarBicicletaEnABB(bicicleta70));
+    assert(dosHijos.insertarBicicletaEnABB(bicicleta65));
+    assert(dosHijos.insertarBicicletaEnABB(bicicleta75));
+    assert(dosHijos.eliminarBicicletaDelABB(60));
+    texto = obtenerListadoBicicletas(dosHijos);
+    size_t posicion55 = texto.find("Bicicleta: 55");
+    size_t posicion65 = texto.find("Bicicleta: 65");
+    size_t posicion70 = texto.find("Bicicleta: 70");
+    size_t posicion75 = texto.find("Bicicleta: 75");
+    assert(posicion55 != string::npos && posicion65 != string::npos
+           && posicion70 != string::npos && posicion75 != string::npos);
+    assert(posicion55 < posicion65 && posicion65 < posicion70
+           && posicion70 < posicion75);
+    assert(texto.find("Bicicleta: 60") == string::npos);
+}
+
+// Comprueba si un código aparece como elemento completo de una combinación.
+static bool codigoEnCombinacion(string combinacion, string codigo)
+{
+    size_t posicion = combinacion.find(codigo);
+    if (posicion == string::npos)
+        return false;
+
+    bool inicioValido = posicion == 0;
+    if (!inicioValido && posicion >= 2)
+        inicioValido = combinacion.substr(posicion - 2, 2) == ", ";
+
+    size_t finCodigo = posicion + codigo.length();
+    bool finValido = finCodigo == combinacion.length();
+    if (!finValido && finCodigo + 2 <= combinacion.length())
+        finValido = combinacion.substr(finCodigo, 2) == ", ";
+
+    return inicioValido && finValido;
+}
+
+// Busca una combinación sin depender del orden interno de la tabla hash.
+static bool contieneCombinacion(string salida, string codigoA, string codigoB,
+                                string codigoC)
+{
+    size_t inicio = 0;
+    while (inicio < salida.length())
+    {
+        size_t apertura = salida.find('{', inicio);
+        if (apertura == string::npos)
+            return false;
+
+        size_t cierre = salida.find('}', apertura);
+        if (cierre == string::npos)
+            return false;
+
+        string combinacion = salida.substr(apertura + 1, cierre - apertura - 1);
+        int cantidadCodigos = 1;
+        size_t i;
+        for (i = 0; i < combinacion.length(); ++i)
+        {
+            if (combinacion[i] == ',')
+                ++cantidadCodigos;
+        }
+
+        int cantidadEsperada = codigoC.empty() ? 2 : 3;
+        bool contieneCodigos = codigoEnCombinacion(combinacion, codigoA)
+                            && codigoEnCombinacion(combinacion, codigoB);
+        if (!codigoC.empty())
+            contieneCodigos = contieneCodigos
+                           && codigoEnCombinacion(combinacion, codigoC);
+
+        if (cantidadCodigos == cantidadEsperada && contieneCodigos)
+            return true;
+
+        inicio = cierre + 1;
+    }
+    return false;
+}
+
+// Comprueba las soluciones de ejemplo y los casos sin solución e inválido.
+static void probarRedistribucionBacktracking()
+{
+    Sistema sinEstaciones;
+    ostringstream datos;
+    streambuf* salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sinEstaciones.buscarRedistribuciones(10);
+    cout.rdbuf(salidaAnterior);
+    assert(datos.str().find("No hay estaciones cargadas.") != string::npos);
+
+    Sistema sistema;
+    assert(sistema.agregarEstacion("PLZ", "Plaza", "Barrio", 3, 0));
+    assert(sistema.agregarEstacion("CAB", "Cabildo", "Barrio", 7, 0));
+    assert(sistema.agregarEstacion("RET", "Retiro", "Barrio", 5, 0));
+    assert(sistema.agregarEstacion("CON", "Congreso", "Barrio", 2, 0));
+    assert(sistema.agregarEstacion("BOE", "Boedo", "Barrio", 5, 0));
+
+    datos.str("");
+    salidaAnterior = cout.rdbuf(datos.rdbuf());
+    sistema.buscarRedistribuciones(10);
+    sistema.buscarRedistribuciones(1);
+    sistema.buscarRedistribuciones(0);
+    cout.rdbuf(salidaAnterior);
+
+    string texto = datos.str();
+    assert(contieneCombinacion(texto, "PLZ", "CAB", ""));
+    assert(contieneCombinacion(texto, "RET", "BOE", ""));
+    assert(contieneCombinacion(texto, "PLZ", "RET", "CON"));
+    assert(contieneCombinacion(texto, "PLZ", "CON", "BOE"));
+
+    size_t cantidadSoluciones = 0;
+    size_t posicion = texto.find('{');
+    while (posicion != string::npos)
+    {
+        ++cantidadSoluciones;
+        posicion = texto.find('{', posicion + 1);
+    }
+    assert(cantidadSoluciones == 4);
+    assert(texto.find("No hay combinaciones de estaciones") != string::npos);
+    assert(texto.find("La capacidad del camion debe ser positiva.") != string::npos);
+}
+
 // Comprueba la espera FIFO independiente para cada estación.
 static void probarColaDeEspera()
 {
@@ -287,6 +560,12 @@ int main()
     probarViajesPorDni();
     probarBicicletasPorKilometraje();
     probarInsercionBicicletasEnABB();
+    probarBusquedaBicicletaPorId();
+    probarListadoBicicletasInorden();
+    probarConteoBicicletasAveriadas();
+    probarAlturaBicicletasABB();
+    probarEliminacionBicicletasDelABB();
+    probarRedistribucionBacktracking();
     probarColaDeEspera();
     probarTaller();
 }

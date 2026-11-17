@@ -505,6 +505,64 @@ bool Sistema::insertarBicicletaEnABB(Bicicleta bicicleta)
     return bicicletasPorId.insertar(bicicleta.getBiciId(), bicicleta);
 }
 
+// Busca por bici_id y muestra el registro encontrado.
+void Sistema::mostrarBicicletaPorId(int biciId)
+{
+    Bicicleta* bicicletaEncontrada = bicicletasPorId.buscar(biciId);
+    if (bicicletaEncontrada == nullptr)
+    {
+        cout << "Bicicleta no encontrada." << endl;
+        return;
+    }
+
+    cout << "Bicicleta encontrada:" << endl;
+    bicicletaEncontrada->mostrarBicicleta();
+}
+
+// Muestra el valor visitado por el recorrido inorder.
+static void mostrarBicicletaInorden(int, Bicicleta bicicleta)
+{
+    bicicleta.mostrarBicicleta();
+    cout << "------------------------------" << endl;
+}
+
+// Recorre el ABB de izquierda a derecha para mostrar IDs ascendentes.
+void Sistema::listarBicicletasInorden()
+{
+    if (bicicletasPorId.vacio())
+    {
+        cout << "No hay bicicletas en el ABB." << endl;
+        return;
+    }
+
+    cout << "Bicicletas ordenadas por ID:" << endl;
+    bicicletasPorId.recorrerInorden(mostrarBicicletaInorden);
+}
+
+// Indica si el valor del nodo corresponde a una bicicleta averiada.
+static bool esBicicletaAveriada(int, Bicicleta bicicleta)
+{
+    return bicicleta.getEstado() == "Averiada";
+}
+
+// Cuenta las bicicletas averiadas mediante el recorrido del ABB.
+size_t Sistema::contarBicicletasAveriadas()
+{
+    return bicicletasPorId.contarSi(esBicicletaAveriada);
+}
+
+// Devuelve la altura calculada por el ABB.
+int Sistema::alturaBicicletasABB()
+{
+    return bicicletasPorId.altura();
+}
+
+// Elimina del ABB el nodo identificado por bici_id.
+bool Sistema::eliminarBicicletaDelABB(int biciId)
+{
+    return bicicletasPorId.eliminar(biciId);
+}
+
 // Atiende el pedido o agrega el DNI al final de la cola de esa estación.
 void Sistema::solicitarBicicleta(string codigoEstacion, int dniUsuario)
 {
@@ -646,4 +704,109 @@ void Sistema::extraerBicicletaDelTaller()
 
     cout << "Bicicleta enviada a reparacion:" << endl;
     bicicletaExtraida.mostrarBicicleta();
+}
+
+// Prueba para cada estación si forma parte de una solución.
+void Sistema::buscarRedistribucionesRecursivo(Estacion* candidatas[],
+                                             size_t cantidadCandidatas,
+                                             size_t indice, int capacidadCamion,
+                                             int sumaActual, bool seleccionadas[],
+                                             bool& encontro)
+{
+    if (sumaActual == capacidadCamion)
+    {
+        cout << "{";
+        bool primeraEstacion = true;
+        size_t i;
+        for (i = 0; i < indice; ++i)
+        {
+            if (seleccionadas[i])
+            {
+                if (!primeraEstacion)
+                    cout << ", ";
+                cout << candidatas[i]->getCodigo();
+                primeraEstacion = false;
+            }
+        }
+        cout << "}" << endl;
+        encontro = true;
+        return;
+    }
+
+    if (indice >= cantidadCandidatas)
+        return;
+
+    int faltantes = candidatas[indice]->getCapacidadAnclajes()
+                  - candidatas[indice]->getBicisDisponibles();
+    if (faltantes <= capacidadCamion - sumaActual)
+    {
+        seleccionadas[indice] = true;
+        buscarRedistribucionesRecursivo(candidatas, cantidadCandidatas,
+                                        indice + 1, capacidadCamion,
+                                        sumaActual + faltantes, seleccionadas,
+                                        encontro);
+    }
+
+    seleccionadas[indice] = false;
+    buscarRedistribucionesRecursivo(candidatas, cantidadCandidatas,
+                                    indice + 1, capacidadCamion, sumaActual,
+                                    seleccionadas, encontro);
+}
+
+// Busca todos los subconjuntos de estaciones que completan la carga del camión.
+void Sistema::buscarRedistribuciones(int capacidadCamion)
+{
+    if (capacidadCamion <= 0)
+    {
+        cout << "La capacidad del camion debe ser positiva." << endl;
+        return;
+    }
+
+    size_t cantidadEstaciones = estaciones.tamano();
+    if (cantidadEstaciones == 0)
+    {
+        cout << "No hay estaciones cargadas." << endl;
+        return;
+    }
+
+    Estacion** candidatas = new Estacion*[cantidadEstaciones];
+    estaciones.copiarReferencias(candidatas);
+
+    size_t cantidadCandidatas = 0;
+    size_t i;
+    for (i = 0; i < cantidadEstaciones; ++i)
+    {
+        int faltantes = candidatas[i]->getCapacidadAnclajes()
+                      - candidatas[i]->getBicisDisponibles();
+        if (faltantes > 0 && faltantes <= capacidadCamion)
+        {
+            candidatas[cantidadCandidatas] = candidatas[i];
+            ++cantidadCandidatas;
+        }
+    }
+
+    if (cantidadCandidatas == 0)
+    {
+        cout << "No hay combinaciones de estaciones que completen el camion."
+             << endl;
+        delete[] candidatas;
+        return;
+    }
+
+    bool* seleccionadas = new bool[cantidadCandidatas];
+    for (i = 0; i < cantidadCandidatas; ++i)
+        seleccionadas[i] = false;
+
+    cout << "Combinaciones de estaciones para completar "
+         << capacidadCamion << " bicicletas:" << endl;
+    bool encontro = false;
+    buscarRedistribucionesRecursivo(candidatas, cantidadCandidatas, 0,
+                                    capacidadCamion, 0, seleccionadas, encontro);
+
+    if (!encontro)
+        cout << "No hay combinaciones de estaciones que completen el camion."
+             << endl;
+
+    delete[] seleccionadas;
+    delete[] candidatas;
 }

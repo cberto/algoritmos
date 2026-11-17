@@ -13,6 +13,7 @@ classDiagram
         -cargarBicicletas(carpeta): bool
         -cargarViajes(carpeta): bool
         -cargarCiclovias(carpeta): bool
+        -buscarRedistribucionesRecursivo(candidatas, cantidad, indice, capacidad, suma, seleccionadas, encontro): void
         -estaciones: TablaHash~string, Estacion~
         -ciclovias: Grafo~string~
         -colasEspera: TablaHash~string, Cola<int>~
@@ -33,6 +34,12 @@ classDiagram
         +mostrarViajesPorDni(dniUsuario): void
         +listarBicicletasMasKilometros(kilometrosMinimos): void
         +insertarBicicletaEnABB(bicicleta): bool
+        +mostrarBicicletaPorId(biciId): void
+        +listarBicicletasInorden(): void
+        +contarBicicletasAveriadas(): size_t
+        +alturaBicicletasABB(): int
+        +eliminarBicicletaDelABB(biciId): bool
+        +buscarRedistribuciones(capacidadCamion): void
         +solicitarBicicleta(codigoEstacion, dniUsuario): void
         +devolverBicicleta(codigoEstacion): void
         +ingresarBicicletaAlTaller(biciId): void
@@ -167,8 +174,9 @@ classDiagram
 - `Grafo<string>` almacena los códigos de estación como vértices, no objetos `Estacion`.
 - `Sistema` conserva los viajes de `viajes.txt` en una `ListaEnlazada<Viaje>`; B1 consulta el origen y la fecha para contar los viajes dentro del rango solicitado, y B2 los consulta por DNI y suma las duraciones.
 - `Sistema` conserva las bicicletas de `bicicletas.txt` en una `ListaEnlazada<Bicicleta>`; B3 recorre la lista para mostrar las que superan el kilometraje ingresado.
-- C1 inserta cada bicicleta cargada también en `ArbolBinarioBusqueda<int, Bicicleta>`, con `bici_id` como clave; el ABB rechaza identificadores duplicados. C2–C5 aún no están integrados.
+- C1 inserta cada bicicleta cargada también en `ArbolBinarioBusqueda<int, Bicicleta>`, con `bici_id` como clave; el ABB rechaza identificadores duplicados. C2 busca por ese ID y muestra sus datos o informa si no existe; C3 recorre el ABB inorder para listarlas en orden creciente de ID; C4 cuenta las que tienen estado `Averiada` mediante un recorrido completo; C5 calcula la altura usando la operación del ABB; C6 opcional elimina del ABB por ID.
 - `Sistema` mantiene una cola FIFO por estación, indexada por código en una tabla hash. Al devolver una bicicleta, la entrega al primer DNI en espera; si no hay nadie esperando, aumenta la disponibilidad de la estación.
 - `Sistema` usa un `MonticuloMinimo<BicicletaTaller>` para B5; la prioridad acompaña a cada bicicleta y permite extraer primero la más urgente.
-- La cola y el min-heap están integrados con el módulo B; el ABB genérico está implementado en `estructuras/` y C1 ya lo integra con las bicicletas.
+- La cola y el min-heap están integrados con el módulo B; el ABB genérico está implementado en `estructuras/` y C1–C6 lo integran con las bicicletas.
+- D1 obtiene las estaciones de la tabla hash, calcula el faltante como capacidad de anclajes menos bicicletas disponibles y explora incluir o excluir cada estación candidata mediante backtracking.
 - `Sistema` posee la tabla hash, el grafo y la lista; estas estructuras mantienen sus propios nodos y almacenan los tipos indicados en el diagrama.

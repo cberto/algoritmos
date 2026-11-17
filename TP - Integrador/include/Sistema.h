@@ -1,6 +1,7 @@
 #ifndef SISTEMA_H
 #define SISTEMA_H
 
+#include <cstddef>
 #include <string>
 #include "Bicicleta.h"
 #include "ArbolBinarioBusqueda.h"
@@ -37,6 +38,13 @@ private:
 
     // Carga las conexiones de ciclovía desde su archivo.
     bool cargarCiclovias(string carpeta);
+
+    // Explora las decisiones de incluir o excluir cada estación candidata.
+    void buscarRedistribucionesRecursivo(Estacion* candidatas[],
+                                         size_t cantidadCandidatas,
+                                         size_t indice, int capacidadCamion,
+                                         int sumaActual, bool seleccionadas[],
+                                         bool& encontro);
 
 public:
     // Crea el sistema sin datos cargados.
@@ -82,6 +90,21 @@ public:
     // Inserta una bicicleta en el ABB si su identificador no existe.
     bool insertarBicicletaEnABB(Bicicleta bicicleta);
 
+    // Busca una bicicleta por ID en el ABB y muestra sus datos.
+    void mostrarBicicletaPorId(int biciId);
+
+    // Muestra las bicicletas en orden creciente de ID.
+    void listarBicicletasInorden();
+
+    // Cuenta las bicicletas averiadas recorriendo el ABB.
+    size_t contarBicicletasAveriadas();
+
+    // Devuelve la altura del ABB; un árbol vacío tiene altura -1.
+    int alturaBicicletasABB();
+
+    // Elimina una bicicleta del ABB por ID.
+    bool eliminarBicicletaDelABB(int biciId);
+
     // Atiende un pedido de bicicleta o lo agrega a la espera.
     void solicitarBicicleta(string codigoEstacion, int dniUsuario);
 
@@ -93,6 +116,9 @@ public:
 
     // Extrae y muestra la bicicleta más urgente del taller.
     void extraerBicicletaDelTaller();
+
+    // Muestra los subconjuntos de estaciones cuyo faltante suma la capacidad.
+    void buscarRedistribuciones(int capacidadCamion);
 };
 
 #endif
