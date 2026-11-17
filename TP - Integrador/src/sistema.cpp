@@ -28,6 +28,28 @@ bool Sistema::cargarDatos(string carpeta)
     return true;
 }
 
+// Muestra la cantidad de estaciones, bicicletas y viajes cargados.
+void Sistema::resumen()
+{
+    if (!cargado)
+    {
+        cout << "No hay datos cargados." << endl;
+        return;
+    }
+
+    size_t cantidadEstaciones = estaciones.tamano();
+    size_t cantidadBicicletas = bicicletas.tamano();
+    size_t cantidadBicicletasAveriadas = contarBicicletasAveriadas();
+    int alturaAbbBicicletas = alturaBicicletasABB();
+    size_t cantidadViajes = viajes.tamano();
+
+    cout << "Estaciones cargadas: " << cantidadEstaciones << endl;
+    cout << "Bicicletas cargadas: " << cantidadBicicletas << endl;
+    cout << "Bicicletas averiadas: " << cantidadBicicletasAveriadas << endl;
+    cout << "Altura del ABB de bicicletas: " << alturaAbbBicicletas << endl;
+    cout << "Viajes cargados: " << cantidadViajes << endl;
+}
+
 // Carga los registros de estaciones en la tabla hash y el grafo.
 bool Sistema::cargarEstaciones(string carpeta)
 {

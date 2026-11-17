@@ -45,7 +45,7 @@ static void mostrarMenu()
          << " 0. Salir\n"
          << "----- Datos -----\n"
          << " 1. Cargar datos                         [C1 inserta bicicletas en ABB]\n"
-         << " 2. Generar resumen                      [TODO]\n"
+         << " 2. Generar resumen\n"
          << "----- Modulo A: Estaciones -----\n"
          << "10. Buscar estacion\n"
          << "11. Agregar estacion\n"
@@ -91,7 +91,7 @@ int main()
             sistema.cargarDatos("data");
             break;
         case 2:
-            cout << "Resumen del sistema" << endl;
+            sistema.resumen();
             break;
         case 10:
         {

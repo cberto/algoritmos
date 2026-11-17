@@ -57,7 +57,7 @@ public:
     bool cargarDatos(string carpeta);
 
     // Muestra un resumen del sistema.
-    void resumen() const;
+    void resumen();
 
     // Busca una estación por código.
     Estacion* buscarEstacion(string codigo);
