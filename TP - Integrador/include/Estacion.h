@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include "Cola.h"
 
 using namespace std;
 
@@ -14,6 +15,7 @@ private:
     string barrio;
     int capacidadAnclajes;
     int bicisDisponibles;
+    Cola<int> espera;
 
 public:
     // Crea una estación vacía para permitir su almacenamiento en la tabla.
@@ -71,6 +73,24 @@ public:
             return false;
         ++bicisDisponibles;
         return true;
+    }
+
+    // Indica si no hay usuarios esperando una bicicleta.
+    bool colaVaciaDeEspera() const
+    {
+        return espera.vacia();
+    }
+
+    // Agrega el DNI del usuario al final de la cola de espera.
+    void encolarEspera(int dniUsuario)
+    {
+        espera.encolar(dniUsuario);
+    }
+
+    // Quita y devuelve el DNI del primer usuario en espera.
+    bool desencolarEspera(int& dniUsuario)
+    {
+        return espera.desencolar(dniUsuario);
     }
 
     // Muestra los datos de la estación.

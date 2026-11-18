@@ -5,7 +5,6 @@
 #include <string>
 #include "Bicicleta.h"
 #include "ArbolBinarioBusqueda.h"
-#include "Cola.h"
 #include "Estacion.h"
 #include "Grafo.h"
 #include "ListaEnlazada.h"
@@ -20,7 +19,6 @@ class Sistema
 private:
     TablaHash<string, Estacion> estaciones;
     Grafo<string> ciclovias;
-    TablaHash<string, Cola<int>> colasEspera;
     ListaEnlazada<Bicicleta> bicicletas;
     ArbolBinarioBusqueda<int, Bicicleta> bicicletasPorId;
     ListaEnlazada<Viaje> viajes;

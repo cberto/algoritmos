@@ -4,17 +4,18 @@ Este documento explica, estructura por estructura, el mecanismo interno de cada 
 
 ## Panorama general
 
-`Sistema` actúa como fachada: concentra la lógica de negocio y mantiene seis estructuras genéricas como miembros privados. `main.cpp` solo arma el menú y valida la entrada; nunca accede a las estructuras directamente.
+`Sistema` actúa como fachada: concentra la lógica de negocio y mantiene cinco estructuras genéricas como miembros privados. `main.cpp` solo arma el menú y valida la entrada; nunca accede a las estructuras directamente.
 
 | Miembro de `Sistema` | Tipo | Contenido |
 | --- | --- | --- |
 | `estaciones` | `TablaHash<string, Estacion>` | estaciones indexadas por código |
 | `ciclovias` | `Grafo<string>` | conexiones entre estaciones |
-| `colasEspera` | `TablaHash<string, Cola<int>>` | DNIs en espera, uno por estación |
 | `bicicletas` | `ListaEnlazada<Bicicleta>` | bicicletas en orden de carga |
 | `bicicletasPorId` | `ArbolBinarioBusqueda<int, Bicicleta>` | bicicletas indexadas por `bici_id` |
 | `viajes` | `ListaEnlazada<Viaje>` | viajes en orden de carga |
 | `taller` | `MinHeap<BicicletaTaller>` | bicicletas averiadas pendientes de reparación |
+
+La cola de espera no es un miembro de `Sistema`: el enunciado pide una `Cola<int>` por estación, no una tabla hash adicional, así que esa cola vive directamente dentro de cada `Estacion` (ver más abajo). El único requisito de tabla hash que exige el enunciado es indexar `estaciones` por código.
 
 ## Tabla de hash (`TablaHash<Clave, Valor>`)
 
@@ -24,7 +25,6 @@ La función de hash para `string` (`FuncionHash<string>`, en `FuncionHash.h`) ac
 
 **Uso en el sistema.**
 - `estaciones`: cada estación se busca, agrega y elimina por su código (`buscarEstacion`, `agregarEstacion`, `eliminarEstacion`). `listarEstacionesOrdenadas` y `listarEstacionesBajaOcupacion` usan `copiarReferencias` para recorrer todas las estaciones sin alterar la tabla.
-- `colasEspera`: cada estación tiene su propia `Cola<int>` como valor; `solicitarBicicleta` y `devolverBicicleta` la ubican por código antes de operarla.
 - `Grafo<string>` también mantiene internamente una `TablaHash<string, NodoVertice*>` (`indice`) para ubicar un vértice por su código en tiempo constante promedio, en lugar de recorrer la lista de vértices.
 
 ## Lista enlazada (`ListaEnlazada<T>`)
@@ -41,7 +41,7 @@ La función de hash para `string` (`FuncionHash<string>`, en `FuncionHash.h`) ac
 **Mecanismo.** Lista enlazada con punteros a `frente` y `final`: `encolar` agrega al final y `desencolar` quita del frente, ambas operaciones en O(1) porque no hace falta recorrer la estructura.
 
 **Uso en el sistema.**
-- `colasEspera` guarda una `Cola<int>` por estación con los DNI que esperan una bicicleta. `solicitarBicicleta` encola un DNI cuando no hay bicicletas disponibles; `devolverBicicleta` desencola primero antes de aumentar la disponibilidad, para respetar el orden de llegada (FIFO).
+- Cada `Estacion` tiene su propia `Cola<int> espera` como miembro, con los DNI que esperan una bicicleta (expuesta a través de `colaVaciaDeEspera`, `encolarEspera` y `desencolarEspera`). `Sistema::solicitarBicicleta` encola un DNI cuando no hay bicicletas disponibles; `Sistema::devolverBicicleta` desencola primero antes de aumentar la disponibilidad, para respetar el orden de llegada (FIFO). No hace falta una tabla hash extra para esto: la estación ya se ubica por código en `estaciones`, y una vez encontrada, su cola de espera es parte de ella.
 - `Grafo<string>::caminoMinimo` usa una `Cola<NodoVertice*>` interna (`pendientes`) como cola de frontera del recorrido en anchura: BFS visita los vértices en el orden en que los encoló, lo que garantiza que el destino se alcance por el camino con menos tramos.
 
 ## Árbol binario de búsqueda (`ArbolBinarioBusqueda<Clave, Valor>`)

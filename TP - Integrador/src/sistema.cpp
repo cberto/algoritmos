@@ -222,14 +222,6 @@ bool Sistema::agregarEstacion(string codigo, string nombre, string barrio,
         estaciones.eliminar(codigo);
         return false;
     }
-
-    Cola<int> colaNueva;
-    if (!colasEspera.insertar(codigo, colaNueva))
-    {
-        ciclovias.eliminarVertice(codigo);
-        estaciones.eliminar(codigo);
-        return false;
-    }
     return true;
 }
 
@@ -240,7 +232,6 @@ bool Sistema::eliminarEstacion(string codigo)
         return false;
 
     ciclovias.eliminarVertice(codigo);
-    colasEspera.eliminar(codigo);
     return estaciones.eliminar(codigo);
 }
 
@@ -564,20 +555,13 @@ void Sistema::solicitarBicicleta(string codigoEstacion, int dniUsuario)
         return;
     }
 
-    Cola<int>* cola = colasEspera.buscar(codigoEstacion);
-    if (cola == nullptr)
-    {
-        cout << "No se encontro la cola de espera de la estacion." << endl;
-        return;
-    }
-
-    if (cola->vacia() && estacion->retirarBicicleta())
+    if (estacion->colaVaciaDeEspera() && estacion->retirarBicicleta())
     {
         cout << "Bicicleta disponible para el usuario " << dniUsuario << "." << endl;
     }
     else
     {
-        cola->encolar(dniUsuario);
+        estacion->encolarEspera(dniUsuario);
         cout << "No hay bicicletas disponibles. Usuario " << dniUsuario
              << " agregado a la cola de espera." << endl;
     }
@@ -593,15 +577,8 @@ void Sistema::devolverBicicleta(string codigoEstacion)
         return;
     }
 
-    Cola<int>* cola = colasEspera.buscar(codigoEstacion);
-    if (cola == nullptr)
-    {
-        cout << "No se encontro la cola de espera de la estacion." << endl;
-        return;
-    }
-
     int dniUsuario;
-    if (cola->desencolar(dniUsuario))
+    if (estacion->desencolarEspera(dniUsuario))
     {
         cout << "Bicicleta asignada al primer usuario en espera: "
              << dniUsuario << "." << endl;
