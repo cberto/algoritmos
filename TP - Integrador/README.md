@@ -114,7 +114,7 @@ classDiagram
         +buscarEstacion(codigo) Estacion*
         +agregar(...) bool
         +eliminar(codigo) bool
-        +recorrer(visitar) void
+        +volcar(salida) void
         +cantidad() int
         +totalColisiones() int
         +factorCarga() double
@@ -149,7 +149,7 @@ classDiagram
         +insertar(bici) bool
         +buscar(id) Bicicleta*
         +eliminar(id) bool
-        +recorrer(visitar) void
+        +volcarInorden(salida) void
         +cantidadAveriadas() int
         +altura() int
         +cantidadBicicletas() int
@@ -210,7 +210,7 @@ classDiagram
         +desencolar() T
         +vacia() bool
         +cantidad() int
-        +recorrer(visitar) void
+        +volcar(salida) void
     }
 
     class Taller {
@@ -255,6 +255,8 @@ classDiagram
     Ciclovia ..> Cola : usa en BFS
     Redistribucion ..> Faltante : usa
     Redistribucion ..> Array : usa
+    HashEstaciones ..> Array : vuelca a (listar)
+    ABBicicleta ..> Array : vuelca a (inorder)
 ```
 
 **Composición** (rombo lleno): el contenedor crea y destruye a sus partes. Por ejemplo, `HashEstaciones` hace `new Estacion` al agregar y `delete` al eliminar o en su destructor; `ABBicicleta` hace lo mismo con cada `Bicicleta`.
@@ -277,7 +279,7 @@ Las ciclovías se modelan como un **grafo no dirigido con listas de adyacencia**
 | Operación | Complejidad | Comentario |
 | --- | --- | --- |
 | Buscar estación | O(1) promedio, O(n) peor caso | O(1 + α), con α el factor de carga |
-| Agregar estación | O(1) promedio | Antes busca para no duplicar |
+| Agregar estación | O(1) prom. (hash) + O(V) (grafo) | El hash es O(1); agregar el vértice al grafo busca entre los V existentes para no duplicar |
 | Eliminar estación | O(1) promedio en el hash + O(V + E) en el grafo | Se quitan todas sus aristas |
 | Listar ordenadas | O(n²) | Inserción directa sobre una copia de punteros, para no desarmar la tabla |
 | Ocupación < 20 % | O(n) | Recorre toda la tabla |
@@ -296,6 +298,8 @@ Las ciclovías se modelan como un **grafo no dirigido con listas de adyacencia**
 ## Módulo C — Registro de bicicletas (ABB)
 
 Las bicicletas se guardan en un **árbol binario de búsqueda ordenado por `biciId`**.
+
+La inserción y el borrado son **recursivos**: en cada paso se compara el ID y se baja a la rama izquierda (menor) o derecha (mayor). Para recorrer el árbol sin exponer sus nodos, `volcarInorden` copia las bicicletas en un `Array` en orden de ID, y quien lo pide las recorre con un `for` (el hash y la cola usan el mismo patrón con `volcar`).
 
 | Operación | Complejidad |
 | --- | --- |
