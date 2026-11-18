@@ -11,6 +11,7 @@ using namespace std;
 
 
 
+// Abre los cuatro .txt de la carpeta y carga estaciones, bicicletas, viajes y ciclovias; no recarga si ya habia datos. O(total de lineas): inserta cada estacion (hash O(1) prom), bici (ABB O(h)), viaje (O(1)) y ciclovia (grafo O(V)) una vez.
 bool Sistema::cargarDatos(string carpeta){
     cout << "Cargando datos desde archivos..." << endl;
      if(cargado) {
@@ -62,6 +63,7 @@ bool Sistema::cargarDatos(string carpeta){
     return true;
 }
 
+// Imprime los totales de cada estructura y las metricas del hash (colisiones y factor de carga). O(1): todos los totales son contadores ya guardados.
 void Sistema::resumen() const {
   cout << " | Resumen" << endl
      << " |-----------------" << endl
@@ -79,16 +81,13 @@ void Sistema::listarEstaciones(bool capacidad) const {
  Array<Estacion*> ordenados;
  
 
- estaciones.recorrer([&](Estacion& e) {
-  ordenados.agregar(&e);});
+ estaciones.volcar(ordenados);
 
-  // metodo utilizado es insercion 
-  //Insercion directa sobre  una copia de punteros, para no desarmar la tabla hash
   for(int i=1; i<ordenados.cantidad(); i++){
     Estacion* actual = ordenados[i];
     int ant = i-1;
     int clave = capacidad ? actual->getCapacidad() : actual->getDisponible();
-  
+
 
     while(ant >= 0){
       int tmpAnterior = capacidad ? ordenados[ant]->getCapacidad() : ordenados[ant]->getDisponible();
@@ -97,16 +96,14 @@ void Sistema::listarEstaciones(bool capacidad) const {
       }
       ordenados[ant+1] = ordenados[ant];
       --ant;
-     
+
     }
-    ordenados[ant+1] = actual;
+    ordenados[ant+1] = actual;   
   }
+  // Ya ordenado, imprimo cada estacion.
   cout << " | Listado" << endl
        << " |--------------------------" << endl;
   for(int i=0; i<ordenados.cantidad(); i++){
-   
-   
-    
     ordenados[i]->mostrarEstacion();
     cout << " |--------------------------" << endl;
   }
@@ -117,14 +114,16 @@ void Sistema::listarOcupacion() const {
   int total = 0;
   cout << " | Listado" << endl
   << " |--------------------------" << endl;
-  estaciones.recorrer([&](const Estacion& e) {
-    //quinta parte de la capacidad
+  Array<Estacion*> todas;
+  estaciones.volcar(todas);
+  for(int i = 0; i < todas.cantidad(); i++){
+    const Estacion& e = *todas[i];
     if(5*e.getDisponible() < e.getCapacidad()){
       e.mostrarEstacion();
       cout << " |--------------------------" << endl;
       ++total;
     }
-  });
+  }
       if(!total){
       cout << " | No hay estaciones con ocupacion menor al 20%" << endl << endl;
      }
@@ -159,7 +158,6 @@ bool Sistema::agregarBicicleta(int biciId, string codigoEstacion, string tipo, s
 }
 
 bool Sistema::eliminarBicicleta(int id) {
-    // Una bici en el taller no se borra: el heap quedaria con un ID inexistente.
     if (taller.contiene(id)) return false;
     return bicicletas.eliminar(id);
 }
@@ -212,12 +210,15 @@ bool Sistema::eliminarBicicleta(int id) {
 
  void Sistema:: revisionBicicletas(int km) const {
   int total = 0;
-  bicicletas.recorrer([&](const Bicicleta& bici){
+  Array<Bicicleta*> todas;
+  bicicletas.volcarInorden(todas);
+  for(int i = 0; i < todas.cantidad(); i++){
+    const Bicicleta& bici = *todas[i];
     if(bici.getKilometros() > km){
       bici.mostrarBicicleta();
       ++total;
     }
-  });
+  }
   if(!total){
     cout << " | No hay bicicletas con mas de " << km << " km" << endl << endl;
   }
@@ -272,11 +273,13 @@ bool Sistema::mostrarEspera(string cod) const {
     return true;
   }
   bool primero = true;
-  e->espera.recorrer([&](int dni) {
+  Array<int> dnis;
+  e->espera.volcar(dnis);
+  for(int i = 0; i < dnis.cantidad(); i++){
     if (!primero) cout << " -> ";
-    cout << dni;
+    cout << dnis[i];
     primero = false;
-  });
+  }
   cout << " (primero -> ultimo)" << endl << endl;
   return true;
 }
