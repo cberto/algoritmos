@@ -66,32 +66,23 @@ bool Sistema::cargarEstaciones(string carpeta)
     int capacidad;
     int disponibles;
 
-    bool lecturaCorrecta = true;
-    while (lecturaCorrecta)
+    while (levantarEstaciones >> codigo)
     {
-        levantarEstaciones >> codigo;
+        levantarEstaciones >> nombre;
+        levantarEstaciones >> barrio;
+        levantarEstaciones >> capacidad;
+        levantarEstaciones >> disponibles;
+
         if (levantarEstaciones.fail())
         {
-            lecturaCorrecta = false;
+            cout << "Registro de estacion incompleto o invalido." << endl;
+            return false;
         }
-        else
+
+        if (!agregarEstacion(codigo, nombre, barrio, capacidad, disponibles))
         {
-            levantarEstaciones >> nombre;
-            levantarEstaciones >> barrio;
-            levantarEstaciones >> capacidad;
-            levantarEstaciones >> disponibles;
-
-            if (levantarEstaciones.fail())
-            {
-                cout << "Registro de estacion incompleto o invalido." << endl;
-                return false;
-            }
-
-            if (!agregarEstacion(codigo, nombre, barrio, capacidad, disponibles))
-            {
-                cout << "Estacion invalida o repetida: " << codigo << endl;
-                return false;
-            }
+            cout << "Estacion invalida o repetida: " << codigo << endl;
+            return false;
         }
     }
     return true;
@@ -112,37 +103,28 @@ bool Sistema::cargarBicicletas(string carpeta)
     string tipo;
     string estado;
     int kilometros;
-    bool leyendoBicicletas = true;
-    while (leyendoBicicletas)
+    while (levantarBicicletas >> biciId)
     {
-        levantarBicicletas >> biciId;
+        levantarBicicletas >> codigoEstacion;
+        levantarBicicletas >> tipo;
+        levantarBicicletas >> estado;
+        levantarBicicletas >> kilometros;
+
         if (levantarBicicletas.fail())
         {
-            leyendoBicicletas = false;
+            cout << "Registro de bicicleta incompleto o invalido." << endl;
+            return false;
         }
-        else
+
+        Bicicleta nuevaBicicleta(biciId, codigoEstacion, tipo,
+                                 estado, kilometros);
+        if (!insertarBicicletaEnABB(nuevaBicicleta))
         {
-            levantarBicicletas >> codigoEstacion;
-            levantarBicicletas >> tipo;
-            levantarBicicletas >> estado;
-            levantarBicicletas >> kilometros;
-
-            if (levantarBicicletas.fail())
-            {
-                cout << "Registro de bicicleta incompleto o invalido." << endl;
-                return false;
-            }
-
-            Bicicleta nuevaBicicleta(biciId, codigoEstacion, tipo,
-                                     estado, kilometros);
-            if (!insertarBicicletaEnABB(nuevaBicicleta))
-            {
-                cout << "Identificador de bicicleta repetido: "
-                     << biciId << endl;
-                return false;
-            }
-            bicicletas.insertarAlFinal(nuevaBicicleta);
+            cout << "Identificador de bicicleta repetido: "
+                 << biciId << endl;
+            return false;
         }
+        bicicletas.insertarAlFinal(nuevaBicicleta);
     }
     cout << "Bicicletas insertadas en el ABB." << endl;
     return true;
@@ -165,33 +147,24 @@ bool Sistema::cargarViajes(string carpeta)
     string destinoViaje;
     int fechaViaje;
     int duracionMinutos;
-    bool leyendoViajes = true;
-    while (leyendoViajes)
+    while (levantarViajes >> viajeId)
     {
-        levantarViajes >> viajeId;
+        levantarViajes >> biciId;
+        levantarViajes >> dniUsuario;
+        levantarViajes >> origenViaje;
+        levantarViajes >> destinoViaje;
+        levantarViajes >> fechaViaje;
+        levantarViajes >> duracionMinutos;
+
         if (levantarViajes.fail())
         {
-            leyendoViajes = false;
+            cout << "Registro de viaje incompleto o invalido." << endl;
+            return false;
         }
-        else
-        {
-            levantarViajes >> biciId;
-            levantarViajes >> dniUsuario;
-            levantarViajes >> origenViaje;
-            levantarViajes >> destinoViaje;
-            levantarViajes >> fechaViaje;
-            levantarViajes >> duracionMinutos;
 
-            if (levantarViajes.fail())
-            {
-                cout << "Registro de viaje incompleto o invalido." << endl;
-                return false;
-            }
-
-            Viaje nuevoViaje(viajeId, biciId, dniUsuario, origenViaje,
-                             destinoViaje, fechaViaje, duracionMinutos);
-            viajes.insertarAlFinal(nuevoViaje);
-        }
+        Viaje nuevoViaje(viajeId, biciId, dniUsuario, origenViaje,
+                         destinoViaje, fechaViaje, duracionMinutos);
+        viajes.insertarAlFinal(nuevoViaje);
     }
     return true;
 }
@@ -208,28 +181,19 @@ bool Sistema::cargarCiclovias(string carpeta)
 
     string estacionA;
     string estacionB;
-    bool leyendoCiclovias = true;
-    while (leyendoCiclovias)
+    while (levantarCiclovias >> estacionA)
     {
-        levantarCiclovias >> estacionA;
+        levantarCiclovias >> estacionB;
         if (levantarCiclovias.fail())
         {
-            leyendoCiclovias = false;
+            cout << "Registro de ciclovia incompleto." << endl;
+            return false;
         }
-        else
-        {
-            levantarCiclovias >> estacionB;
-            if (levantarCiclovias.fail())
-            {
-                cout << "Registro de ciclovia incompleto." << endl;
-                return false;
-            }
 
-            if (!ciclovias.conectar(estacionA, estacionB))
-            {
-                cout << "No se pudo conectar " << estacionA << " con " << estacionB << "." << endl;
-                return false;
-            }
+        if (!ciclovias.conectar(estacionA, estacionB))
+        {
+            cout << "No se pudo conectar " << estacionA << " con " << estacionB << "." << endl;
+            return false;
         }
     }
     return true;

@@ -1,46 +1,81 @@
 # TP Integrador — Sistema de Bicicletas Públicas
 
-Implementación parcial del sistema descrito en `TP2C2026.pdf`. El módulo de estaciones carga, busca, agrega y elimina estaciones, permite listarlas ordenadas por capacidad o bicicletas disponibles, filtra las que tienen menos del 20% de ocupación y calcula caminos mínimos por ciclovías. En el módulo B están implementados B1–B5: consultas de viajes, listado de bicicletas por kilometraje, colas de espera por estación y prioridad del taller. El módulo C está implementado: C1 carga en ABB por `bici_id`, C2 busca por ID, C3 lista por inorder, C4 cuenta las averiadas y C5 calcula la altura y C6 implementa la eliminación opcional de bicicletas del ABB. D1 resuelve la redistribución y el módulo D está implementado.
+Sistema en C++17 que gestiona la red de bicicletas públicas de Buenos Aires: carga y consulta de estaciones, bicicletas, viajes y ciclovías, y redistribución de bicicletas mediante backtracking, según el enunciado de `TP2C2026.pdf`. Las estructuras de datos genéricas (tabla de hash, lista enlazada, cola, árbol binario de búsqueda, montículo mínimo y grafo) están implementadas en `estructuras/`, sin recurrir a contenedores de la biblioteca estándar.
 
-## Compilar / correr
+## Compilación y ejecución
+
+Desde `TP - Integrador/`:
 
 ```bash
-cd "TP - Integrador"
 make
 ./bicis
 ```
 
-Las estructuras desacopladas tienen una prueba independiente:
+o sin `make`:
 
 ```bash
-cd "estructuras"
+g++ -std=c++17 -Wall -Wextra -Iinclude -Iestructuras src/*.cpp -o bicis
+./bicis
+```
+
+El programa debe ejecutarse desde `TP - Integrador/`, porque la opción 1 lee los archivos de `data/` con ruta relativa.
+
+Las estructuras desacopladas tienen pruebas propias:
+
+```bash
+cd estructuras
 make test
 ```
 
-Las operaciones implementadas de estaciones y del módulo B también tienen pruebas:
+Las operaciones de estaciones y del módulo B también tienen pruebas:
 
 ```bash
 cd "TP - Integrador"
 make test
 ```
 
-## Estructura
+## Estructura del proyecto
 
 ```
 TP - Integrador/
 ├── data/                 # archivos de entrada de ejemplo
-├── estructuras/          # contenedores manuales genéricos y pruebas
-├── include/              # clases del dominio y Sistema
-├── src/                  # menú y coordinación del sistema
+├── estructuras/          # contenedores genéricos (hash, lista, cola, ABB, heap, grafo) y pruebas
+├── include/              # clases del dominio (Estacion, Bicicleta, Viaje) y Sistema
+├── src/                  # main.cpp (menú) y sistema.cpp (lógica)
 ├── Makefile
 └── README.md
 ```
 
-`estructuras/` contiene lista enlazada, cola, tabla hash, ABB, min-heap y grafo con BFS. Son implementaciones manuales independientes de las clases del dominio y no usan contenedores STL. La tabla hash, el grafo, las listas enlazadas, la cola, el min-heap y el ABB se usan para estaciones, ciclovías, bicicletas, viajes, esperas y taller.
+## Menú
 
-El listado ordenado de estaciones usa selección directa de menor a mayor y permite elegir entre capacidad de anclajes y bicicletas disponibles. El filtro de ocupación compara las bicicletas disponibles con la capacidad de cada estación. Los caminos mínimos se calculan con BFS sobre las conexiones cargadas desde `data/ciclovias.txt`. Los viajes se cargan desde `data/viajes.txt` y B1 considera incluidos ambos extremos del rango de fechas.
+| Opción | Módulo | Funcionalidad |
+| --- | --- | --- |
+| 0 | — | Salir |
+| 1 | Datos | Cargar estaciones, bicicletas, viajes y ciclovías desde `data/` |
+| 2 | Datos | Generar resumen del sistema |
+| 10 | A | Buscar estación |
+| 11 | A | Agregar estación |
+| 13 | A | Eliminar estación |
+| 14 | A | Listar estaciones ordenadas por capacidad o disponibilidad |
+| 15 | A | Listar estaciones con ocupación menor al 20 % |
+| 16 | A | Camino mínimo por ciclovías (BFS) |
+| 20 | B | Viajes por estación y rango de fechas |
+| 21 | B | Viajes por DNI y minutos pedaleados |
+| 22 | B | Bicicletas con más de X kilómetros |
+| 23 | B | Solicitar o devolver una bicicleta (colas de espera) |
+| 24 | B | Taller de reparaciones (min-heap) |
+| 30 | C | Buscar bicicleta por ID en el ABB |
+| 31 | C | Listar bicicletas en inorder |
+| 32 | C | Contar bicicletas averiadas |
+| 33 | C | Calcular la altura del ABB |
+| 34 | C | Eliminar una bicicleta del ABB |
+| 40 | D | Redistribución de bicicletas (backtracking) |
 
-La carga se organiza en subtareas: `cargarDatos` coordina y los métodos privados de `Sistema` procesan estaciones, bicicletas, viajes y ciclovías por separado.
+Todas las entradas numéricas se validan con la función `leer<T>` de `main.cpp`: ante texto inválido en un campo numérico, se vuelve a solicitar el dato en lugar de entrar en un bucle infinito.
+
+## Diagrama de clases
+
+Ver [UML_ACTUAL.md](./UML_ACTUAL.md).
 
 ## Complejidad y elección de estructuras
 
@@ -97,7 +132,29 @@ Con los datos de prueba, la tabla de 11 buckets registra **1 colisión de inserc
 
 6. **Eliminar una bicicleta del ABB (C6, opcional) — O(h) tiempo y O(h) espacio de pila.** Se busca el ID y se elimina el nodo conservando el orden del árbol. El ABB contempla hoja, un hijo y dos hijos; en este último caso lo reemplaza por el mínimo del subárbol derecho.
 
-**Pregunta de análisis de C:** si se insertan cinco bicicletas en orden creciente de ID, cada una queda como hijo derecho de la anterior. El árbol tiene altura 4 (medida en aristas) y se degenera en una lista; buscar el último ID requiere revisar las cinco bicicletas, por lo que la búsqueda cuesta O(N_b) en este caso, en vez de O(log N_b) en un árbol balanceado. Por ejemplo, al insertar los IDs 101, 102, 103, 104 y 105, buscar 105 compara los cinco nodos.
+**Pregunta de análisis de C:** si se insertan las bicicletas en orden creciente de ID, cada una queda como hijo derecho de la anterior. El árbol se degenera en una lista de altura N_b − 1; buscar el último ID insertado requiere revisar las N_b bicicletas, por lo que la búsqueda cuesta O(N_b) en este caso, en vez de O(log N_b) en un árbol balanceado.
+
+`data/bicicletas.txt` tiene los IDs 501 a 507 ya ordenados, así que al cargar los datos (opción 1) y pedir la altura (opción 33) el programa devuelve **6** (N_b − 1, con N_b = 7). Insertando los mismos siete IDs en un orden que vaya partiendo el rango por la mitad (504, 502, 506, 501, 503, 505, 507) el árbol queda balanceado, con altura **2**:
+
+```
+Cargadas en orden (501..507) — altura 6      Cargadas 504, 502, 506, 501, 503, 505, 507 — altura 2
+
+501                                                        504
+  \                                                       /   \
+  502                                                   502   506
+    \                                                  /  \   /  \
+    503                                              501  503 505 507
+      \
+      504
+        \
+        505
+          \
+          506
+            \
+            507
+```
+
+Buscar la bicicleta 507 cuesta 7 comparaciones en el árbol degenerado y solo 3 en el balanceado.
 
 ### Módulo D — Redistribución con backtracking
 
@@ -105,4 +162,16 @@ Con los datos de prueba, la tabla de 11 buckets registra **1 colisión de inserc
 
 2. **Complejidad temporal en el peor caso (D2).** Sea S la cantidad de estaciones candidatas y R la cantidad de soluciones. La exploración tiene como máximo O(2^S) decisiones; mostrar las soluciones agrega O(S*R), porque cada una puede contener hasta S estaciones. El tiempo total es O(2^S + S*R), acotado por O(S*2^S) en el peor caso. El espacio auxiliar es O(S) por los arreglos de selección y la pila recursiva.
 
-Ver [ESTADO_ACTUAL.md](./ESTADO_ACTUAL.md) para el relevamiento del TP y [UML_ACTUAL.md](./UML_ACTUAL.md) para el diagrama vigente.
+**Ejemplo.** Con cinco estaciones cuyo faltante es PLZ 3, CAB 7, RET 5, CON 2 y BOE 5, y un camión de capacidad 10, el programa (opción 40) imprime:
+
+```
+Combinaciones de estaciones para completar 10 bicicletas:
+{CON, PLZ, BOE}
+{CON, PLZ, RET}
+{PLZ, CAB}
+{BOE, RET}
+```
+
+## Documentación adicional
+
+Ver [RESUMEN_IMPLEMENTACION.md](./RESUMEN_IMPLEMENTACION.md) para una explicación del funcionamiento interno de cada estructura de datos y de cómo la usa `Sistema`.
