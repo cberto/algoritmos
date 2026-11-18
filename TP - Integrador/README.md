@@ -281,7 +281,7 @@ Las ciclovías se modelan como un **grafo no dirigido con listas de adyacencia**
 | Buscar estación | O(1) promedio, O(n) peor caso | O(1 + α), con α el factor de carga |
 | Agregar estación | O(1) prom. (hash) + O(V) (grafo) | El hash es O(1); agregar el vértice al grafo busca entre los V existentes para no duplicar |
 | Eliminar estación | O(1) promedio en el hash + O(V + E) en el grafo | Se quitan todas sus aristas |
-| Listar ordenadas | O(n²) | Inserción directa sobre una copia de punteros, para no desarmar la tabla |
+| Listar ordenadas | O(n²) peor caso, O(n) mejor caso | La consigna permitía burbujeo, selección o inserción; elegimos **inserción directa** sobre una copia de punteros, para no desarmar la tabla. Es estable, no usa memoria extra y corta antes (mejor caso O(n)) si ya viene ordenada |
 | Ocupación < 20 % | O(n) | Recorre toda la tabla |
 | Camino mínimo (BFS) | O(V + E) | V = estaciones, E = ciclovías |
 
