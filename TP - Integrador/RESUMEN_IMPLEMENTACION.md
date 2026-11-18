@@ -14,7 +14,7 @@ Este documento explica, estructura por estructura, el mecanismo interno de cada 
 | `bicicletas` | `ListaEnlazada<Bicicleta>` | bicicletas en orden de carga |
 | `bicicletasPorId` | `ArbolBinarioBusqueda<int, Bicicleta>` | bicicletas indexadas por `bici_id` |
 | `viajes` | `ListaEnlazada<Viaje>` | viajes en orden de carga |
-| `taller` | `MonticuloMinimo<BicicletaTaller>` | bicicletas averiadas pendientes de reparación |
+| `taller` | `MinHeap<BicicletaTaller>` | bicicletas averiadas pendientes de reparación |
 
 ## Tabla de hash (`TablaHash<Clave, Valor>`)
 
@@ -50,7 +50,7 @@ La función de hash para `string` (`FuncionHash<string>`, en `FuncionHash.h`) ac
 
 **Uso en el sistema.** `bicicletasPorId` indexa cada bicicleta por `bici_id` en el momento de la carga (`insertarBicicletaEnABB`), antes de agregarla también a la lista `bicicletas`. Sobre ese árbol se apoyan directamente las operaciones del módulo C: `mostrarBicicletaPorId` (búsqueda), `listarBicicletasInorden` (recorrido inorder), `contarBicicletasAveriadas` (`contarSi` con el predicado `esBicicletaAveriada`), `alturaBicicletasABB` (altura) y `eliminarBicicletaDelABB` (eliminación). Como la altura depende por completo del orden de inserción, cargar las bicicletas con IDs ya ordenados degenera el árbol en una lista y empeora la búsqueda de O(log N_b) a O(N_b).
 
-## Montículo mínimo (`MonticuloMinimo<T>`)
+## Montículo mínimo (`MinHeap<T>`)
 
 **Mecanismo.** Heap binario representado en un arreglo dinámico (`datos`), sin usar punteros entre nodos: para la posición `i`, el padre está en `(i-1)/2` y los hijos en `2i+1` y `2i+2`. `insertar` agrega el elemento al final y lo hace "flotar" (*sift-up*) mientras sea menor que su padre, según el `operator<` del tipo almacenado. `extraerMinimo` devuelve la raíz (el mínimo), mueve el último elemento a la posición 0 y lo hace "hundir" (*sift-down*) intercambiándolo con el menor de sus hijos hasta restablecer el orden. `asegurarCapacidad` duplica el arreglo cuando se llena, de forma análoga a un `vector` manual.
 

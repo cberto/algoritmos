@@ -20,11 +20,11 @@ classDiagram
         -bicicletas: ListaEnlazada~Bicicleta~
         -bicicletasPorId: ArbolBinarioBusqueda~int, Bicicleta~
         -viajes: ListaEnlazada~Viaje~
-        -taller: MonticuloMinimo~BicicletaTaller~
+        -taller: MinHeap~BicicletaTaller~
         -cargado: bool
         +cargarDatos(carpeta): bool
         +resumen(): void
-        +buscarEstacion(codigo): Estacion*
+        +buscarEstacion(codigo): Estacion
         +agregarEstacion(codigo, nombre, barrio, capacidad, disponibles): bool
         +eliminarEstacion(codigo): bool
         +listarEstacionesOrdenadas(criterio): void
@@ -122,7 +122,7 @@ classDiagram
 
     class TablaHash~Clave, Valor, Hash~ {
         +insertar(clave, valor) bool
-        +buscar(clave) Valor*
+        +buscar(clave) Valor
         +eliminar(clave) bool
         +copiarReferencias(referencias)
         +factorCarga() double
@@ -130,12 +130,12 @@ classDiagram
 
     class ArbolBinarioBusqueda~Clave, Valor~ {
         +insertar(clave, valor) bool
-        +buscar(clave) Valor*
+        +buscar(clave) Valor
         +eliminar(clave) bool
         +recorrerInorden(visitar)
     }
 
-    class MonticuloMinimo~T~ {
+    class MinHeap~T~ {
         +insertar(dato)
         +consultarMinimo(dato) bool
         +extraerMinimo(dato) bool
@@ -156,7 +156,7 @@ classDiagram
     Sistema *-- ListaEnlazada~Bicicleta~ : bicicletas cargadas
     Sistema *-- ArbolBinarioBusqueda~int, Bicicleta~ : bici_id => bicicleta (C1)
     Sistema *-- ListaEnlazada~Viaje~ : viajes cargados
-    Sistema *-- MonticuloMinimo~BicicletaTaller~ : bicicletas para reparar
+    Sistema *-- MinHeap~BicicletaTaller~ : bicicletas para reparar
     Sistema ..> Estacion : consulta y devuelve puntero
     TablaHash ..> Estacion : Valor almacenado
     ListaEnlazada ..> Viaje : elementos almacenados
@@ -176,7 +176,7 @@ classDiagram
 - `Sistema` conserva las bicicletas de `bicicletas.txt` en una `ListaEnlazada<Bicicleta>`; B3 recorre la lista para mostrar las que superan el kilometraje ingresado.
 - C1 inserta cada bicicleta cargada también en `ArbolBinarioBusqueda<int, Bicicleta>`, con `bici_id` como clave; el ABB rechaza identificadores duplicados. C2 busca por ese ID y muestra sus datos o informa si no existe; C3 recorre el ABB inorder para listarlas en orden creciente de ID; C4 cuenta las que tienen estado `Averiada` mediante un recorrido completo; C5 calcula la altura usando la operación del ABB; C6 opcional elimina del ABB por ID.
 - `Sistema` mantiene una cola FIFO por estación, indexada por código en una tabla hash. Al devolver una bicicleta, la entrega al primer DNI en espera; si no hay nadie esperando, aumenta la disponibilidad de la estación.
-- `Sistema` usa un `MonticuloMinimo<BicicletaTaller>` para B5; la prioridad acompaña a cada bicicleta y permite extraer primero la más urgente.
+- `Sistema` usa un `MinHeap<BicicletaTaller>` para B5; la prioridad acompaña a cada bicicleta y permite extraer primero la más urgente.
 - La cola y el min-heap están integrados con el módulo B; el ABB genérico está implementado en `estructuras/` y C1–C6 lo integran con las bicicletas.
 - D1 obtiene las estaciones de la tabla hash, calcula el faltante como capacidad de anclajes menos bicicletas disponibles y explora incluir o excluir cada estación candidata mediante backtracking.
 - `Sistema` posee la tabla hash, el grafo y la lista; estas estructuras mantienen sus propios nodos y almacenan los tipos indicados en el diagrama.

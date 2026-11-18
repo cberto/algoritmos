@@ -4,7 +4,7 @@
 #include "Cola.h"
 #include "Grafo.h"
 #include "ListaEnlazada.h"
-#include "MonticuloMinimo.h"
+#include "MinHeap.h"
 #include "TablaHash.h"
 
 using namespace std;
@@ -147,7 +147,7 @@ static void probarArbol()
 // Comprueba prioridades y expansión del arreglo del heap.
 static void probarMonticulo()
 {
-    MonticuloMinimo<Trabajo> monticulo;
+    MinHeap<Trabajo> monticulo;
     Trabajo trabajo;
     assert(!monticulo.extraerMinimo(trabajo));
 

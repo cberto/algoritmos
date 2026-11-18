@@ -9,7 +9,7 @@
 #include "Estacion.h"
 #include "Grafo.h"
 #include "ListaEnlazada.h"
-#include "MonticuloMinimo.h"
+#include "MinHeap.h"
 #include "TablaHash.h"
 #include "Viaje.h"
 
@@ -24,7 +24,7 @@ private:
     ListaEnlazada<Bicicleta> bicicletas;
     ArbolBinarioBusqueda<int, Bicicleta> bicicletasPorId;
     ListaEnlazada<Viaje> viajes;
-    MonticuloMinimo<BicicletaTaller> taller;
+    MinHeap<BicicletaTaller> taller;
     bool cargado;
 
     // Carga las estaciones desde su archivo.

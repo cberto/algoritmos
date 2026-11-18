@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -Iinclude -Iestructuras
 SRC = src/main.cpp src/sistema.cpp
-HEADERS = include/Bicicleta.h include/Estacion.h include/Sistema.h include/Viaje.h estructuras/ArbolBinarioBusqueda.h estructuras/TablaHash.h estructuras/Grafo.h estructuras/Cola.h estructuras/ListaEnlazada.h estructuras/FuncionHash.h estructuras/MonticuloMinimo.h
+HEADERS = include/Bicicleta.h include/Estacion.h include/Sistema.h include/Viaje.h estructuras/ArbolBinarioBusqueda.h estructuras/TablaHash.h estructuras/Grafo.h estructuras/Cola.h estructuras/ListaEnlazada.h estructuras/FuncionHash.h estructuras/MinHeap.h
 OUT = bicis
 TEST_OUT = tests/test_estaciones.exe
 

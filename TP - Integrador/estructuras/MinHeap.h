@@ -1,12 +1,12 @@
-#ifndef ESTRUCTURAS_MONTICULO_MINIMO_H
-#define ESTRUCTURAS_MONTICULO_MINIMO_H
+#ifndef ESTRUCTURAS_MIN_HEAP_H
+#define ESTRUCTURAS_MIN_HEAP_H
 
 #include <cstddef>
 
 using namespace std;
 
 template <typename T>
-class MonticuloMinimo
+class MinHeap
 {
 private:
     T* datos;
@@ -39,7 +39,7 @@ private:
 
 public:
     // Crea un montículo vacío.
-    MonticuloMinimo()
+    MinHeap()
     {
         datos = nullptr;
         cantidad = 0;
@@ -47,7 +47,7 @@ public:
     }
 
     // Libera el arreglo dinámico.
-    ~MonticuloMinimo()
+    ~MinHeap()
     {
         delete[] datos;
     }
