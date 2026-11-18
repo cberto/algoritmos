@@ -5,6 +5,7 @@
 
 
 
+
 template<class T> class Array
 {
     T* datos = nullptr;
@@ -12,14 +13,15 @@ template<class T> class Array
     int usados = 0;
 
     public: 
-    Array() = default;
-    Array(const Array& ) = delete;
+    Array() = default; 
+   
+    Array(const Array& ) = delete;   
     Array& operator=(const Array& ) = delete;
     ~Array() { delete[] datos; }
 
-   int cantidad() const { return usados; }
-   T& operator[](int i) { return datos[i]; }
-   const T& operator[](int i) const { return datos[i]; }
+   int cantidad() const { return usados; }                  
+   T& operator[](int i) { return datos[i]; }               
+   const T& operator[](int i) const { return datos[i]; }   
    void agregar(const T& valor) {
     if(usados == capacidad) {
         int nuevaCapacidad = capacidad == 0 ? 4 : capacidad * 2;
@@ -55,8 +57,8 @@ template<class T> class Cola{
     Cola(const Cola& ) = delete;
     Cola& operator=(const Cola& ) = delete;
     ~Cola() { while(primero) { Nodo* actual = primero; primero = primero->siguiente; delete actual; } }
-    bool vacia() const { return primero == nullptr; }
-    int cantidad() const { return usados; }
+    bool vacia() const { return primero == nullptr; }   
+    int cantidad() const { return usados; }             
     void encolar(const T& valor) {
         Nodo* nuevo = new Nodo{valor, nullptr};
         if(ultimo) ultimo->siguiente = nuevo;
@@ -74,9 +76,9 @@ template<class T> class Cola{
     --usados;
     return valor;
   }
-  template<class F> void recorrer(F visitar) const{
+  void volcar(Array<T>& salida) const{
     for(Nodo* n = primero; n; n = n->siguiente){
-        visitar(n->dato);
+        salida.agregar(n->dato);
     }
   }
 };
