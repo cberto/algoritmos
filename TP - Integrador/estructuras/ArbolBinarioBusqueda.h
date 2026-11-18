@@ -1,8 +1,6 @@
 #ifndef ESTRUCTURAS_ARBOL_BINARIO_BUSQUEDA_H
 #define ESTRUCTURAS_ARBOL_BINARIO_BUSQUEDA_H
 
-#include <cstddef>
-
 using namespace std;
 
 template <typename Clave, typename Valor>
@@ -27,7 +25,7 @@ private:
     };
 
     Nodo* raiz;
-    size_t cantidad;
+    int cantidad;
 
     // Inserta recursivamente una clave que todavía no existe.
     bool insertarRec(Nodo*& actual, Clave& clave, Valor& valor)
@@ -45,7 +43,7 @@ private:
     }
 
     // Busca el nodo que contiene la clave.
-    Nodo* buscarNodo(Clave clave) const
+    Nodo* buscarNodo(Clave clave)
     {
         Nodo* actual = raiz;
         while (actual != nullptr)
@@ -107,7 +105,7 @@ private:
     }
 
     // Cuenta recursivamente los nodos del subárbol.
-    static size_t contarRec(Nodo* actual)
+    static int contarRec(Nodo* actual)
     {
         if (actual == nullptr)
             return 0;
@@ -135,11 +133,11 @@ private:
     }
 
     // Cuenta los valores que cumplen el predicado.
-    static size_t contarSiRec(Nodo* actual, bool (*predicado)(Clave, Valor))
+    static int contarSiRec(Nodo* actual, bool (*predicado)(Clave, Valor))
     {
         if (actual == nullptr)
             return 0;
-        return static_cast<size_t>(predicado(actual->clave, actual->valor))
+        return static_cast<int>(predicado(actual->clave, actual->valor))
              + contarSiRec(actual->izquierdo, predicado)
              + contarSiRec(actual->derecho, predicado);
     }
@@ -174,13 +172,6 @@ public:
         return encontrado == nullptr ? nullptr : &encontrado->valor;
     }
 
-    // Busca una clave sin modificar el valor encontrado.
-    const Valor* buscar(Clave clave) const
-    {
-        Nodo* encontrado = buscarNodo(clave);
-        return encontrado == nullptr ? nullptr : &encontrado->valor;
-    }
-
     // Elimina una clave; devuelve false si no existe.
     bool eliminar(Clave clave)
     {
@@ -191,37 +182,37 @@ public:
     }
 
     // Indica si el árbol está vacío.
-    bool vacio() const
+    bool vacio()
     {
         return raiz == nullptr;
     }
 
     // Devuelve la cantidad de nodos.
-    size_t tamano() const
+    int tamano()
     {
         return cantidad;
     }
 
     // Cuenta nodos recorriendo el árbol.
-    size_t contarNodos() const
+    int contarNodos()
     {
         return contarRec(raiz);
     }
 
     // Devuelve la altura del árbol.
-    int altura() const
+    int altura()
     {
         return alturaRec(raiz);
     }
 
     // Recorre el árbol en orden creciente.
-    void recorrerInorden(void (*visitar)(Clave, Valor)) const
+    void recorrerInorden(void (*visitar)(Clave, Valor))
     {
         recorrerInordenRec(raiz, visitar);
     }
 
     // Cuenta los nodos que cumplen el predicado.
-    size_t contarSi(bool (*predicado)(Clave, Valor)) const
+    int contarSi(bool (*predicado)(Clave, Valor))
     {
         return contarSiRec(raiz, predicado);
     }

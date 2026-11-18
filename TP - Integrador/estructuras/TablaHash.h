@@ -1,7 +1,6 @@
 #ifndef ESTRUCTURAS_TABLA_HASH_H
 #define ESTRUCTURAS_TABLA_HASH_H
 
-#include <cstddef>
 #include <stdexcept>
 #include "FuncionHash.h"
 
@@ -27,14 +26,14 @@ private:
     };
 
     Nodo** buckets;
-    size_t capacidad;
-    size_t cantidad;
-    size_t colisiones;
+    int capacidad;
+    int cantidad;
+    int colisiones;
 
     // Libera los nodos sin borrar el arreglo de buckets.
     void limpiar()
     {
-        size_t i;
+        int i;
         for (i = 0; i < capacidad; ++i)
         {
             while (buckets[i] != nullptr)
@@ -48,22 +47,25 @@ private:
         colisiones = 0;
     }
 
-    // Devuelve el bucket correspondiente a una clave.
-    size_t posicion(Clave clave) const
+    // Devuelve el bucket correspondiente a una clave, llevando el resto negativo a un índice válido.
+    int posicion(Clave clave)
     {
-        return Hash{}(clave) % capacidad;
+        int resto = Hash{}(clave) % capacidad;
+        if (resto < 0)
+            resto += capacidad;
+        return resto;
     }
 
 public:
     // Crea la tabla con la cantidad indicada de buckets.
-    TablaHash(size_t cantidadBuckets = 11)
+    TablaHash(int cantidadBuckets = 11)
     {
         buckets = nullptr;
         capacidad = cantidadBuckets;
         cantidad = 0;
         colisiones = 0;
 
-        if (capacidad == 0)
+        if (capacidad <= 0)
             throw invalid_argument("La tabla hash necesita al menos un bucket.");
         buckets = new Nodo*[capacidad]();
     }
@@ -78,9 +80,9 @@ public:
     // Inserta una clave nueva; devuelve false si ya existe.
     bool insertar(Clave clave, Valor valor)
     {
-        size_t indice = posicion(clave);
+        int indice = posicion(clave);
         Nodo* actual = buckets[indice];
-        size_t i;
+        int i;
         for (i = 0; i < cantidad; ++i)
         {
             if (actual == nullptr)
@@ -102,23 +104,7 @@ public:
     Valor* buscar(Clave clave)
     {
         Nodo* actual = buckets[posicion(clave)];
-        size_t i;
-        for (i = 0; i < cantidad; ++i)
-        {
-            if (actual == nullptr)
-                break;
-            if (actual->clave == clave)
-                return &actual->valor;
-            actual = actual->siguiente;
-        }
-        return nullptr;
-    }
-
-    // Busca una clave sin modificar el valor encontrado.
-    const Valor* buscar(Clave clave) const
-    {
-        Nodo* actual = buckets[posicion(clave)];
-        size_t i;
+        int i;
         for (i = 0; i < cantidad; ++i)
         {
             if (actual == nullptr)
@@ -147,13 +133,13 @@ public:
     }
 
     // Indica si la tabla está vacía.
-    bool vacia() const
+    bool vacia()
     {
         return cantidad == 0;
     }
 
     // Devuelve la cantidad de entradas.
-    size_t tamano() const
+    int tamano()
     {
         return cantidad;
     }
@@ -161,8 +147,8 @@ public:
     // Copia las direcciones de los valores en un arreglo.
     void copiarReferencias(Valor* referencias[])
     {
-        size_t cantidadCopiada = 0;
-        size_t i;
+        int cantidadCopiada = 0;
+        int i;
         for (i = 0; i < capacidad; ++i)
         {
             Nodo* actual = buckets[i];
@@ -176,19 +162,19 @@ public:
     }
 
     // Devuelve la cantidad de buckets.
-    size_t cantidadBuckets() const
+    int cantidadBuckets()
     {
         return capacidad;
     }
 
     // Devuelve las inserciones que encontraron ocupado su bucket.
-    size_t cantidadColisiones() const
+    int cantidadColisiones()
     {
         return colisiones;
     }
 
     // Devuelve entradas divididas por buckets.
-    double factorCarga() const
+    double factorCarga()
     {
         return static_cast<double>(cantidad) / capacidad;
     }

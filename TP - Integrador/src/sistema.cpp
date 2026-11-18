@@ -37,11 +37,11 @@ void Sistema::resumen()
         return;
     }
 
-    size_t cantidadEstaciones = estaciones.tamano();
-    size_t cantidadBicicletas = bicicletas.tamano();
-    size_t cantidadBicicletasAveriadas = contarBicicletasAveriadas();
+    int cantidadEstaciones = estaciones.tamano();
+    int cantidadBicicletas = bicicletas.tamano();
+    int cantidadBicicletasAveriadas = contarBicicletasAveriadas();
     int alturaAbbBicicletas = alturaBicicletasABB();
-    size_t cantidadViajes = viajes.tamano();
+    int cantidadViajes = viajes.tamano();
 
     cout << "Estaciones cargadas: " << cantidadEstaciones << endl;
     cout << "Bicicletas cargadas: " << cantidadBicicletas << endl;
@@ -244,7 +244,7 @@ void Sistema::listarEstacionesOrdenadas(int criterio)
         return;
     }
 
-    size_t cantidadEstaciones = estaciones.tamano();
+    int cantidadEstaciones = estaciones.tamano();
     if (cantidadEstaciones == 0)
     {
         cout << "No hay estaciones cargadas." << endl;
@@ -254,9 +254,9 @@ void Sistema::listarEstacionesOrdenadas(int criterio)
     Estacion** ordenadas = new Estacion*[cantidadEstaciones];
     estaciones.copiarReferencias(ordenadas);
 
-    size_t i;
-    size_t j;
-    size_t posicionMenor;
+    int i;
+    int j;
+    int posicionMenor;
     int valorActual;
     int valorMenor;
     // Selección: busca el menor de las estaciones que todavía no están ordenadas.
@@ -307,7 +307,7 @@ void Sistema::listarEstacionesOrdenadas(int criterio)
 // Muestra las estaciones cuya disponibilidad es menor al 20% de capacidad.
 void Sistema::listarEstacionesBajaOcupacion()
 {
-    size_t cantidadEstaciones = estaciones.tamano();
+    int cantidadEstaciones = estaciones.tamano();
     if (cantidadEstaciones == 0)
     {
         cout << "No hay estaciones cargadas." << endl;
@@ -318,7 +318,7 @@ void Sistema::listarEstacionesBajaOcupacion()
     estaciones.copiarReferencias(referencias);
 
     bool hayEstacionesParaMostrar = false;
-    size_t i;
+    int i;
     int capacidad;
     int disponibles;
     double porcentajeOcupacion;
@@ -364,7 +364,7 @@ void Sistema::mostrarCaminoMinimo(string origen, string destino)
 
     cout << "Recorrido minimo (" << camino.tamano() - 1 << " tramos):" << endl;
     string codigo;
-    size_t i;
+    int i;
     for (i = 0; i < camino.tamano(); ++i)
     {
         camino.obtener(i, codigo);
@@ -378,7 +378,7 @@ void Sistema::mostrarCaminoMinimo(string origen, string destino)
 // Cuenta los viajes cuya estación de origen y fecha coinciden con la consulta.
 int Sistema::contarViajesSalidos(string codigoEstacion, int fechaInicio, int fechaFin)
 {
-    size_t cantidadViajes = viajes.tamano();
+    int cantidadViajes = viajes.tamano();
     if (cantidadViajes == 0)
         return 0;
 
@@ -386,7 +386,7 @@ int Sistema::contarViajesSalidos(string codigoEstacion, int fechaInicio, int fec
     viajes.copiarElementos(viajesCargados);
 
     int cantidadEncontrada = 0;
-    size_t i;
+    int i;
     for (i = 0; i < cantidadViajes; ++i)
     {
         if (viajesCargados[i].getEstacionOrigen() == codigoEstacion
@@ -404,7 +404,7 @@ int Sistema::contarViajesSalidos(string codigoEstacion, int fechaInicio, int fec
 // Muestra los viajes asociados al DNI y suma sus duraciones.
 void Sistema::mostrarViajesPorDni(int dniUsuario)
 {
-    size_t cantidadViajes = viajes.tamano();
+    int cantidadViajes = viajes.tamano();
     Viaje* viajesCargados = nullptr;
     if (cantidadViajes > 0)
     {
@@ -414,7 +414,7 @@ void Sistema::mostrarViajesPorDni(int dniUsuario)
 
     bool encontroViajes = false;
     int totalMinutos = 0;
-    size_t i;
+    int i;
     for (i = 0; i < cantidadViajes; ++i)
     {
         if (viajesCargados[i].getDniUsuario() == dniUsuario)
@@ -446,7 +446,7 @@ void Sistema::listarBicicletasMasKilometros(int kilometrosMinimos)
         return;
     }
 
-    size_t cantidadBicicletas = bicicletas.tamano();
+    int cantidadBicicletas = bicicletas.tamano();
     if (cantidadBicicletas == 0)
     {
         cout << "No hay bicicletas cargadas." << endl;
@@ -457,7 +457,7 @@ void Sistema::listarBicicletasMasKilometros(int kilometrosMinimos)
     bicicletas.copiarElementos(bicicletasCargadas);
 
     bool encontroBicicletas = false;
-    size_t i;
+    int i;
     for (i = 0; i < cantidadBicicletas; ++i)
     {
         if (bicicletasCargadas[i].getKilometros() > kilometrosMinimos)
@@ -523,7 +523,7 @@ static bool esBicicletaAveriada(int, Bicicleta bicicleta)
 }
 
 // Cuenta las bicicletas averiadas mediante el recorrido del ABB.
-size_t Sistema::contarBicicletasAveriadas()
+int Sistema::contarBicicletasAveriadas()
 {
     return bicicletasPorId.contarSi(esBicicletaAveriada);
 }
@@ -602,13 +602,13 @@ void Sistema::ingresarBicicletaAlTaller(int biciId)
         return;
     }
 
-    size_t cantidadBicicletas = bicicletas.tamano();
+    int cantidadBicicletas = bicicletas.tamano();
     Bicicleta* bicicletasCargadas = new Bicicleta[cantidadBicicletas];
     bicicletas.copiarElementos(bicicletasCargadas);
 
     Bicicleta bicicletaEncontrada;
     bool encontrada = false;
-    size_t i;
+    int i;
     for (i = 0; i < cantidadBicicletas; ++i)
     {
         if (bicicletasCargadas[i].getBiciId() == biciId)
@@ -671,8 +671,8 @@ void Sistema::extraerBicicletaDelTaller()
 
 // Prueba para cada estación si forma parte de una solución.
 void Sistema::buscarRedistribucionesRecursivo(Estacion* candidatas[],
-                                             size_t cantidadCandidatas,
-                                             size_t indice, int capacidadCamion,
+                                             int cantidadCandidatas,
+                                             int indice, int capacidadCamion,
                                              int sumaActual, bool seleccionadas[],
                                              bool& encontro)
 {
@@ -680,7 +680,7 @@ void Sistema::buscarRedistribucionesRecursivo(Estacion* candidatas[],
     {
         cout << "{";
         bool primeraEstacion = true;
-        size_t i;
+        int i;
         for (i = 0; i < indice; ++i)
         {
             if (seleccionadas[i])
@@ -725,7 +725,7 @@ void Sistema::buscarRedistribuciones(int capacidadCamion)
         return;
     }
 
-    size_t cantidadEstaciones = estaciones.tamano();
+    int cantidadEstaciones = estaciones.tamano();
     if (cantidadEstaciones == 0)
     {
         cout << "No hay estaciones cargadas." << endl;
@@ -735,8 +735,8 @@ void Sistema::buscarRedistribuciones(int capacidadCamion)
     Estacion** candidatas = new Estacion*[cantidadEstaciones];
     estaciones.copiarReferencias(candidatas);
 
-    size_t cantidadCandidatas = 0;
-    size_t i;
+    int cantidadCandidatas = 0;
+    int i;
     for (i = 0; i < cantidadEstaciones; ++i)
     {
         int faltantes = candidatas[i]->getCapacidadAnclajes()

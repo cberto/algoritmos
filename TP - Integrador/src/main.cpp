@@ -232,7 +232,7 @@ int main()
             break;
         case 32:
         {
-            size_t cantidadAveriadas = sistema.contarBicicletasAveriadas();
+            int cantidadAveriadas = sistema.contarBicicletasAveriadas();
             cout << "Cantidad de bicicletas averiadas: "
                  << cantidadAveriadas << endl;
             break;

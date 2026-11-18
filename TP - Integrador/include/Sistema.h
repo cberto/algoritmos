@@ -1,7 +1,6 @@
 #ifndef SISTEMA_H
 #define SISTEMA_H
 
-#include <cstddef>
 #include <string>
 #include "Bicicleta.h"
 #include "ArbolBinarioBusqueda.h"
@@ -39,8 +38,8 @@ private:
 
     // Explora las decisiones de incluir o excluir cada estación candidata.
     void buscarRedistribucionesRecursivo(Estacion* candidatas[],
-                                         size_t cantidadCandidatas,
-                                         size_t indice, int capacidadCamion,
+                                         int cantidadCandidatas,
+                                         int indice, int capacidadCamion,
                                          int sumaActual, bool seleccionadas[],
                                          bool& encontro);
 
@@ -95,7 +94,7 @@ public:
     void listarBicicletasInorden();
 
     // Cuenta las bicicletas averiadas recorriendo el ABB.
-    size_t contarBicicletasAveriadas();
+    int contarBicicletasAveriadas();
 
     // Devuelve la altura del ABB; un árbol vacío tiene altura -1.
     int alturaBicicletasABB();

@@ -1,8 +1,6 @@
 #ifndef ESTRUCTURAS_MIN_HEAP_H
 #define ESTRUCTURAS_MIN_HEAP_H
 
-#include <cstddef>
-
 using namespace std;
 
 template <typename T>
@@ -10,8 +8,8 @@ class MinHeap
 {
 private:
     T* datos;
-    size_t cantidad;
-    size_t capacidad;
+    int cantidad;
+    int capacidad;
 
     // Duplica el arreglo cuando se llena.
     void asegurarCapacidad()
@@ -19,9 +17,9 @@ private:
         if (cantidad < capacidad)
             return;
 
-        size_t nuevaCapacidad = capacidad == 0 ? 8 : capacidad * 2;
+        int nuevaCapacidad = capacidad == 0 ? 8 : capacidad * 2;
         T* nuevosDatos = new T[nuevaCapacidad];
-        size_t i;
+        int i;
         for (i = 0; i < cantidad; ++i)
             nuevosDatos[i] = datos[i];
         delete[] datos;
@@ -30,7 +28,7 @@ private:
     }
 
     // Intercambia dos posiciones del arreglo.
-    void intercambiar(size_t primero, size_t segundo)
+    void intercambiar(int primero, int segundo)
     {
         T temporal = datos[primero];
         datos[primero] = datos[segundo];
@@ -53,13 +51,13 @@ public:
     }
 
     // Indica si no hay elementos.
-    bool vacio() const
+    bool vacio()
     {
         return cantidad == 0;
     }
 
     // Devuelve la cantidad de elementos.
-    size_t tamano() const
+    int tamano()
     {
         return cantidad;
     }
@@ -68,12 +66,12 @@ public:
     void insertar(T dato)
     {
         asegurarCapacidad();
-        size_t indice = cantidad++;
+        int indice = cantidad++;
         datos[indice] = dato;
 
         while (indice > 0)
         {
-            size_t padre = (indice - 1) / 2;
+            int padre = (indice - 1) / 2;
             if (!(datos[indice] < datos[padre]))
                 break;
             intercambiar(indice, padre);
@@ -82,7 +80,7 @@ public:
     }
 
     // Copia la raíz, que contiene el mínimo.
-    bool consultarMinimo(T& dato) const
+    bool consultarMinimo(T& dato)
     {
         if (vacio())
             return false;
@@ -102,12 +100,12 @@ public:
             return true;
 
         datos[0] = datos[cantidad];
-        size_t indice = 0;
+        int indice = 0;
         while (true)
         {
-            size_t izquierdo = indice * 2 + 1;
-            size_t derecho = izquierdo + 1;
-            size_t menor = indice;
+            int izquierdo = indice * 2 + 1;
+            int derecho = izquierdo + 1;
+            int menor = indice;
 
             if (izquierdo < cantidad && datos[izquierdo] < datos[menor])
                 menor = izquierdo;

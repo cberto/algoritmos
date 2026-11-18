@@ -1,7 +1,6 @@
 #ifndef ESTRUCTURAS_GRAFO_H
 #define ESTRUCTURAS_GRAFO_H
 
-#include <cstddef>
 #include "Cola.h"
 #include "FuncionHash.h"
 #include "ListaEnlazada.h"
@@ -48,14 +47,14 @@ private:
     };
 
     NodoVertice* vertices;
-    size_t cantidad;
+    int cantidad;
     TablaHash<Vertice, NodoVertice*, Hash> indice;
 
     // Indica si el origen ya tiene una arista al destino.
     bool contieneArista(NodoVertice* origen, NodoVertice* destino)
     {
         NodoArista* arista = origen->aristas;
-        size_t i;
+        int i;
         for (i = 0; i < cantidad; ++i)
         {
             if (arista == nullptr)
@@ -71,7 +70,7 @@ private:
     void quitarArista(NodoVertice* origen, NodoVertice* destino)
     {
         NodoArista** enlace = &origen->aristas;
-        size_t i;
+        int i;
         for (i = 0; i < cantidad; ++i)
         {
             if (*enlace == nullptr)
@@ -94,7 +93,7 @@ private:
     void reiniciarBusqueda()
     {
         NodoVertice* actual = vertices;
-        size_t i;
+        int i;
         for (i = 0; i < cantidad; ++i)
         {
             actual->visitado = false;
@@ -206,7 +205,7 @@ public:
         NodoVertice* eliminado = *encontrado;
 
         NodoVertice* actual = vertices;
-        size_t i;
+        int i;
         for (i = 0; i < cantidad; ++i)
         {
             if (actual != eliminado)
@@ -247,7 +246,7 @@ public:
             if (actual == *fin)
                 break;
             NodoArista* arista = actual->aristas;
-            size_t i;
+            int i;
             for (i = 0; i < cantidad; ++i)
             {
                 if (arista == nullptr)
@@ -266,7 +265,7 @@ public:
         if (encontrado)
         {
             actual = *fin;
-            size_t i;
+            int i;
             for (i = 0; i < cantidad; ++i)
             {
                 if (actual == nullptr)
@@ -280,13 +279,13 @@ public:
     }
 
     // Indica si el grafo contiene el vértice.
-    bool contiene(Vertice dato) const
+    bool contiene(Vertice dato)
     {
         return indice.buscar(dato) != nullptr;
     }
 
     // Devuelve la cantidad de vértices.
-    size_t cantidadVertices() const
+    int cantidadVertices()
     {
         return cantidad;
     }

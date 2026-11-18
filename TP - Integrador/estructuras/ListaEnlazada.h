@@ -1,8 +1,6 @@
 #ifndef ESTRUCTURAS_LISTA_ENLAZADA_H
 #define ESTRUCTURAS_LISTA_ENLAZADA_H
 
-#include <cstddef>
-
 using namespace std;
 
 template <typename T>
@@ -24,7 +22,7 @@ private:
 
     Nodo* primero;
     Nodo* ultimo;
-    size_t cantidad;
+    int cantidad;
 
 public:
     // Crea una lista vacía.
@@ -42,13 +40,13 @@ public:
     }
 
     // Indica si no hay elementos.
-    bool vacia() const
+    bool vacia()
     {
         return primero == nullptr;
     }
 
     // Devuelve la cantidad de elementos.
-    size_t tamano() const
+    int tamano()
     {
         return cantidad;
     }
@@ -77,13 +75,13 @@ public:
     }
 
     // Copia el elemento de la posición indicada en dato.
-    bool obtener(size_t posicion, T& dato) const
+    bool obtener(int posicion, T& dato)
     {
-        if (posicion >= cantidad)
+        if (posicion < 0 || posicion >= cantidad)
             return false;
 
         Nodo* actual = primero;
-        size_t i;
+        int i;
         for (i = 0; i < posicion; ++i)
             actual = actual->siguiente;
 
@@ -92,10 +90,10 @@ public:
     }
 
     // Copia los elementos de la lista en un arreglo.
-    void copiarElementos(T elementos[]) const
+    void copiarElementos(T elementos[])
     {
         Nodo* actual = primero;
-        size_t i;
+        int i;
         for (i = 0; i < cantidad; ++i)
         {
             elementos[i] = actual->dato;
@@ -159,10 +157,10 @@ public:
     }
 
     // Llama a visitar una vez por cada elemento.
-    void recorrer(void (*visitar)(T)) const
+    void recorrer(void (*visitar)(T))
     {
         Nodo* actual = primero;
-        size_t i;
+        int i;
         for (i = 0; i < cantidad; ++i)
         {
             visitar(actual->dato);

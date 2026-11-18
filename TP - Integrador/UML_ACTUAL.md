@@ -35,7 +35,7 @@ classDiagram
         +insertarBicicletaEnABB(bicicleta): bool
         +mostrarBicicletaPorId(biciId): void
         +listarBicicletasInorden(): void
-        +contarBicicletasAveriadas(): size_t
+        +contarBicicletasAveriadas(): int
         +alturaBicicletasABB(): int
         +eliminarBicicletaDelABB(biciId): bool
         +buscarRedistribuciones(capacidadCamion): void

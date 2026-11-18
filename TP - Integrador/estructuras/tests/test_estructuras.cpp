@@ -44,7 +44,7 @@ struct Trabajo
     }
 
     // Compara los trabajos por prioridad.
-    bool operator<(Trabajo otro) const
+    bool operator<(Trabajo otro)
     {
         return prioridad < otro.prioridad;
     }

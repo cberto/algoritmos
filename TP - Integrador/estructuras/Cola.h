@@ -1,8 +1,6 @@
 #ifndef ESTRUCTURAS_COLA_H
 #define ESTRUCTURAS_COLA_H
 
-#include <cstddef>
-
 using namespace std;
 
 template <typename T>
@@ -24,7 +22,7 @@ private:
 
     Nodo* frente;
     Nodo* final;
-    size_t cantidad;
+    int cantidad;
 
     // Libera todos los nodos de la cola.
     void limpiar()
@@ -55,13 +53,13 @@ public:
     }
 
     // Indica si no hay elementos.
-    bool vacia() const
+    bool vacia()
     {
         return frente == nullptr;
     }
 
     // Devuelve la cantidad de elementos.
-    size_t tamano() const
+    int tamano()
     {
         return cantidad;
     }
@@ -95,7 +93,7 @@ public:
     }
 
     // Copia el primer elemento en dato sin quitarlo.
-    bool consultarFrente(T& dato) const
+    bool consultarFrente(T& dato)
     {
         if (frente == nullptr)
             return false;

@@ -76,7 +76,7 @@ public:
     }
 
     // Indica si no hay usuarios esperando una bicicleta.
-    bool colaVaciaDeEspera() const
+    bool colaVaciaDeEspera()
     {
         return espera.vacia();
     }
@@ -94,7 +94,7 @@ public:
     }
 
     // Muestra los datos de la estación.
-    void mostrarEstacion() const
+    void mostrarEstacion()
     {
         cout << "Codigo: " << codigo << endl;
         cout << "Nombre: " << nombre << endl;

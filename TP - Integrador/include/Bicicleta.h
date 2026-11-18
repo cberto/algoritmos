@@ -112,7 +112,7 @@ public:
     }
 
     // Permite que el montículo compare primero las prioridades menores.
-    bool operator<(BicicletaTaller otra) const
+    bool operator<(BicicletaTaller otra)
     {
         return prioridad < otra.prioridad;
     }
