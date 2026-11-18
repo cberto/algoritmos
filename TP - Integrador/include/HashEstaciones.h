@@ -2,6 +2,7 @@
 #define HASH_ESTACIONES_H
 
 #include "Estacion.h"
+#include "Estructuras.h"
 
 #include <string>
 #include <iostream>
@@ -14,12 +15,12 @@ class HashEstaciones {
         Nodo* siguiente;
     };
 
-    static constexpr int cantidadBuckets = 11; 
+    static constexpr int cantidadBuckets = 11;
 
     Nodo** buckets;
     
-    int usados; //Cantidad de datos que se usaron en la tabla hash
-    int colisiones; //Cantidad de colisiones que ocurrieron en la tabla hash
+    int usados; 
+    int colisiones; 
 
     public:
     HashEstaciones() : buckets(new Nodo*[cantidadBuckets]()), usados(0), colisiones(0) {}
@@ -41,8 +42,7 @@ class HashEstaciones {
         int valor = 0;
         
         for(char letra:codigo)
-            // el numero 31 primo y permite que el orden de las letras influya en la distribucion  
-            // unsigned char: con letras como Ñ o tildes el char es negativo y el indice saldria de la tabla
+          
             valor = (valor * 31 + (unsigned char)letra) % cantidadBuckets;
 
         return valor;
@@ -66,7 +66,6 @@ class HashEstaciones {
     
         buckets[pos] = new Nodo { new Estacion(codigo, nombre, barrio, capacidad, disponible), buckets[pos] };
         
-        //Sumo 1 al usados (solo porque esta adelante, si lo pongo al final tengo que igualar)
         ++usados;
         
         return true;
@@ -88,15 +87,15 @@ class HashEstaciones {
         return true;
     }
 
-    template<class T> void recorrer(T visitar) const {
+    void volcar(Array<Estacion*>& salida) const {
         for(int i = 0; i < cantidadBuckets; ++i) {
             for(Nodo* n = buckets[i]; n; n = n->siguiente) {
-                visitar(*n->estacion);
+                salida.agregar(n->estacion);
             }
         }
     }
     int cantidad() const {
-        return usados; 
+        return usados;
     }
     int totalColisiones() const {
         return colisiones;
