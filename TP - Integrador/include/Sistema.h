@@ -1,6 +1,7 @@
 #ifndef SISTEMA_H
 #define SISTEMA_H
 
+
 #include "HashEstaciones.h"
 #include "Ciclovias.h"
 #include "ABBicicleta.h"
@@ -39,12 +40,19 @@ class Sistema {
         bool devolverBicicleta(string cod);
         bool mostrarEspera(string cod) const;
         bool ingresarTaller(int idBici, int prioridad);
+        
         bool retirarTaller();
+       
         bool eliminarBicicleta(int id);
-        void listarBicicletas() const{ bicicletas.recorrer([&](const Bicicleta bici){
-            bici.mostrarBicicleta();
-        });};
+        void listarBicicletas() const{
+            Array<Bicicleta*> todas;
+            bicicletas.volcarInorden(todas);
+            for(int i = 0; i < todas.cantidad(); i++){
+                todas[i]->mostrarBicicleta();
+            }
+        }
         int bicicletasAveriadas() const { return bicicletas.cantidadAveriadas(); }
+       
         int altura() const { return bicicletas.altura(); }
         Bicicleta* buscarBicicleta(int id) const { return bicicletas.buscar(id); }
 
