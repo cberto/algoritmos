@@ -160,6 +160,8 @@ classDiagram
     Sistema *-- ArbolBinarioBusqueda~int, Bicicleta~ : bici_id => bicicleta (C1)
     Sistema *-- ListaEnlazada~Viaje~ : viajes cargados
     Sistema *-- MinHeap~BicicletaTaller~ : bicicletas para reparar
+    MinHeap ..> BicicletaTaller : elemento almacenado
+    BicicletaTaller *-- Bicicleta : copia para reparar
     Sistema ..> Estacion : consulta y devuelve puntero
     TablaHash ..> Estacion : Valor almacenado
     ListaEnlazada ..> Viaje : elementos almacenados
