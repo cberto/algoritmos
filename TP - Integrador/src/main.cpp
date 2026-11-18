@@ -8,26 +8,31 @@
 
 using namespace std;
 
+// Pide un dato por consola y lo reintenta hasta que el usuario escribe un unico valor valido del tipo T.
 // getline + istringstream evita bucles infinitos ante letras en un campo numerico.
 template<class T> T leer(string mensaje) {
-    for (;;) {
+    for (;;) {  // Bucle infinito (for sin condicion): repite hasta leer un valor valido o cortar con el throw.
         cout << mensaje;
         string linea, sobrante;
         if (!getline(cin, linea)) throw runtime_error("Fin de entrada");
         istringstream entrada(linea); T valor{};
+        // Acepto solo si se leyo el valor Y no sobro nada mas: asi rechazo "5 7" o "5abc".
         if (entrada >> valor && !(entrada >> sobrante)) return valor;
         cout << "Entrada invalida. Ingrese un solo valor." << endl;
     }
 }
 
+// Pide una fecha y la reintenta hasta que este bien escrita en formato AAAAMMDD (8 digitos, mes y dia validos).
 static string leerFecha(string mensaje) {
     for (;;) {
         string fecha = leer <string>(mensaje);
+        // Tiene que tener 8 caracteres y que todos sean numeros.
         bool soloDigitos = fecha.size() == 8;
         for (char c : fecha) {
             if (c < '0' || c > '9') soloDigitos = false;
         }
         if (soloDigitos) {
+            // Separo el mes (posiciones 4-5) y el dia (posiciones 6-7) y chequeo que tengan sentido.
             int mes = stoi(fecha.substr(4, 2));
             int dia = stoi(fecha.substr(6, 2));
             if (mes >= 1 && mes <= 12 && dia >= 1 && dia <= 31) return fecha;
@@ -36,14 +41,15 @@ static string leerFecha(string mensaje) {
     }
 }
 
+
 static void mostrarMenu()
 {
     cout << endl << "========== Bicicletas Publicas BA ==========" << endl
     << " 0. Salir" << endl
-    << "----- Datos -----" << endl
+    << "----- Datos -----" << endl  // Sistema.h / Sistema.cpp orquesta la carga y usa las estructuras de Estructuras.h
     << " 1. Cargar datos                         " << endl
     << " 2. Generar resumen                      " << endl
-    << "----- Modulo A: Estaciones -----"                << endl
+    << "----- Modulo A: Estaciones -----"                << endl  // HashEstaciones.h + Estacion.h + Ciclovias.h (conectar y camino minimo)
     << "10. Buscar estacion                      " << endl
     << "11. Agregar estacion                     " << endl
     << "12. Conectar estaciones                  " << endl
@@ -51,7 +57,7 @@ static void mostrarMenu()
     << "14. Listar estaciones ordenadas          " << endl
     << "15. Ocupacion < 20%                      " << endl
     << "16. Camino minimo por ciclovias          " << endl
-    << "----- Modulo B: Viajes y colas -----"            << endl
+    << "----- Modulo B: Viajes y colas -----"            << endl  // Viaje.h (consultas) + Estacion.h (Cola de espera) + Taller.h (min-heap)
     << "20. Viajes por estacion y fechas         " << endl
     << "21. Viajes por DNI                       " << endl
     << "22. Bicicletas con mas de X km           " << endl
@@ -60,17 +66,18 @@ static void mostrarMenu()
     << "25. Atender la bici mas urgente          " << endl
     << "26. Devolver bicicleta a una estacion    " << endl
     << "27. Mostrar cola de espera               " << endl
-    << "----- Modulo C: ABB bicicletas -----"            << endl
+    << "----- Modulo C: ABB bicicletas -----"            << endl  // ABBicicleta.h + Bicicleta.h
     << "30. Buscar bicicleta por ID              " << endl
     << "31. Listar bicicletas inorder            " << endl
     << "32. Contar averiadas / altura ABB        " << endl
     << "33. Agregar bicicleta                    " << endl
     << "34. Eliminar bicicleta                   " << endl
-    << "----- Modulo D: Backtracking -----"              << endl
+    << "----- Modulo D: Backtracking -----"              << endl  // Redistribucion.h
     << "40. Redistribucion (suma = C)            " << endl
     << "============================================"    << endl;
 }
 
+// Bucle principal: crea el Sistema en la pila, muestra el menu y ejecuta la opcion elegida hasta que se pide salir (0).
 int main()
 {
     int opcion = -1;
@@ -233,11 +240,13 @@ int main()
                 cout << (sistema.eliminarBicicleta(leer <int>("ID: ")) ? "Bicicleta eliminada" : "No existe o esta en el taller") << endl;
                 break;
             case 40: {
+                // Pido la capacidad del camion (el total que tiene que sumar); no puede ser negativa.
                 int c = leer <int>("Ingrese la capacidad del camion: ");
                 if(c < 0){
                     cout << "Validacion con numeros negativos no permitida" << endl;
                     break;
                 }
+               // Leo toda la linea con los pares "codigo cantidad" separados por comas.
                cout << "Ingrese las estaciones (ej: PLZ 3, CAB 7, RET 5): ";
                string linea;
                if(!getline(cin, linea)) throw runtime_error("Fin de entrada");
@@ -246,10 +255,12 @@ int main()
                istringstream lista(linea);
                string item;
                bool valido = true;
+               // Corto la linea en pedazos por cada coma y cargo cada estacion con su faltante.
                while(getline(lista, item, ',')){
                 istringstream partes(item);
                 string codigo, sobrante;
                 int cantidad;
+                // Cada pedazo tiene que ser exactamente un codigo y un numero; si no, aviso y corto.
                 if(!(partes >> codigo >> cantidad) || (partes >> sobrante)){
                     cout << "Formato invalido en: \"" << item << "\"" << endl;
                     valido = false;
@@ -259,11 +270,12 @@ int main()
                }
                if(!valido) break;
 
+              // Ya con los datos cargados, el backtracking busca que combinaciones suman justo la capacidad.
               try{
                 Redistribucion:: resolver(datos, c);
 
               } catch(const invalid_argument& e){
-                cout << e.what() << endl;
+                cout << e.what() << endl;   // Si resolver encuentra datos invalidos, muestra el motivo.
               }
               break;
             }
