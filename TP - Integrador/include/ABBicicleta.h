@@ -2,6 +2,7 @@
 #define ABBICICLETA_H
 
 #include "Bicicleta.h"
+#include "Estructuras.h"
 
 #include <string>
 #include <iostream>
@@ -16,7 +17,8 @@ class ABBicicleta {
     };
     Nodo* raiz = nullptr;
     int usados = 0;
-     static void liberar(Nodo* n){
+   
+     static void liberar(Nodo* n){ 
         if(!n){
             return;
         }
@@ -26,18 +28,80 @@ class ABBicicleta {
         delete n;
      }
 
-     template<class F> static void inorder( Nodo* n, F& visitar){
+   
+     static void inorder(Nodo* n, Array<Bicicleta*>& salida){
         if(!n){
             return;
         }
-        inorder(n->izq, visitar);
-        visitar(*n->bici);
-        inorder(n->der, visitar);
-
+        inorder(n->izq, salida);
+        salida.agregar(n->bici);
+        inorder(n->der, salida);
      }
+
+     
+     static int contarAveriadas(Nodo* n){
+        if(!n){
+            return 0;
+        }
+        int esta = n->bici->getEstado() == "Averiada" ? 1 : 0;
+        return esta + contarAveriadas(n->izq) + contarAveriadas(n->der);
+     }
+
+     static bool insertarRec(Nodo*& n, Bicicleta& bici){
+        if(!n){
+            n = new Nodo{ new Bicicleta(bici), nullptr, nullptr };
+            return true;
+        }
+        if(bici.getId() == n->bici->getId()){
+            return false;  
+        }
+        if(bici.getId() < n->bici->getId()){
+            return insertarRec(n->izq, bici);
+        }
+        return insertarRec(n->der, bici);
+     }
+
+     static Nodo* extraerMinimo(Nodo*& n){
+        if(!n->izq){
+            Nodo* minimo = n;
+            n = n->der;          
+            minimo->der = nullptr;
+            return minimo;
+        }
+        return extraerMinimo(n->izq);
+     }
+
+     static bool eliminarRec(Nodo*& n, int id){
+        if(!n){
+            return false;   
+        }
+        if(id < n->bici->getId()){
+            return eliminarRec(n->izq, id);
+        }
+        if(id > n->bici->getId()){
+            return eliminarRec(n->der, id);
+        }
+        // lo encontre
+        Nodo* borrar = n;
+        if(!n->izq){
+            n = n->der;          
+        } else if(!n->der){
+            n = n->izq;         
+        } else {
+            Nodo* sucesor = extraerMinimo(n->der);
+            sucesor->izq = n->izq;
+            sucesor->der = n->der;
+            n = sucesor;
+        }
+        delete borrar->bici;
+        delete borrar;
+        return true;
+     }
+
      static int alturaNodo(Nodo* n){
         if(!n){
-            return -1; //vacio = -1 
+            
+            return -1;
         }
         int izq = alturaNodo(n->izq);
         int der = alturaNodo(n->der);
@@ -58,63 +122,32 @@ class ABBicicleta {
         return n ? n->bici : nullptr;
     }
     bool insertar(Bicicleta& bici){
-    Nodo** enlace = &raiz;
-    while(*enlace){
-    if((*enlace)->bici->getId() == bici.getId()){
-        return false;
-    }
-    enlace = bici.getId() < (*enlace)->bici->getId() ? &(*enlace)->izq : &(*enlace)->der;
-    }
-    *enlace = new Nodo{ new Bicicleta(bici), nullptr, nullptr };
-    ++usados;
-    return true;
-}
-
-bool eliminar(int id){
-    Nodo** enlace = &raiz;
-    while(*enlace && (*enlace)->bici->getId() != id){
-        enlace = id < (*enlace)->bici->getId() ? &(*enlace)->izq : &(*enlace)->der;
-    }
-    if(!*enlace){
-        return false;
-    }
-    Nodo* viejo = *enlace;
-    if(viejo->izq && viejo->der){
-        Nodo** sucesor = &viejo->der;
-        while((*sucesor)->izq){
-            sucesor = &(*sucesor)->izq;
+        if(!insertarRec(raiz, bici)){
+            return false;
         }
-        delete viejo->bici;
-        viejo->bici = (*sucesor)->bici;
-        Nodo* borrar = *sucesor;
-        *sucesor = borrar->der;
-        delete borrar;
-    } else {
-        *enlace = viejo->izq ? viejo->izq : viejo->der;
-        delete viejo->bici;
-        delete viejo;
+        ++usados;
+        return true;
     }
-    --usados;
-    return true;
-}
 
-template<class F> void recorrer(F visitar) const{
-    inorder(raiz, visitar);
-}
-
-int cantidadAveriadas() const { 
-   int total = 0;
-   recorrer([&](const Bicicleta&  bici){
-    if(bici.getEstado() == "Averiada"){
-        ++total;
+    bool eliminar(int id){
+        if(!eliminarRec(raiz, id)){
+            return false;
+        }
+        --usados;
+        return true;
     }
-   });
-   return total;
- }
 
-int altura() const { return alturaNodo(raiz); }
+    void volcarInorden(Array<Bicicleta*>& salida) const{
+        inorder(raiz, salida);
+    }
 
-int cantidadBicicletas() const { return usados; }
+    int cantidadAveriadas() const {
+        return contarAveriadas(raiz);
+    }
+
+    int altura() const { return alturaNodo(raiz); }
+
+    int cantidadBicicletas() const { return usados; }
 
 
 };
